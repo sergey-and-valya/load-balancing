@@ -39,15 +39,15 @@ namespace GaussGenerator
 
         private class Generator : IGenerator<int, EmptyData>
         {
-            private int count;
-            private int n;
-            private int m;
-            private int M1;
-            private int M2;
-            private int min_w;
-            private int max_w;
-            private double min_h;
-            private double max_h;
+            private readonly int count;
+            private readonly int n;
+            private readonly int m;
+            private readonly int M1;
+            private readonly int M2;
+            private readonly int min_w;
+            private readonly int max_w;
+            private readonly double min_h;
+            private readonly double max_h;
 
             public Generator(int count, int n, int m, int M1, int M2, int min_w, int max_w, double min_h, double max_h)
             {
@@ -118,10 +118,10 @@ namespace GaussGenerator
                 {
                     #region // задаём разбиения по каждому измерению
                     // формируем массив номеров строк, по которым идёт разбиение
-                    List<int> num_row = Create_partition(M1, n);
+                    List<int> num_row = CreatePartition(M1, n);
 
                     // формируем массив номеров столбцов, по которым идёт разбиение
-                    List<int> num_col = Create_partition(M2, m);
+                    List<int> num_col = CreatePartition(M2, m);
 
 
                     #endregion
@@ -212,7 +212,7 @@ namespace GaussGenerator
                     #region // полученное решение
                     // 1. матрица matrix
                     // 2. разбиение по осям
-                    Create_solution(num_row, num_col);
+                    CreateSolution(num_row, num_col);
                     // максимальная загрузка при полученном разбиении
                     // 3. Max
                     #endregion
@@ -245,7 +245,7 @@ namespace GaussGenerator
             }
         }
 
-        static List<int> Create_partition(int count_partition, int size_partition)
+        static List<int> CreatePartition(int count_partition, int size_partition)
         {
             Random rnd = new Random(DateTime.Now.Millisecond);
             List<int> partition = new List<int>(count_partition + 2);
@@ -263,7 +263,7 @@ namespace GaussGenerator
             return partition;
         }
 
-        static void Create_solution(List<int> num_row, List<int> num_col)
+        static void CreateSolution(List<int> num_row, List<int> num_col)
         {
             num_row.RemoveAt(num_row.Count - 1);
             num_row.RemoveAt(0);

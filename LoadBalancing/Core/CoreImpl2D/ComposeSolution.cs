@@ -17,8 +17,8 @@ namespace CoreImpl2D
         /// <param name="y">Разбиение по второму направлению</param>
         public ComposeSolution(ISolution x, ISolution y)
         {
-            this.X = x;
-            this.Y = y;
+            X = x;
+            Y = y;
         }
 
         /// <summary>

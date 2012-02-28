@@ -63,7 +63,7 @@ namespace CoreImpl2D
             }
         }
 
-        int[] x;
-        int[] y;
+        private readonly int[] x;
+        private readonly int[] y;
     }
 }

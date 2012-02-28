@@ -7,7 +7,7 @@ namespace AlgorithmPluginCore
     /// </summary>
     /// <typeparam name="T">Тип хранимых в матрице данных</typeparam>
     /// <typeparam name="TProblem">Тип исходной задачи</typeparam>
-    public interface IAlgorithm<T, TProblem>
+    public interface IAlgorithm<T, in TProblem>
         where TProblem : IProblem<T>
     {
         /// <summary>

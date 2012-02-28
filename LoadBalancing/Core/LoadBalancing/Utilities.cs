@@ -24,6 +24,7 @@ namespace LoadBalancing
         /// Средняя нагрузка при заданных параметрах разбиения матрицы
         /// </summary>
         /// <param name="matrix">Матрица</param>
+        /// <param name="partitioning">Параметры разбиения матрицы</param>
         /// <returns>Сумма элементов</returns>
         public static double W(IMatrix<int> matrix, PartitioningParameters partitioning)
         {

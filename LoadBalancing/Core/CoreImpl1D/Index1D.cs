@@ -20,7 +20,6 @@ namespace CoreImpl1D
         /// <summary>
         /// Одномерный индекс
         /// </summary>
-        /// <param name="i">Значение индекса</param>
         public Index1D() :
             this(-1)
         {

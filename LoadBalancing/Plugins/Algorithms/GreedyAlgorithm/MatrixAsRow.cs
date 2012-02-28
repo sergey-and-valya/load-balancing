@@ -55,6 +55,6 @@ namespace GreedyAlgorithm
             }
         }
 
-        private IMatrix<int> matrix;
+        private readonly IMatrix<int> matrix;
     }
 }

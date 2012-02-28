@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Windows.Forms;
-using Core;
 using CoreImpl2D;
 using GeneratorPluginCore;
 using MatrixStorage;
@@ -40,15 +38,15 @@ namespace ExponentGenerator
 
         private class Generator : IGenerator<int, EmptyData>
         {
-            private int count;
-            private int n;
-            private int m;
-            private double min_w;
-            private double max_w;
-            private double min_h;
-            private double max_h;
-            private int mountainsMin;
-            private int mountainsMax;
+            private readonly int count;
+            private readonly int n;
+            private readonly int m;
+            private readonly double min_w;
+            private readonly double max_w;
+            private readonly double min_h;
+            private readonly double max_h;
+            private readonly int mountainsMin;
+            private readonly int mountainsMax;
 
             public Generator(int count, int n, int m, double min_w, double max_w, double min_h, double max_h, int mountainsMin, int mountainsMax)
             {

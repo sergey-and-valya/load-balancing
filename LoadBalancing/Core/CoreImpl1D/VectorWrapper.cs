@@ -27,7 +27,7 @@ namespace CoreImpl1D
 
         public int N
         {
-            get { return this.Size(0); }
+            get { return Size(0); }
         }
 
         public int Dimensions
@@ -52,6 +52,6 @@ namespace CoreImpl1D
             }
         }
 
-        private IMatrix<T> matrix;
+        private readonly IMatrix<T> matrix;
     }
 }

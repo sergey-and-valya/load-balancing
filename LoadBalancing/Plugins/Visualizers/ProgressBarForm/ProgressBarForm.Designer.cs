@@ -1,4 +1,4 @@
-﻿namespace ProgressBar
+﻿namespace ProgressBarForm
 {
     partial class ProgressBarForm
     {

@@ -86,6 +86,6 @@ namespace CoreImpl1D
             }
         }
 
-        private T[] vector;
+        private readonly T[] vector;
     }
 }

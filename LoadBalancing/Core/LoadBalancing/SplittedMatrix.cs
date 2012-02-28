@@ -99,7 +99,7 @@ namespace LoadBalancing
             }
         }
 
-        private IMatrix<int> matrix;
-        private ISolution solution;
+        private readonly IMatrix<int> matrix;
+        private readonly ISolution solution;
     }
 }

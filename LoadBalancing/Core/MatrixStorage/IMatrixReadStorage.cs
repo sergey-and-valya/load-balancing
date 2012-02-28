@@ -8,7 +8,7 @@ namespace MatrixStorage
     /// </summary>
     /// <typeparam name="T">Тип хранимых в матрице данных</typeparam>
     /// <typeparam name="TData">Тип дополнительной информации, связанная с матрицей (например список хороших начальных решений)</typeparam>
-    public interface IMatrixReadStorage<T, TData>
+    public interface IMatrixReadStorage<T, out TData>
     {
         /// <summary>
         /// Получает перечисление матриц в хранилище

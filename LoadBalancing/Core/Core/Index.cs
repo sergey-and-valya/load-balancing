@@ -42,6 +42,6 @@ namespace Core
             }
         }
 
-        private int[] components;
+        private readonly int[] components;
     }
 }

@@ -71,6 +71,6 @@ namespace CoreImpl1D
             }
         }
 
-        int[] x;
+        private readonly int[] x;
     }
 }

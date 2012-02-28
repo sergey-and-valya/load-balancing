@@ -30,8 +30,8 @@ namespace Visualizer
 
         private void InitParameters(SplittedMatrix splittedMatrix, IMatrix<int> matrix, ISolution solution)
         {
-            this.Name = "SolutionVisualizerForm";
-            this.Text = "     Visualizer of solution";
+            Name = "SolutionVisualizerForm";
+            Text = "     Visualizer of solution";
             this.splittedMatrix = splittedMatrix;
             this.matrix = matrix;
             this.solution = solution;
@@ -39,16 +39,16 @@ namespace Visualizer
             int columns = matrix.Size(0);
             int minSize = rows < columns ? rows : columns;
             zoomShift = 1 + minSize / 400;
-            coefficient = 255.0 / (double)CoreUtilities.Utilities.Max(matrix);
+            coefficient = 255.0 / CoreUtilities.Utilities.Max(matrix);
             modeOfDrawing = Mode.Matrix;
             ModeChangeButton.Visible = true;
-            settingsEvent = new SetSettingsEvent(SetZoom);
-            settingsEvent += new SetSettingsEvent(SetSolutionSize);
-            settingsEvent += new SetSettingsEvent(SetStep);
-            settingsEvent += new SetSettingsEvent(SetBitmap);
-            settingsEvent += new SetSettingsEvent(InitSumInBlocks);
-            settingsEvent += new SetSettingsEvent(SetBoundOfValuesOfBlocks);
-            settingsEvent += new SetSettingsEvent(SetSumInBlocks);
+            settingsEvent = SetZoom;
+            settingsEvent += SetSolutionSize;
+            settingsEvent += SetStep;
+            settingsEvent += SetBitmap;
+            settingsEvent += InitSumInBlocks;
+            settingsEvent += SetBoundOfValuesOfBlocks;
+            settingsEvent += SetSumInBlocks;
         }
 
         private void SetSizeOfBitmap()
@@ -211,8 +211,8 @@ namespace Visualizer
 
         private void SetBoundOfValuesOfBlocks()
         {
-            boundOfValuesOfBlocks.max = (int)GetMaxOfSumOfSplittedElements();
-            boundOfValuesOfBlocks.min = (int)GetMinOfSumOfSplittedElements();
+            boundOfValuesOfBlocks.max = GetMaxOfSumOfSplittedElements();
+            boundOfValuesOfBlocks.min = GetMinOfSumOfSplittedElements();
             SetAlmostMaxOfSumOfSplittedElements();
             SetAlmostMinOfSumOfSplittedElements();
         }
@@ -260,8 +260,8 @@ namespace Visualizer
         protected override void SetSettings()
         {
             base.SetSettings();
-            settingsEvent += new SetSettingsEvent(SetChangeModeButtonLocation);
-            settingsEvent += new SetSettingsEvent(SetCriterionLocation);
+            settingsEvent += SetChangeModeButtonLocation;
+            settingsEvent += SetCriterionLocation;
         }
 
         protected override void ChangeBitmap()

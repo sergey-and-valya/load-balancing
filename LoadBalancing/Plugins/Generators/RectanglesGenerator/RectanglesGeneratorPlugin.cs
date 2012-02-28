@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Windows.Forms;
-using Core;
 using CoreImpl2D;
 using GeneratorPluginCore;
 using MatrixStorage;
@@ -40,13 +38,13 @@ namespace RectanglesGenerator
 
         private class Generator : IGenerator<int, EmptyData>
         {
-            private int count;
-            private int n;
-            private int m;
-            private int min_h;
-            private int max_h;
-            private int rectsMin;
-            private int rectsMax;
+            private readonly int count;
+            private readonly int n;
+            private readonly int m;
+            private readonly int min_h;
+            private readonly int max_h;
+            private readonly int rectsMin;
+            private readonly int rectsMax;
 
             public Generator(int count, int n, int m, int min_h, int max_h, int rectsMin, int rectsMax)
             {

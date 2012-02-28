@@ -20,7 +20,7 @@ namespace FileStorage
         {
             private class EmptyDataRecord : IMatrixData<int, EmptyData>
             {
-                private FileMatrixData parent;
+                private readonly FileMatrixData parent;
 
                 public EmptyDataRecord(FileMatrixData parent)
                 {
@@ -45,7 +45,7 @@ namespace FileStorage
 
             private class SolutionDataRecord : IMatrixData<int, SolutionData>
             {
-                private FileMatrixData parent;
+                private readonly FileMatrixData parent;
 
                 public SolutionDataRecord(FileMatrixData parent)
                 {
@@ -74,11 +74,11 @@ namespace FileStorage
 
             public FileMatrixData(string basePath, string name, string filename, int[] sizes, string solutionFilename = null)
             {
-                this.BasePath = basePath;
-                this.Name = name;
-                this.Filename = filename;
-                this.Sizes = sizes;
-                this.SolutionFilename = solutionFilename;
+                BasePath = basePath;
+                Name = name;
+                Filename = filename;
+                Sizes = sizes;
+                SolutionFilename = solutionFilename;
             }
 
             [XmlIgnore]
@@ -179,10 +179,10 @@ namespace FileStorage
             public int[] Sizes;
 
             [XmlIgnore]
-            private WeakReference matrix = new WeakReference(null);
+            private readonly WeakReference matrix = new WeakReference(null);
 
             [XmlIgnore]
-            private WeakReference solution = new WeakReference(null);
+            private readonly WeakReference solution = new WeakReference(null);
         }
 
         public Storage(string path = "")
@@ -223,10 +223,10 @@ namespace FileStorage
                     var serializer = new XmlSerializer(typeof(FileMatrixData));
                     var matrixData = serializer.Deserialize(xml) as FileMatrixData;
 
-                    matrixData.BasePath = Path;
-
                     if (matrixData != null)
                     {
+                        matrixData.BasePath = Path;
+
                         if (matrixData.SolutionFilename == null)
                         {
                             yield return matrixData.AsMatrixData();
@@ -290,10 +290,10 @@ namespace FileStorage
                     var serializer = new XmlSerializer(typeof(FileMatrixData));
                     var matrixData = serializer.Deserialize(xml) as FileMatrixData;
 
-                    matrixData.BasePath = Path;
-
                     if (matrixData != null)
                     {
+                        matrixData.BasePath = Path;
+
                         if (matrixData.SolutionFilename != null)
                         {
                             yield return matrixData.AsSolutionData();

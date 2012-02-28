@@ -49,6 +49,6 @@ namespace Core
             }
         }
 
-        int[][] x;
+        private readonly int[][] x;
     }
 }

@@ -77,7 +77,7 @@
     <ProjectReference Include="..\Visualizer\Visualizer.csproj">
       <Project>{9D8CC1E6-DA7B-4112-804D-4DC7E78CCD94}</Project>
       <Name>Visualizer</Name>
-      <Private>False</Private>
+      <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

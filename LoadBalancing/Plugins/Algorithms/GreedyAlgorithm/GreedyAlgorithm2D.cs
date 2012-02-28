@@ -40,7 +40,7 @@ namespace GreedyAlgorithm
             return solution;
         }
 
-        private bool LocalProcedure(int[] x, int[] y, SplittedMatrix matrix, int I, int J)
+        private bool LocalProcedure(int[] x, int[] y, IMatrix<int> matrix, int I, int J)
         {
             int max;
 
@@ -77,7 +77,7 @@ namespace GreedyAlgorithm
             return false;
         }
 
-        private int LocalMaximumDiag(SplittedMatrix matrix, int I, int J)
+        private static int LocalMaximumDiag(IMatrix<int> matrix, int I, int J)
         {
             int max = 0;
 
@@ -104,7 +104,7 @@ namespace GreedyAlgorithm
         }
 
 
-        private int LocalMaximumHorizontal(SplittedMatrix matrix, int I)
+        private int LocalMaximumHorizontal(IMatrix<int> matrix, int I)
         {
             int max = 0;
 
@@ -123,7 +123,7 @@ namespace GreedyAlgorithm
         }
 
 
-        private int LocalMaximumVertical(SplittedMatrix matrix, int J)
+        private static int LocalMaximumVertical(IMatrix<int> matrix, int J)
         {
             int max = 0;
 
@@ -141,7 +141,7 @@ namespace GreedyAlgorithm
             return max;
         }
 
-        private bool TryToMoveDiag(int max, int deltai, int deltaj, int[] x, int[] y, int I, int J, SplittedMatrix matrix)
+        private static bool TryToMoveDiag(int max, int deltai, int deltaj, int[] x, int[] y, int I, int J, IMatrix<int> matrix)
         {
             x[I] = x[I] + deltai;
             y[J] = y[J] + deltaj;
@@ -155,7 +155,7 @@ namespace GreedyAlgorithm
             return false;
         }
 
-        private bool TryToMoveVertical(int max, int deltaj, int[] y, int J, SplittedMatrix matrix)
+        private static bool TryToMoveVertical(int max, int deltaj, int[] y, int J, IMatrix<int> matrix)
         {
             y[J] = y[J] + deltaj;
 
@@ -167,7 +167,7 @@ namespace GreedyAlgorithm
             return false;
         }
 
-        private bool TryToMoveHorizontal(int max, int deltai, int[] x, int I, SplittedMatrix matrix)
+        private bool TryToMoveHorizontal(int max, int deltai, int[] x, int I, IMatrix<int> matrix)
         {
             x[I] = x[I] + deltai;
 
@@ -179,6 +179,6 @@ namespace GreedyAlgorithm
             return false;
         }
 
-        private IAlgorithm<int, LoadBalancingProblem> auxilary;
+        private readonly IAlgorithm<int, LoadBalancingProblem> auxilary;
     }
 }

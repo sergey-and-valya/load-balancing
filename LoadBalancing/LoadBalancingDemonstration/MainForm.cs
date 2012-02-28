@@ -35,10 +35,10 @@ namespace LoadBalancingDemonstration
         [ImportMany(typeof(IAlgorithmPlugin<int, LoadBalancingProblem>))]
         private IEnumerable<IAlgorithmPlugin<int, LoadBalancingProblem>> Algorithms;
 
-        IList<IMatrixData<int, EmptyData>> matrixes;
-        IList<IMatrixData<int, SolutionData>> solutionMatrixes;
+        readonly IList<IMatrixData<int, EmptyData>> matrixes;
+        readonly IList<IMatrixData<int, SolutionData>> solutionMatrixes;
 
-        Storage fileStorage;
+        readonly Storage fileStorage;
 
         public MainForm()
         {

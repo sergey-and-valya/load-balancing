@@ -11,13 +11,13 @@ namespace TestSolutionGenerator
 {
     internal class Generator : IGenerator<int, Tuple<PartitioningParameters, ISolution, double>>
     {
-        private int count;
-        private int M1;
-        private int M2;
-        private int m;
-        private int n;
-        private int Min;
-        private int Max;
+        private readonly int count;
+        private readonly int M1;
+        private readonly int M2;
+        private readonly int m;
+        private readonly int n;
+        private readonly int Min;
+        private readonly int Max;
 
         public Generator(int count, int M1, int M2, int m, int n, int Min, int Max)
         {

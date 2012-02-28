@@ -83,15 +83,15 @@ namespace Visualizer
 
         protected virtual void SetSettings()
         {
-            settingsEvent = new SetSettingsEvent(SetSize);
-            settingsEvent += new SetSettingsEvent(SetElementsLocation);
-            settingsEvent += new SetSettingsEvent(SetLabelsLocation);
+            settingsEvent = SetSize;
+            settingsEvent += SetElementsLocation;
+            settingsEvent += SetLabelsLocation;
         }
 
         private void SetSize()
         {
             DrawingBox.Size = new Size((int)(zoomOfSize.width * sizeOfMatrix.Width), (int)(zoomOfSize.height * sizeOfMatrix.Height));
-            this.ClientSize = new Size(DrawingBox.Size.Width + 7 * shift, DrawingBox.Size.Height + shift);
+            ClientSize = new Size(DrawingBox.Size.Width + 7 * shift, DrawingBox.Size.Height + shift);
         }
 
         private void SetElementsLocation()
@@ -174,35 +174,35 @@ namespace Visualizer
 
         protected void MinTrackBar_Scroll(object sender, EventArgs e)
         {
-            this.ChangeBitmap();
-            this.SetDrawingBoxBackgroundImage(currentBitmap);
+            ChangeBitmap();
+            SetDrawingBoxBackgroundImage(currentBitmap);
             ValueMinLabel.Text = MinTrackBar.Value.ToString();
         }
 
         protected void MaxTrackBar_Scroll(object sender, EventArgs e)
         {
-            this.ChangeBitmap();
-            this.SetDrawingBoxBackgroundImage(currentBitmap);
+            ChangeBitmap();
+            SetDrawingBoxBackgroundImage(currentBitmap);
             ValueMaxLabel.Text = MaxTrackBar.Value.ToString();
         }
 
         protected void GreenTrackBar_Scroll(object sender, EventArgs e)
         {
             trackBarColor.green = GreenTrackBar.Value;
-            this.ChangeBitmap();
-            this.SetDrawingBoxBackgroundImage(currentBitmap);
+            ChangeBitmap();
+            SetDrawingBoxBackgroundImage(currentBitmap);
         }
 
         protected void BlueTrackBar_Scroll(object sender, EventArgs e)
         {
             trackBarColor.blue = BlueTrackBar.Value;
-            this.ChangeBitmap();
-            this.SetDrawingBoxBackgroundImage(currentBitmap);
+            ChangeBitmap();
+            SetDrawingBoxBackgroundImage(currentBitmap);
         }
 
         protected virtual void ChangeBitmap()
         {
-            this.SetBitmap();
+            SetBitmap();
         }
 
         protected void SetZoom()
@@ -212,17 +212,17 @@ namespace Visualizer
             if (sizeOfMatrix.Width != sizeOfMatrix.Height)
             {
                 if (sizeOfMatrix.Width > screenSize.Width - shift)
-                    zoomOfSize.width = (double)(screenSize.Width) / (double)(sizeOfMatrix.Width) - 0.2;
+                    zoomOfSize.width = screenSize.Width / (double)(sizeOfMatrix.Width) - 0.2;
                 else
-                    zoomOfSize.width = (double)screenSize.Width / (2 * (double)sizeOfMatrix.Width);
+                    zoomOfSize.width = screenSize.Width / (2.0 * sizeOfMatrix.Width);
 
                 if (sizeOfMatrix.Height > screenSize.Height - shift)
-                    zoomOfSize.height = (double)(screenSize.Height) / (double)(sizeOfMatrix.Height) - 0.2;
+                    zoomOfSize.height = screenSize.Height / (double)(sizeOfMatrix.Height) - 0.2;
                 else
-                    zoomOfSize.height = (double)screenSize.Height / (2 * (double)sizeOfMatrix.Height);
+                    zoomOfSize.height = screenSize.Height / (2.0 * sizeOfMatrix.Height);
             }
             else
-                zoomOfSize.height = zoomOfSize.width = (double)screenSize.Height / (double)sizeOfMatrix.Height - 0.2;
+                zoomOfSize.height = zoomOfSize.width = screenSize.Height / (double)sizeOfMatrix.Height - 0.2;
         }
 
         protected virtual void SetBitmap() { }

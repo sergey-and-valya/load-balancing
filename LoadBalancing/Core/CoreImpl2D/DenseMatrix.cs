@@ -111,9 +111,9 @@ namespace CoreImpl2D
 
         #endregion IMatrix<T> Members
 
-        int m;
-        int n;
+        private readonly int m;
+        private readonly int n;
 
-        T[][] matrix;
+        private readonly T[][] matrix;
     }
 }

@@ -56,8 +56,8 @@ namespace FileStorage
 
         #endregion IMatrix<T> Members
 
-        int[] size;
+        readonly int[] size;
 
-        Array matrix;
+        readonly Array matrix;
     }
 }

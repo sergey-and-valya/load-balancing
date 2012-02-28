@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using Core;
 
 namespace LoadBalancing
 {
     /// <summary>
     /// Параметры задачи балансировки - число разбиений по каждому направлению
     /// </summary>
+    /// <remarks>Числом разбиений по направлению называется размер разбитой матрицы в заданном направлении (<see cref="IMatrix{T}.Size"/>)</remarks>
     public class PartitioningParameters
     {
         /// <summary>
@@ -49,6 +51,6 @@ namespace LoadBalancing
             }
         }
 
-        private int[] counts;
+        private readonly int[] counts;
     }
 }

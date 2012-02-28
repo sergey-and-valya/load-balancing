@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using AlgorithmPluginCore;
+﻿using AlgorithmPluginCore;
 using Core;
 using CoreImpl2D;
 using LoadBalancing;
@@ -8,10 +7,6 @@ namespace FullSearchAlgorithm
 {
     internal class FullSearchAlgorithm2D : IAlgorithm<int, LoadBalancingProblem>
     {
-        public FullSearchAlgorithm2D()
-        {
-        }
-
         public ISolution Run(LoadBalancingProblem problem)
         {
             var criterium = problem.Criterium;
@@ -37,7 +32,7 @@ namespace FullSearchAlgorithm
             {
                 best_x = x;
 
-                if (N == 0)
+                if (N == 1)
                 {
                     best_y = y;
                 }
@@ -48,7 +43,7 @@ namespace FullSearchAlgorithm
 
                     while (true)
                     {
-                        if (y[currentY] > m + currentY - N)
+                        if (y[currentY] > n + currentY - N)
                         {
                             currentY--;
                             if (currentY < 0)
@@ -104,7 +99,7 @@ namespace FullSearchAlgorithm
 
                         while (true)
                         {
-                            if (y[currentY] > m + currentY - N)
+                            if (y[currentY] > n + currentY - N)
                             {
                                 currentY--;
                                 if (currentY < 0)

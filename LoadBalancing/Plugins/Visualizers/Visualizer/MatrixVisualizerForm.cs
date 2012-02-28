@@ -15,24 +15,24 @@ namespace Visualizer
 
         private void InitParameters(IMatrix<int> matrix)
         {
-            this.Name = "MatrixVisualizerForm";
-            this.Text = "     Visualizer of matrix";
+            Name = "MatrixVisualizerForm";
+            Text = "     Visualizer of matrix";
             this.matrix = matrix;
             coefficient = 255.0 / CoreUtilities.Utilities.Max(matrix);
             sizeOfMatrix = new Size(matrix.Size(1), matrix.Size(0));
             matrixBitmap = new Bitmap(sizeOfMatrix.Width, sizeOfMatrix.Height);
             modeOfDrawing = Mode.Matrix;
 
-            settingsEvent = new SetSettingsEvent(SetStep);
-            settingsEvent += new SetSettingsEvent(SetCriterionSettings);
-            settingsEvent += new SetSettingsEvent(SetZoom);
-            settingsEvent += new SetSettingsEvent(SetBitmap);
+            settingsEvent = SetStep;
+            settingsEvent += SetCriterionSettings;
+            settingsEvent += SetZoom;
+            settingsEvent += SetBitmap;
         }
 
         private void SetCriterionSettings()
         {
-            this.CriterionLabel.Hide();
-            this.CriterionValueLabel.Hide();
+            CriterionLabel.Hide();
+            CriterionValueLabel.Hide();
         }
 
         protected override void SetBitmap()

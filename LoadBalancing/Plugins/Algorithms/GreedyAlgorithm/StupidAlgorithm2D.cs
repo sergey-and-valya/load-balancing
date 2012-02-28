@@ -27,6 +27,6 @@ namespace GreedyAlgorithm
             return new ComposeSolution(x, y);
         }
 
-        private IAlgorithm<int, LoadBalancingProblem> auxilary;
+        private readonly IAlgorithm<int, LoadBalancingProblem> auxilary;
     }
 }

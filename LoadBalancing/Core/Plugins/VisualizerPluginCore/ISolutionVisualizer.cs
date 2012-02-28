@@ -8,7 +8,7 @@ namespace VisualizerPluginCore
     /// </summary>
     /// <typeparam name="T">Тип хранимых в матрице данных</typeparam>
     /// <typeparam name="TProblem">Тип исходной задачи</typeparam>
-    public interface ISolutionVisualizer<T, TProblem>
+    public interface ISolutionVisualizer<T, in TProblem>
         where TProblem : IProblem<T>
     {
         /// <summary>

@@ -72,10 +72,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RectanglesGenerator", "Plug
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FullSearchAlgorithm", "Plugins\Algorithms\FullSearchAlgorithm\FullSearchAlgorithm.csproj", "{2A8AC90E-078A-4044-B51B-96892D13861F}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{528472A6-E740-4C33-93CD-1B2F2C2BBFC1}"
-	ProjectSection(SolutionItems) = preProject
-		Диаграмма зависимостей.dgml = Диаграмма зависимостей.dgml
-	EndProjectSection
+
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

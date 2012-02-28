@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace ProgressBar
+namespace ProgressBarForm
 {
     public partial class ProgressBarForm : Form
     {
