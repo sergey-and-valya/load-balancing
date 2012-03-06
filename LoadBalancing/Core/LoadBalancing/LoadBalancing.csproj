@@ -40,7 +40,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LoadBalancingProblem.cs" />
     <Compile Include="MinMaxCriterium.cs" />
     <Compile Include="PartitioningParameters.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

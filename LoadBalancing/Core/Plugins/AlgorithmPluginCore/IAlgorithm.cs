@@ -3,18 +3,16 @@
 namespace AlgorithmPluginCore
 {
     /// <summary>
-    /// Алгоритм
+    /// Алгоритм для решения задачи разбиения матрицы
     /// </summary>
     /// <typeparam name="T">Тип хранимых в матрице данных</typeparam>
-    /// <typeparam name="TProblem">Тип исходной задачи</typeparam>
-    public interface IAlgorithm<T, in TProblem>
-        where TProblem : IProblem<T>
+    public interface IAlgorithm<T>
     {
         /// <summary>
-        /// Запустить алгоритм
+        /// Запустить алгоритм для решения задачи разбиения матрицы
         /// </summary>
-        /// <param name="problem">Исходная задача</param>
+        /// <param name="matrix">Матрица</param>
         /// <returns>Решение, полученное алгоритмом</returns>
-        ISolution Run(TProblem problem);
+        ISolution Run(IMatrix<T> matrix);
     }
 }

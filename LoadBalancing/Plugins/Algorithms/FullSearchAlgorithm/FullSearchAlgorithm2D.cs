@@ -5,23 +5,31 @@ using LoadBalancing;
 
 namespace FullSearchAlgorithm
 {
-    internal class FullSearchAlgorithm2D : IAlgorithm<int, LoadBalancingProblem>
+    internal class FullSearchAlgorithm2D : IAlgorithm<int>
     {
-        public ISolution Run(LoadBalancingProblem problem)
-        {
-            var criterium = problem.Criterium;
-            var matrix = problem.Matrix;
+        private readonly int M;
+        private readonly int N;
 
+        /// <summary>
+        /// Создаёт алгоритм полного перебора для двумерного случая
+        /// </summary>
+        /// <param name="M">Число разбиений по первому направлению</param>
+        /// <param name="N">Число разбиений по второму направлению</param>
+        public FullSearchAlgorithm2D(int M, int N)
+        {
+            this.M = M;
+            this.N = N;
+        }
+
+        public ISolution Run(IMatrix<int> matrix)
+        {
             double best_f = double.MaxValue;
             int[] best_x = null;
             int[] best_y = null;
             bool best_x_changed = false;
 
-            int m = problem.Matrix.Size(0);
-            int n = problem.Matrix.Size(1);
-
-            int M = problem.Parameters[0];
-            int N = problem.Parameters[1];
+            int m = matrix.Size(0);
+            int n = matrix.Size(1);
             
             int[] x = new int[M - 1];
             int[] y = new int[N - 1];
@@ -57,7 +65,7 @@ namespace FullSearchAlgorithm
                         }
                         else
                         {
-                            double f = criterium.Value(matrix, solution);
+                            double f = MinMaxCriterium.Calculate(matrix, solution);
 
                             if (f < best_f)
                             {
@@ -113,7 +121,7 @@ namespace FullSearchAlgorithm
                             }
                             else
                             {
-                                double f = criterium.Value(matrix, solution);
+                                double f = MinMaxCriterium.Calculate(matrix, solution);
 
                                 if (f < best_f)
                                 {

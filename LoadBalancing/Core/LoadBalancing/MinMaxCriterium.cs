@@ -5,24 +5,11 @@ namespace LoadBalancing
     /// <summary>
     /// Минимаксный критерий для загрузки
     /// </summary>
-    public sealed class MinMaxCriterium : ICriterium<int>
+    public static class MinMaxCriterium
     {
-        private MinMaxCriterium() { }
-
-        private static MinMaxCriterium instance;
-
-        public static MinMaxCriterium Instance
+        public static double Calculate(IMatrix<int> matrix, ISolution solution)
         {
-            get
-            {
-                return instance ?? (instance = new MinMaxCriterium());
-            }
-        }
-
-        public double Value(IMatrix<int> matrix, ISolution solution)
-        {
-            SplittedMatrix m = new SplittedMatrix(matrix, solution);
-            return CoreUtilities.Utilities.Max(m);
+            return CoreUtilities.Utilities.Max(new SplittedMatrix(matrix, solution));
         }
     }
 }

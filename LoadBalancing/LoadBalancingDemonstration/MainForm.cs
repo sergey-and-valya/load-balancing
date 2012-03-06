@@ -29,11 +29,11 @@ namespace LoadBalancingDemonstration
         [ImportMany(typeof(IMatrixVisualizerPlugin<int>))]
         private IEnumerable<IMatrixVisualizerPlugin<int>> MatrixVisualizers;
 
-        [ImportMany(typeof(ISolutionVisualizerPlugin<int, LoadBalancingProblem>))]
-        private IEnumerable<ISolutionVisualizerPlugin<int, LoadBalancingProblem>> SolutionVisualizers;
+        [ImportMany(typeof(ISolutionVisualizerPlugin<int>))]
+        private IEnumerable<ISolutionVisualizerPlugin<int>> SolutionVisualizers;
 
-        [ImportMany(typeof(IAlgorithmPlugin<int, LoadBalancingProblem>))]
-        private IEnumerable<IAlgorithmPlugin<int, LoadBalancingProblem>> Algorithms;
+        [ImportMany(typeof(IAlgorithmPlugin<int, PartitioningParameters>))]
+        private IEnumerable<IAlgorithmPlugin<int, PartitioningParameters>> Algorithms;
 
         readonly IList<IMatrixData<int, EmptyData>> matrixes;
         readonly IList<IMatrixData<int, SolutionData>> solutionMatrixes;
@@ -204,7 +204,7 @@ namespace LoadBalancingDemonstration
             }
         }
 
-        private IAlgorithmPlugin<int, LoadBalancingProblem> SelectedAlgorithmPlugin
+        private IAlgorithmPlugin<int, PartitioningParameters> SelectedAlgorithmPlugin
         {
             get
             {
@@ -224,7 +224,7 @@ namespace LoadBalancingDemonstration
             }
         }
 
-        private ISolutionVisualizerPlugin<int, LoadBalancingProblem> SelectedSolutionVisualiserPlugin
+        private ISolutionVisualizerPlugin<int> SelectedSolutionVisualiserPlugin
         {
             get
             {
@@ -328,25 +328,35 @@ namespace LoadBalancingDemonstration
                 var algorithmPlugin = SelectedAlgorithmPlugin;
                 if (algorithmPlugin.HasAlgorithm(2))
                 {
-                    var algorithm = algorithmPlugin.CreateAlgorithm(2);
                     var solutionVisualiserPlugin = SelectedSolutionVisualiserPlugin;
-                    LoadBalancingProblem problem = null;
+
+                    PartitioningParameters parameters = null;
 
                     if (SelectedSolutionMatrixData != null)
-                        problem = new LoadBalancingProblem(SelectedMatrix, SelectedSolutionMatrixData.Data.Item1);
+                        parameters = SelectedSolutionMatrixData.Data.Item1;
                     else if (SelectedMatrixData != null)
                     {
                         var f = new PartitioningParametersForm();
                         if (f.ShowDialog() != DialogResult.OK)
                             return;
-                        problem = new LoadBalancingProblem(SelectedMatrix, new PartitioningParameters(f.M1, f.M2));
+                        parameters = new PartitioningParameters(f.M1, f.M2);
                     }
-                    var solution = algorithm.Run(problem);
+
+                    var algorithm = algorithmPlugin.CreateAlgorithm(2, parameters);
+
+                    if (algorithm == null)
+                    {
+                        return;
+                    }
+                    
+                    var matrix = SelectedMatrix;
+                    
+                    var solution = algorithm.Run(matrix);
 
                     if (solutionVisualiserPlugin.HasSolutionVisualizer(2))
                     {
                         var solutionVisualiser = solutionVisualiserPlugin.CreateSolutionVisualizer(2);
-                        solutionVisualiser.VisualizeSolution(problem, solution);
+                        solutionVisualiser.VisualizeSolution(matrix, solution);
                     }
                 }
             }
@@ -360,12 +370,19 @@ namespace LoadBalancingDemonstration
                 var algorithmPlugin = SelectedAlgorithmPlugin;
                 if (algorithmPlugin.HasAlgorithm(2))
                 {
-                    var algorithm = algorithmPlugin.CreateAlgorithm(2);
-
                     var f = new PartitioningParametersForm();
                     if (f.ShowDialog() != DialogResult.OK)
                         return;
+
                     var partitioningParameters = new PartitioningParameters(f.M1, f.M2);
+                    
+                    var algorithm = algorithmPlugin.CreateAlgorithm(2, partitioningParameters);
+
+                    if (algorithm == null)
+                    {
+                        return;
+                    }
+
                     Test_result tr = new Test_result(fileStorage, fileStorage, algorithm, partitioningParameters);
                     tr.ShowDialog();
                 }

@@ -94,6 +94,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CoreUtilities\CoreUtilities.csproj">
+      <Project>{74EB82FA-BA70-4AD6-873D-2DC607747370}</Project>
+      <Name>CoreUtilities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Core\CoreImpl2D\CoreImpl2D.csproj">
       <Project>{5F57001B-1D90-4B81-B936-D7AA570C9CA6}</Project>
       <Name>CoreImpl2D</Name>

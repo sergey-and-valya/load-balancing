@@ -6,22 +6,22 @@ using LoadBalancing;
 
 namespace GreedyAlgorithm
 {
-    internal class GreedyAlgorithm2D : IAlgorithm<int, LoadBalancingProblem>
+    internal class GreedyAlgorithm2D : IAlgorithm<int>
     {
-        public GreedyAlgorithm2D(IAlgorithm<int, LoadBalancingProblem> auxilary)
+        public GreedyAlgorithm2D(IAlgorithm<int> auxilary)
         {
             this.auxilary = auxilary;
         }
 
-        public ISolution Run(LoadBalancingProblem problem)
+        public ISolution Run(IMatrix<int> matrix)
         {
-            var startSolution = auxilary.Run(problem);
+            var startSolution = auxilary.Run(matrix);
 
             int[] x = startSolution[0].ToArray();
             int[] y = startSolution[1].ToArray();
 
             var solution = new ArraySolution(x, y);
-            var m = new SplittedMatrix(problem.Matrix, solution);
+            var m = new SplittedMatrix(matrix, solution);
 
             while (true)
             {
@@ -179,6 +179,6 @@ namespace GreedyAlgorithm
             return false;
         }
 
-        private readonly IAlgorithm<int, LoadBalancingProblem> auxilary;
+        private readonly IAlgorithm<int> auxilary;
     }
 }

@@ -1,11 +1,9 @@
-﻿using Core;
-namespace AlgorithmPluginCore
+﻿namespace AlgorithmPluginCore
 {
     /// <summary>Плагин алгоритм</summary>
     /// <typeparam name="T">Тип хранимых в матрице данных</typeparam>
-    /// <typeparam name="TProblem">Тип исходной задачи</typeparam>
-    public interface IAlgorithmPlugin<T, in TProblem>
-        where TProblem : IProblem<T>
+    /// <typeparam name="TProblemParameters">Тип параметров исходной задачи</typeparam>
+    public interface IAlgorithmPlugin<T, in TProblemParameters>
     {
         /// <summary>
         /// Название плагина
@@ -16,17 +14,22 @@ namespace AlgorithmPluginCore
         /// Имеется ли в плагине алгоритм решения задачи балансировки нагрузки для матриц заданной размерности
         /// </summary>
         /// <param name="dimensions">Размерность матрицы</param>
-        /// <returns>true, если вызов CreateAlgorithm(dimensions) алгоритм решения задачи балансировки нагрузки для матриц размерности dimensions.
-        /// false, если CreateAlgorithm(dimensions) вернёт null</returns>
+        /// <returns>
+        /// true, если вызов CreateAlgorithm(dimensions, parameters) может вернуть
+        /// алгоритм решения задачи для матриц размерности dimensions.
+        /// false, если CreateAlgorithm(dimensions, parameters) точно вернёт null
+        /// </returns>
         bool HasAlgorithm(int dimensions);
 
         /// <summary>
         /// Создаёт алгоритм решения задачи балансировки нагрузки для матриц заданной размерности
         /// </summary>
         /// <param name="dimensions">Размерность матрицы</param>
-        /// <returns>Алгоритм решения задачи балансировки нагрузки или null,
-        /// если плагин не может быть правильно сконфигурирован, например,
-        /// если пользователь не ввёл дополнительные данные</returns>
-        IAlgorithm<T, TProblem> CreateAlgorithm(int dimensions);
+        /// <param name="parameters">Описание параметров исходной задачи</param>
+        /// <returns>
+        /// Алгоритм решения задачи или null, если плагин не может быть правильно
+        /// сконфигурирован, например, если пользователь не ввёл дополнительные данные
+        /// </returns>
+        IAlgorithm<T> CreateAlgorithm(int dimensions, TProblemParameters parameters);
     }
 }

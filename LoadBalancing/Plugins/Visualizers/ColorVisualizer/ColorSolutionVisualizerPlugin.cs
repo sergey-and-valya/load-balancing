@@ -6,10 +6,10 @@ using VisualizerPluginCore;
 
 namespace ColorVisualizer
 {
-    [Export(typeof(ISolutionVisualizerPlugin<int, LoadBalancingProblem>))]
-    public class ColorSolutionVisualizerPlugin : ISolutionVisualizerPlugin<int, LoadBalancingProblem>
+    [Export(typeof(ISolutionVisualizerPlugin<int>))]
+    public class ColorSolutionVisualizerPlugin : ISolutionVisualizerPlugin<int>
     {
-        #region ISolutionVisualizerPlugin<int, LoadBalancingProblem> Members
+        #region ISolutionVisualizerPlugin<int> Members
 
         public string Name
         {
@@ -18,10 +18,10 @@ namespace ColorVisualizer
 
         public bool HasSolutionVisualizer(int dimensions)
         {
-            return true;
+            return dimensions <= 2;
         }
 
-        public ISolutionVisualizer<int, LoadBalancingProblem> CreateSolutionVisualizer(int dimensions)
+        public ISolutionVisualizer<int> CreateSolutionVisualizer(int dimensions)
         {
             if (dimensions > 2)
                 return null;
@@ -29,19 +29,19 @@ namespace ColorVisualizer
             return new Visualizer();
         }
 
-        #endregion ISolutionVisualizerPlugin<int, LoadBalancingProblem> Members
+        #endregion ISolutionVisualizerPlugin<int> Members
 
-        private class Visualizer : ISolutionVisualizer<int, LoadBalancingProblem>
+        private class Visualizer : ISolutionVisualizer<int>
         {
-            public void VisualizeSolution(LoadBalancingProblem problem, ISolution solution)
+            public void VisualizeSolution(IMatrix<int> matrix, ISolution solution)
             {
-                var max = CoreUtilities.Utilities.Max(problem.Matrix);
-                var min = CoreUtilities.Utilities.Min(problem.Matrix);
-                var criterion = problem.Criterium.Value(problem.Matrix, solution);
+                var max = CoreUtilities.Utilities.Max(matrix);
+                var min = CoreUtilities.Utilities.Min(matrix);
+                var criterion = MinMaxCriterium.Calculate(matrix, solution);
 
-                var splitted = new SplittedMatrix(problem.Matrix, solution);
+                var splitted = new SplittedMatrix(matrix, solution);
                 var solutionVisualizer =
-                    new SolutionVisualizerForm(splitted, problem.Matrix,
+                    new SolutionVisualizerForm(splitted, matrix,
                         solution, min, max, criterion);
 
                 solutionVisualizer.Draw();

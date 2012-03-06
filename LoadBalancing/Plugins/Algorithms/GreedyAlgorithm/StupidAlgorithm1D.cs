@@ -1,20 +1,23 @@
 ﻿using AlgorithmPluginCore;
 using Core;
 using CoreImpl1D;
-using LoadBalancing;
 
 namespace GreedyAlgorithm
 {
-    internal class StupidAlgorithm1D : IAlgorithm<int, LoadBalancingProblem>
+    internal class StupidAlgorithm1D : IAlgorithm<int>
     {
-        public ISolution Run(LoadBalancingProblem problem)
+        public StupidAlgorithm1D(int M)
         {
-            int M = problem.Parameters[0];
+            this.M = M;
+        }
+
+        public ISolution Run(IMatrix<int> matrix)
+        {
             int[] x = new int[M - 1];
-            VectorWrapper<int> v = new VectorWrapper<int>(problem.Matrix);
+            VectorWrapper<int> v = new VectorWrapper<int>(matrix);
             int n = v.N;
 
-            double w = LoadBalancing.Utilities.W(v, problem.Parameters);
+            double w = (double)LoadBalancing.Utilities.Sum(v) / M;
 
             int[] p = new int[n];
             p[0] = v[0];
@@ -54,5 +57,7 @@ namespace GreedyAlgorithm
             
             return new Solution1D(x);
         }
+
+        private readonly int M;
     }
 }

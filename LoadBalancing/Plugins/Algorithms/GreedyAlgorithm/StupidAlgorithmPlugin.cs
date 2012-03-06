@@ -4,8 +4,8 @@ using LoadBalancing;
 
 namespace GreedyAlgorithm
 {
-    [Export(typeof(IAlgorithmPlugin<int, LoadBalancingProblem>))]
-    public class StupidAlgorithmPlugin : IAlgorithmPlugin<int, LoadBalancingProblem>
+    [Export(typeof(IAlgorithmPlugin<int, PartitioningParameters>))]
+    public class StupidAlgorithmPlugin : IAlgorithmPlugin<int, PartitioningParameters>
     {
         public string Name
         {
@@ -20,14 +20,17 @@ namespace GreedyAlgorithm
             return true;
         }
 
-        public IAlgorithm<int, LoadBalancingProblem> CreateAlgorithm(int dimensions)
+        public IAlgorithm<int> CreateAlgorithm(int dimensions, PartitioningParameters parameters)
         {
+            if (parameters.Dimensions != dimensions)
+                return null;
+
             switch (dimensions)
             {
                 case 1:
-                    return new StupidAlgorithm1D();
+                    return new StupidAlgorithm1D(parameters[0]);
                 case 2:
-                    return new StupidAlgorithm2D(new StupidAlgorithm1D());
+                    return new StupidAlgorithm2D(new StupidAlgorithm1D(parameters[0]), new StupidAlgorithm1D(parameters[1]));
             }
             return null;
         }

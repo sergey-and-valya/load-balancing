@@ -124,7 +124,7 @@ namespace LoadBalancingDemonstration
             }
         }
 
-        public Test_result(IMatrixReadStorage<int, EmptyData> storage, IMatrixReadStorage<int, SolutionData> datastorage, IAlgorithm<int, LoadBalancingProblem> algorithm, PartitioningParameters parameters)
+        public Test_result(IMatrixReadStorage<int, EmptyData> storage, IMatrixReadStorage<int, SolutionData> datastorage, IAlgorithm<int> algorithm, PartitioningParameters parameters)
         {
             results = new AllResults();
             InitializeComponent();
@@ -137,10 +137,10 @@ namespace LoadBalancingDemonstration
                 int M1 = parameters[0];
                 int M2 = parameters[1];
                 Int64 start = Stopwatch.GetTimestamp();
-                ISolution solution = algorithm.Run(new LoadBalancingProblem(matrix, parameters));
+                ISolution solution = algorithm.Run(matrix);
                 double time = (Stopwatch.GetTimestamp() - start) / (double)Stopwatch.Frequency;
-                double crit = MinMaxCriterium.Instance.Value(matrix, solution);
-                double w = LoadBalancing.Utilities.W(matrix, parameters);
+                double crit = MinMaxCriterium.Calculate(matrix, solution);
+                double w = Utilities.W(matrix, parameters);
                 double diff = crit - w;
                 results.AddElem(new Note(name, n, m, M1, M2, crit, diff, 0, time, false));
 
@@ -156,10 +156,10 @@ namespace LoadBalancingDemonstration
                 int M2 = dataParameters[1];
                 double goodCrit = matrixData.Data.Item3;
                 Int64 start = Stopwatch.GetTimestamp();
-                ISolution solution = algorithm.Run(new LoadBalancingProblem(matrix, dataParameters));
+                ISolution solution = algorithm.Run(matrix);
                 double time = (Stopwatch.GetTimestamp() - start) / (double)Stopwatch.Frequency;
-                double crit = MinMaxCriterium.Instance.Value(matrix, solution);
-                double w = LoadBalancing.Utilities.W(matrix, dataParameters);
+                double crit = CoreUtilities.Utilities.Max(new SplittedMatrix(matrix, solution));
+                double w = Utilities.W(matrix, dataParameters);
                 double diff = crit - w;
                 double goodDiff = crit - goodCrit;
                 results.AddElem(new Note(name, n, m, M1, M2, crit, diff, goodDiff, time, true));

@@ -34,5 +34,21 @@ namespace LoadBalancing
 
             return Sum(matrix) / (double)N;
         }
+
+
+        /// <summary>
+        /// Средняя нагрузка при заданных параметрах разбиения матрицы
+        /// </summary>
+        /// <param name="matrix">Матрица</param>
+        /// <param name="partitioning">Параметры разбиения матрицы</param>
+        /// <returns>Сумма элементов</returns>
+        public static double W(IMatrix<int> matrix, params int[] partitioning)
+        {
+            int N = 1;
+            for (int i = 0; i < partitioning.Length; i++)
+                N *= partitioning[i];
+
+            return Sum(matrix) / (double)N;
+        }
     }
 }

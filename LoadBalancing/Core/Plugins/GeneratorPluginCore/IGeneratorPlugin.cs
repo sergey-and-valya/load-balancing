@@ -1,7 +1,4 @@
-﻿using System;
-using MatrixStorage;
-
-namespace GeneratorPluginCore
+﻿namespace GeneratorPluginCore
 {
     /// <summary>
     /// Плагин генератора матриц

@@ -40,11 +40,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ICriterium.cs" />
     <Compile Include="IIndex.cs" />
     <Compile Include="IMatrix.cs" />
     <Compile Include="Index.cs" />
-    <Compile Include="IProblem.cs" />
     <Compile Include="ISolution.cs" />
     <Compile Include="MultiDimensionMatrixEnumerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

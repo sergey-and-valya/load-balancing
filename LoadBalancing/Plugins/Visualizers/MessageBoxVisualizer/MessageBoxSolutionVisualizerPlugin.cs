@@ -8,10 +8,10 @@ using VisualizerPluginCore;
 
 namespace MessageBoxVisualizer
 {
-    [Export(typeof(ISolutionVisualizerPlugin<int, LoadBalancingProblem>))]
-    public class MessageBoxSolutionVisualizerPlugin : ISolutionVisualizerPlugin<int, LoadBalancingProblem>
+    [Export(typeof(ISolutionVisualizerPlugin<int>))]
+    public class MessageBoxSolutionVisualizerPlugin : ISolutionVisualizerPlugin<int>
     {
-        #region ISolutionVisualizerPlugin<int,LoadBalancingProblem> Members
+        #region ISolutionVisualizerPlugin<int, PartitioningParameters> Members
 
         public string Name
         {
@@ -20,10 +20,10 @@ namespace MessageBoxVisualizer
 
         public bool HasSolutionVisualizer(int dimensions)
         {
-            return true;
+            return dimensions <= 2;
         }
 
-        public ISolutionVisualizer<int, LoadBalancingProblem> CreateSolutionVisualizer(int dimensions)
+        public ISolutionVisualizer<int> CreateSolutionVisualizer(int dimensions)
         {
             if (dimensions > 2)
                 return null;
@@ -31,14 +31,14 @@ namespace MessageBoxVisualizer
             return new Visualizer();
         }
 
-        #endregion ISolutionVisualizerPlugin<int,LoadBalancingProblem> Members
+        #endregion ISolutionVisualizerPlugin<int> Members
 
-        private class Visualizer : ISolutionVisualizer<int, LoadBalancingProblem>
+        private class Visualizer : ISolutionVisualizer<int>
         {
-            public void VisualizeSolution(LoadBalancingProblem problem, ISolution solution)
+            public void VisualizeSolution(IMatrix<int> matrix, ISolution solution)
             {
                 var text = new StringBuilder();
-                var splitted = new SplittedMatrix(problem.Matrix, solution);
+                var splitted = new SplittedMatrix(matrix, solution);
                 var index = new Index2D();
 
                 for (int i = 0; i < splitted.Size(0); i++) //строка разбитой матрицы
@@ -53,7 +53,7 @@ namespace MessageBoxVisualizer
                                 text.AppendFormat("    ");
 
                             for (index.J = splitted.CellLow(j, 1); index.J <= splitted.CellHigh(j, 1); index.J++) //столбец исходной матрицы, попавший в столбец разбитой матрицы
-                                text.AppendFormat("{0,3} ", problem.Matrix[index]);
+                                text.AppendFormat("{0,3} ", matrix[index]);
                         }
                         text.AppendLine();
                     }

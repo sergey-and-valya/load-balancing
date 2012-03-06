@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using Core;
-using MatrixStorage;
+﻿using MatrixStorage;
 
 namespace GeneratorPluginCore
 {

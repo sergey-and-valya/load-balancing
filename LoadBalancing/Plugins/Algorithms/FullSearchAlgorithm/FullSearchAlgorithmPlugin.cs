@@ -6,8 +6,8 @@ using LoadBalancing;
 
 namespace FullSearchAlgorithm
 {
-    [Export(typeof(IAlgorithmPlugin<int, LoadBalancingProblem>))]
-    public class FullSearchAlgorithmPlugin : IAlgorithmPlugin<int, LoadBalancingProblem>
+    [Export(typeof(IAlgorithmPlugin<int, PartitioningParameters>))]
+    public class FullSearchAlgorithmPlugin : IAlgorithmPlugin<int, PartitioningParameters>
     {
         public string Name
         {
@@ -16,20 +16,17 @@ namespace FullSearchAlgorithm
 
         public bool HasAlgorithm(int dimensions)
         {
-            if (dimensions != 2)
-                return false;
-
-            return true;
+            return dimensions == 2;
         }
 
-        public IAlgorithm<int, LoadBalancingProblem> CreateAlgorithm(int dimensions)
+        public IAlgorithm<int> CreateAlgorithm(int dimensions, PartitioningParameters parameters)
         {
-            if (dimensions == 2)
+            if (dimensions == 2 && parameters.Dimensions == 2)
             {
                 if ((MessageBox.Show("Вы уверены, что хотите запустить полный перебор?", "Важный вопрос", MessageBoxButtons.YesNo) == DialogResult.Yes))
                 if ((MessageBox.Show("Точно-точно?", "Ещё один важный вопрос", MessageBoxButtons.YesNo) == DialogResult.Yes))
                 {
-                    return new FullSearchAlgorithm2D();
+                    return new FullSearchAlgorithm2D(parameters[0], parameters[1]);
                 }
                 throw new Exception();
             }
