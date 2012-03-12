@@ -7,27 +7,24 @@ namespace CoreParallel
     /// Локальный оптимизатор решения
     /// </summary>
     /// <typeparam name="T">Тип хранимых в матрице данных</typeparam>
-    public interface ILocalSolver<T>
+    public interface ILocalOptimizer<T>
     {
         /// <summary>
         /// Список индексов ячеек разбитой матрицы, в пределах которых локальный оптимизатор
         /// проводит оптимизацию
         /// </summary>
-        /// <param name="matrix">Исходная задача</param>
-        /// <param name="solution">Текущее разбиение матрицы</param>
         /// <returns>Перечисление индексов разбитой матрицы</returns>
         /// <remarks>
         /// Одновременно могут быть запущены только те локальные оптимизаторы,
         /// для которых эти списки не пересекаются
         /// </remarks>
-        IEnumerable<IIndex> Workers(IMatrix<T> matrix, ISolution solution);
+        IEnumerable<IIndex> Workers();
         
         /// <summary>
         /// Запустить процедуру локальной оптимизации
         /// </summary>
-        /// <param name="matrix">Исходная задача</param>
-        /// <param name="solution">Текущее разбиение матрицы</param>
+        /// <param name="planner">Планировщик запросов на сборку информации с ячеек разбитой матрицы</param>
         /// <returns>Преобразование текущего решения, выполненное локальным оптимизатором</returns>
-        ISolutionModification Run(IMatrix<T> matrix, ISolution solution);
+        ISolutionModification Run(IPlanner<T> planner);
     }
 }

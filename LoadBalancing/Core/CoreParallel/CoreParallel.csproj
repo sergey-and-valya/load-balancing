@@ -40,7 +40,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ILocalSolver.cs" />
+    <Compile Include="CombineModifications.cs" />
+    <Compile Include="ICollector.cs" />
+    <Compile Include="ILocalOptimizer.cs" />
+    <Compile Include="IPlanner.cs" />
     <Compile Include="ISolutionModification.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MovePartitionPoint.cs" />
