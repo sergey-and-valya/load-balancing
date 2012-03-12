@@ -14,12 +14,19 @@ namespace CoreParallel
         /// </summary>
         protected class ModifiedSolution : ISolution
         {
+            /// <summary>
+            /// Решение, полученное после применения решения
+            /// </summary>
+            /// <param name="baseSolution">Исходное решение</param>
+            /// <param name="dimension">Размерность, в которое изменено решение</param>
+            /// <param name="i">Номер сдвинутой точки разбиения</param>
+            /// <param name="newPosition">Новая позиция точки разбиения</param>
             public ModifiedSolution(ISolution baseSolution, int dimension, int i, int newPosition)
             {
                 this.dimension = dimension;
                 this.i = i;
                 this.newPosition = newPosition;
-        
+
                 BaseSolution = baseSolution;
             }
 
@@ -30,12 +37,22 @@ namespace CoreParallel
 
             public int Size(int dimension)
             {
-                return BaseSolution.Dimensions;
+                return BaseSolution.Size(dimension);
             }
 
             private IEnumerable<int> MovePosition(IEnumerable<int> enumerable)
             {
+                int pos = 0;
 
+                foreach (int p in enumerable)
+                {
+                    if (pos == i)
+                        yield return newPosition;
+                    else
+                        yield return p;
+
+                    pos++;
+                }
             }
 
             public IEnumerable<int> this[int dimension]
@@ -47,7 +64,7 @@ namespace CoreParallel
                         return BaseSolution[dimension];
                     }
 
-                    return BaseSolution[dimension]
+                    return MovePosition(BaseSolution[dimension]);
                 }
             }
 
