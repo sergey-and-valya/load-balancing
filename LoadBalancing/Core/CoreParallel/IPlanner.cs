@@ -1,3 +1,4 @@
+using System;
 using Core;
 
 namespace CoreParallel
@@ -9,12 +10,12 @@ namespace CoreParallel
     public interface IPlanner<T>
     {
         /// <summary>
-        /// —обрать информацию о матрице с €чейки разбитой матрицы
+        /// «апланировать асинхронный сбор информацию о матрице с €чейки разбитой матрицы
         /// </summary>
         /// <typeparam name="TCollectedData">“ип собираемых данных</typeparam>
         /// <param name="index">»ндекс €чейки разбитой матрицы</param>
         /// <param name="collector">—борщик информации</param>
-        /// <returns>—обранна€ информаци€</returns>
-        TCollectedData RunCollector<TCollectedData>(IIndex index, ICollector<T, TCollectedData> collector);
+        /// <param name="completionCallback">‘ункци€, котора€ будет вызвана при завершении сбора информации</param>
+        void RunCollectorAsync<TCollectedData>(IIndex index, ICollector<T, TCollectedData> collector, Action<TCollectedData> completionCallback);
     }
 }
