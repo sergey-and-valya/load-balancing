@@ -1,18 +1,19 @@
-#ifndef _INDEX1D_H
-#define _INDEX1D_H
+#ifndef _INDEX2D_H
+#define _INDEX2D_H
 
 #include <Core/IIndex.h>
 
-class Index1D : public IIndex
+class Index2D : public IIndex
 {
 public:
-	Index1D(int i);
+	Index2D(int i, int j);
 	
 	int operator[](int dimension) const;
 	int Dimensions() const;
 
 private:
 	int i;
+	int j;
 };
 
-#endif // _INDEX1D_H
+#endif // _INDEX2D_H

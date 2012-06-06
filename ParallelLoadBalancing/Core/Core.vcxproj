@@ -11,12 +11,16 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Partitioning.cpp" />
     <ClCompile Include="test.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\include\Core\IDimensional.h" />
+    <ClInclude Include="..\include\Core\IIndex.h" />
     <ClInclude Include="..\include\Core\IMatrix.h" />
+    <ClInclude Include="..\include\Core\IPartitioning.h" />
     <ClInclude Include="..\include\Core\ISolution.h" />
+    <ClInclude Include="..\include\Core\Partitioning.h" />
+    <ClInclude Include="..\include\Core\Solution.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{1B792909-3006-4D2B-865D-53363732E4F2}</ProjectGuid>

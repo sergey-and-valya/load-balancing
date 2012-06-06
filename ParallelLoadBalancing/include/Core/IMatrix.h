@@ -1,14 +1,15 @@
 #ifndef _IMATRIX_H
 #define _IMATRIX_H
 
-class IDimensional; //IDimensional.h
+#include "IIndex.h"
 
-template<typename TData, typename TIndex = IDimensional, typename TSize = TIndex>
+template<typename TData>
 class IMatrix
 {
 public:
-	virtual TData& operator[](const TIndex& index) = 0;
-	virtual const TSize& Size() const = 0;
+	virtual TData& operator[](const IIndex& index) = 0;
+	virtual int Dimensions() const = 0;
+	virtual int SizeInDimension(int dimension) const = 0;
 };
 
 #endif // _IMATRIX_H
