@@ -16,17 +16,30 @@
 
 int main()
 {
-	RebalancerMoveLeftTest();
-	RebalancerNoMoveTest();
-	LoadBalancingTest();
+	RebalancerMoveFromLeftTest();
+	RebalancerMoveFromRightTest();
+	RebalancerMoveFromTopTest();
+	RebalancerMoveFromBottomTest();
 	
-	LoadBalancingCentralTest();
+	RebalancerMoveToLeftTest();
+	RebalancerMoveToRightTest();
+	RebalancerMoveToTopTest();
+	RebalancerMoveToBottomTest();
 
+	RebalancerNoMoveTest();
+	
+	RebalancerMoveFromLeftFromTopTest();
+	//LoadBalancingTest();
+	
+	//LoadBalancingCentralTest();
+
+
+	return 0;
 	MPI_Init(NULL, NULL);
 	
 	auto lb = LoadBalancingAlgorithm(6);
 	auto rb = Rebalancer();
-	auto ts = TestingSystem("C:\\StartMatrix\\matrix");
+	auto ts = TestingSystem("C:\\StartMatrix\\matrix", 10);
 	auto comm = MPIWorldCommunicator();
 	auto env = Environment(NEEDS_LOAD_BALANCING);
 

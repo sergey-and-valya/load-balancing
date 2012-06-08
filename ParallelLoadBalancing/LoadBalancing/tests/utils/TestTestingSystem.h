@@ -8,7 +8,7 @@ class TestTestingSystem : public ITestingSystem
 {
 public:
 	typedef std::function<void(IMPICommunicator&, IProblemBuilder&)> LoadProblemFunction;
-	typedef std::function<void(IMPICommunicator&, int[], const double[], double[], const int[], const int[], int, int)> RunFunction;
+	typedef std::function<bool(IMPICommunicator&, int[], const double[], double[], const int[], const int[], int, int)> RunFunction;
 
 	TestTestingSystem (LoadProblemFunction loadProblemImpl, RunFunction runImpl)
 		: m_loadProblemImpl(loadProblemImpl)
@@ -21,7 +21,7 @@ public:
 		m_loadProblemImpl(comm, builder);
 	}
 
-	void Run(
+	bool Run(
 		IMPICommunicator& comm,
 		int time_matrix[],
 		const double matrix[],
@@ -31,7 +31,7 @@ public:
 		int bpNumberI,
 		int bpNumberJ)
 	{
-		m_runImpl(comm, time_matrix, matrix, new_matrix, solutionI, solutionJ, bpNumberI, bpNumberJ);
+		return m_runImpl(comm, time_matrix, matrix, new_matrix, solutionI, solutionJ, bpNumberI, bpNumberJ);
 	}
 
 private:

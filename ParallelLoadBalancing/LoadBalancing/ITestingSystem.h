@@ -11,7 +11,7 @@ class ITestingSystem
 public:
 	virtual void LoadProblem(IMPICommunicator& comm, IProblemBuilder& builder) = 0;
 
-	virtual void Run(
+	virtual bool Run(
 		IMPICommunicator& comm,
 		int time_matrix[],
 		const double matrix[],

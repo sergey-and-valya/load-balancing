@@ -15,12 +15,20 @@
 
 void EnvironmentTest()
 {
-	int bpNumberI = 5;
-	int bpNumberJ = 6;
-	int mpiRank = 10;
+	
+	int localWidth  = 100;
+	int localHeight = 200;
+	
+	int bpNumberI = 10;
+	int bpNumberJ = 5;
 
+	int mpiRank = 10;
+	
 	int procI = mpiRank / (bpNumberJ + 1);
 	int procJ = mpiRank % (bpNumberJ + 1);
+
+	int step = 0;
+	int steps = 10;
 
 	auto env = Environment(true);
 
@@ -37,67 +45,71 @@ void EnvironmentTest()
 		},
 		[](void* buf, int count, MPI_Datatype datatype, int dest, int tag) -> int
 		{
+			assert(false);
 			return MPI_SUCCESS;
 		},
 		[](void* buf, int count, MPI_Datatype datatype, int source, int tag, MPI_Status* status) -> int
 		{
+			assert(false);
 			return MPI_SUCCESS;
 		}
 	);
 
 	auto lb = TestLoadBalancing(
-		[procI, procJ](IMPICommunicator& comm, const int time_matrix[], const int oldSolutionI[], const int oldSolutionJ[], int bpNumberI, int bpNumberJ, int newSolutionI[], int newSolutionJ[])
+		[procI, procJ](IMPICommunicator& newcomm, const int time_matrix[], const int oldSolutionI[], const int oldSolutionJ[], int bpNumberI, int bpNumberJ, int newSolutionI[], int newSolutionJ[])
 		{
 			newSolutionI[procI]--;
 		}
 	);
 	
 	auto ts = TestTestingSystem(
-		[bpNumberI, bpNumberJ](IMPICommunicator& comm, IProblemBuilder& builder)
+		[localWidth, localHeight](IMPICommunicator& comm, IProblemBuilder& builder)
 		{
-			int height = (bpNumberI + 1) * 100;
-			int width  = (bpNumberJ + 1) * 100;
-
 			builder.SetBreakPointCount(bpNumberI, bpNumberJ);
 			
 			auto solutionI = builder.CreateSolutionI();
 			auto solutionJ = builder.CreateSolutionJ();
-			
-			solutionI[0] = -1;
-			solutionJ[0] = -1;
-			
-			solutionI[bpNumberI + 1] = height - 1;
-			solutionJ[bpNumberJ + 1] = width - 1;
-			
-			for(int i = 1; i <= bpNumberI; i++)
+						
+			for(int i = 0; i <= bpNumberI + 1; i++)
 			{
-				solutionI[i] = i * 100 - 1;
+				solutionI[i] = i * localHeight - 1;
 			}
-			
-			for(int i = 1; i <= bpNumberJ; i++)
+
+			for(int i = 0; i <= bpNumberJ + 1; i++)
 			{
-				solutionJ[i] = i * 100 - 1;
+				solutionJ[i] = i * localWidth - 1;
 			}
+	
 
 			auto localMatrix = builder.CreateLocalMatrix();
 			
-			int mpiRank;
-
-			comm.Rank(&mpiRank);
-
-			int procI = mpiRank / (bpNumberJ + 1);
-			int procJ = mpiRank % (bpNumberJ + 1);
-
-			for(int i = 0; i < 100; i++)
+			for(int i = 0; i < localHeight; i++)
 			{
-				for(int j = 0; j < 100; j++)
+				for(int j = 0; j < localWidth; j++)
 				{
-					localMatrix[i * 100 + j] = i * width + j;
+					localMatrix[i * localWidth + j] = i * localWidth + j;
 				}
 			}
 		},
-		[](IMPICommunicator& comm, int time_matrix[], const double matrix[], double new_matrix[], const int solutionI[], const int solutionJ[], int bpNumberI, int bpNumberJ)
+		[&step, steps, localWidth, localHeight](IMPICommunicator& comm, int time_matrix[], const double matrix[], double new_matrix[], const int solutionI[], const int solutionJ[], int bpNumberI, int bpNumberJ)
 		{
+			for(int i = 0; i < localHeight; i++)
+			{
+				for(int j = 0; j < localWidth; j++)
+				{
+					assert(matrix[i * localWidth + j] == i * localWidth + j);
+				}
+			}
+
+			for(int i = 0; i < localHeight; i++)
+			{
+				for(int j = 0; j < localWidth; j++)
+				{
+					time_matrix[i * localWidth + j] = i * localWidth + j;
+					time_matrix[i * localWidth + j] = i * localWidth + j;
+				}
+			}
+			return ++step < steps;
 		}
 	);
 	

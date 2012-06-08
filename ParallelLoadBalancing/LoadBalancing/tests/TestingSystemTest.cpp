@@ -39,7 +39,7 @@ void TestingSystemTest()
 		}
 	);
 
-	auto ts = TestingSystem("C:\\StartMatrix\\matrix");
+	auto ts = TestingSystem("C:\\StartMatrix\\matrix", 10);
 	
 	//ts.LoadProblem(comm, );
 }

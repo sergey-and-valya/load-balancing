@@ -76,4 +76,12 @@ void Environment::Run(IMPICommunicator& comm, ITestingSystem& ts, ILoadBalancing
 			}
 		}
 	}
+	
+	free(solutionI[0]);
+	free(solutionJ[0]);
+	free(solutionI[1]);
+	free(solutionJ[1]);
+	free(matrix[0]);
+	free(matrix[1]);
+	free(time_matrix);
 }

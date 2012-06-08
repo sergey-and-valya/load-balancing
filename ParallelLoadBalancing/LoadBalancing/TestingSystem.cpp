@@ -7,9 +7,11 @@
 #define PI 3.141592653589793238462643
 #define LIMIT(arr, limit) ((arr > 10.0) ? 10.0 : arr)
 
-TestingSystem::TestingSystem(char* filename)
+TestingSystem::TestingSystem(char* filename, int steps)
+	: filename(filename)
+	, steps(steps)
+	, step(0)
 {
-	this->filename = filename;
 }
 
 void TestingSystem::LoadProblem(IMPICommunicator& comm, IProblemBuilder& builder)
@@ -93,7 +95,7 @@ void TestingSystem::LoadProblem(IMPICommunicator& comm, IProblemBuilder& builder
 	fclose(file_read);
 }
 
-void TestingSystem::Run(
+bool TestingSystem::Run(
 	IMPICommunicator& comm,
 	int time_matrix[],
 	const double matrix[],
@@ -235,6 +237,8 @@ void TestingSystem::Run(
 	}
 	delete [] arr;
 	delete [] flag_arr;
+
+	return ++step < steps;
 }
 
 // посчитать значение функции в точке (i, j)

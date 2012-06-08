@@ -6,11 +6,11 @@
 class TestingSystem : public ITestingSystem
 {
 public:
-	TestingSystem(char* filename);
+	TestingSystem(char* filename, int steps);
 
 	void LoadProblem(IMPICommunicator& comm, IProblemBuilder& builder);
 
-	void Run(
+	bool Run(
 		IMPICommunicator& comm,
 		int time_matrix[],
 		const double matrix[],
@@ -62,6 +62,8 @@ private:
 
 private:
 	char* filename;
+	int steps;
+	int step;
 };
 
 #endif
