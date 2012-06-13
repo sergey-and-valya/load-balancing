@@ -244,7 +244,7 @@ private:
 
 void TestingSystemStep()
 {
-	int steps = 1;
+	int steps = 10;
 
 	double matrix[] = {
 		5   , 6  , 7   , 11  , 100 , 200 , 305 , 40  ,
@@ -332,13 +332,15 @@ void TestingSystemStep()
 
 		for(int step = 0; step < steps; step++)
 		{
+			bool isLast = step == steps - 1;
+
 			for(int procI = 0; procI < bpNumberI + 1; procI++)
 			{
 				for(int procJ = 0; procJ < bpNumberJ + 1; procJ++)
 				{
 					int mpiRank = procI * (bpNumberJ + 1) + procJ;
 
-					processors[mpiRank] = new TestMPIProcessor([mpiCommSize, mpiRank, procI, procJ, processors, solutionI, solutionJ, bpNumberI, bpNumberJ, testingSystems, matrix, _matrixWidth, _matrixHeight]()
+					processors[mpiRank] = new TestMPIProcessor([mpiCommSize, mpiRank, procI, procJ, processors, solutionI, solutionJ, bpNumberI, bpNumberJ, testingSystems, matrix, _matrixWidth, _matrixHeight, isLast]()
 					{
 						auto _mpiCommSize = mpiCommSize;
 						auto _mpiRank = mpiRank;
@@ -387,10 +389,17 @@ void TestingSystemStep()
 							}
 						}
 
-						//testingSystems[mpiRank]->Run(comm, time_matrix, matrix, newMatrix, solutionI, solutionJ, bpNumberI, bpNumberJ);
-						testingSystems[mpiRank]->Run(comm, time_matrix, local_matrix, new_local_matrix, solutionI, solutionJ, bpNumberI, bpNumberJ);
+						bool shouldContinue = testingSystems[mpiRank]->Run(comm, time_matrix, local_matrix, new_local_matrix, solutionI, solutionJ, bpNumberI, bpNumberJ);
 						
-						
+						if(isLast)
+						{
+							assert(!shouldContinue);
+						}
+						else
+						{
+							assert(shouldContinue);
+						}
+
 						for(int i = 0; i < localHeight; i++)
 						{
 							for(int j = 0; j < localWidth; j++)
@@ -399,11 +408,20 @@ void TestingSystemStep()
 							}
 						}
 
-						//free(time_matrix);
-						//free(local_matrix);
-						//free(new_local_matrix);
+						free(time_matrix);
+						free(local_matrix);
+						free(new_local_matrix);
 					});
-
+				}
+			}
+			
+			
+			for(int procI = 0; procI < bpNumberI + 1; procI++)
+			{
+				for(int procJ = 0; procJ < bpNumberJ + 1; procJ++)
+				{
+					int mpiRank = procI * (bpNumberJ + 1) + procJ;
+					
 					processors[mpiRank]->start();
 				}
 			}
@@ -425,7 +443,7 @@ void TestingSystemStep()
 
 	run(bpNumberI_A, bpNumberJ_A, solutionI_A, solutionJ_A, newMatrix_A);
 	run(bpNumberI_B, bpNumberJ_B, solutionI_B, solutionJ_B, newMatrix_B);
-
+	
 	
 	for(int i = 0; i < matrixHeight; i++)
 	{

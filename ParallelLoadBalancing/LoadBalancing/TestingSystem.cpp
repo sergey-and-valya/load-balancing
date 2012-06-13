@@ -108,11 +108,11 @@ bool TestingSystem::Run(
 	int procI = mpi_rank / (bpNumberJ + 1);
 	int procJ = mpi_rank % (bpNumberJ + 1);
 
-	int global_index_i = solutionI[procI] ;
-	int global_index_j = solutionJ[procJ];
+	int global_index_i = solutionI[procI] + 1;
+	int global_index_j = solutionJ[procJ] + 1;
 
-	int col = solutionJ[procJ + 1] - solutionJ[procJ ? 0 : procJ];
-	int row = solutionI[procI + 1] - solutionI[procI ? 0 : procI];
+	int col = solutionJ[procJ + 1] - solutionJ[procJ];
+	int row = solutionI[procI + 1] - solutionI[procI];
 
 	int num_processor_row = bpNumberI + 1;
 	int num_processor_col = bpNumberJ + 1;
