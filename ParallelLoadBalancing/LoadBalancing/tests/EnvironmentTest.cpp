@@ -108,7 +108,7 @@ void EnvironmentTest()
 				}
 			}
 		},
-		[&step, steps, &localWidth, &localHeight](IMPICommunicator& comm, int time_matrix[], const double matrix[], double new_matrix[], const int solutionI[], const int solutionJ[], int bpNumberI, int bpNumberJ)
+		[&step, steps, &localWidth, &localHeight](IMPICommunicator& comm, int time_matrix[], const double matrix[], double new_matrix[], const int solutionI[], const int solutionJ[], int bpNumberI, int bpNumberJ) -> bool
 		{
 			for(int i = 0; i < localHeight; i++)
 			{

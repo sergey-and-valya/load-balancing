@@ -128,5 +128,8 @@
     <ClCompile Include="BinaryFile.cpp">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
+    <ClCompile Include="tests\EnvironmentTest.cpp">
+      <Filter>Файлы исходного кода</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

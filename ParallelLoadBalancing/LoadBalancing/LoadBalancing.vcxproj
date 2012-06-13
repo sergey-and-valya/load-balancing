@@ -116,6 +116,7 @@
     <ClCompile Include="MPIWorldCommunicator.cpp" />
     <ClCompile Include="Rebalancer.cpp" />
     <ClCompile Include="TestingSystem.cpp" />
+    <ClCompile Include="tests\EnvironmentTest.cpp" />
     <ClCompile Include="tests\LoadBalancingTest.cpp" />
     <ClCompile Include="tests\TestingSystemTest.cpp" />
     <ClCompile Include="tests\RebalancerTest.cpp" />

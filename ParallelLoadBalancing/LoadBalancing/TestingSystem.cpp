@@ -53,40 +53,38 @@ void TestingSystem::LoadProblem(IMPICommunicator& comm, IProblemBuilder& builder
 	int finish_col;
 		
 	// смещаемся на ind_row переменных int
-	inputFile.Seek(ind_row * sizeof(int), SEEK_CUR);
-	inputFile.Read(&start_row, sizeof(int), 1);
-	if (ind_row != 0) 
-		start_row++;				
-	inputFile.Read(&finish_row, sizeof(int), 1);
-		
-	// теперь посчитаем номера столбцов, которые должны считать
-	inputFile.Seek((num_processor_row + 1 + 4 + ind_col) * sizeof(int), SEEK_SET);
-	inputFile.Read(&start_col, sizeof(int), 1);		
-	if (ind_col != 0) 
-		start_col++;
-	inputFile.Read(&finish_col, sizeof(int), 1);
+	//inputFile.Seek(ind_row * sizeof(int), SEEK_CUR);
+	//inputFile.Read(&start_row, sizeof(int), 1);
+	//if (ind_row != 0) 
+	//	start_row++;				
+	//inputFile.Read(&finish_row, sizeof(int), 1);
+	//	
+	//// теперь посчитаем номера столбцов, которые должны считать
+	//inputFile.Seek((num_processor_row + 1 + 4 + ind_col) * sizeof(int), SEEK_SET);
+	//inputFile.Read(&start_col, sizeof(int), 1);		
+	//if (ind_col != 0) 
+	//	start_col++;
+	//inputFile.Read(&finish_col, sizeof(int), 1);
+	start_row = solutionI[ind_row];
+	finish_row = solutionI[ind_row + 1];
+	start_col = solutionJ[ind_col];
+	finish_col = solutionJ[ind_col + 1];
+
 
 	// теперь заполним нашу матрицу
-	int row = finish_row - start_row + 1;
-	int col = finish_col - start_col + 1;
+	int row = finish_row - start_row;
+	int col = finish_col - start_col;
 
-	double* tmp_matrix = new double[row * col];
 	double* matrix = builder.CreateLocalMatrix();
-	double** mtx = &matrix;
 		
-	for (int i = 0; i < row; i++)
-	{
-		mtx[i] = &tmp_matrix[i * col];
-	}
-	tmp_matrix = NULL;
 	
-	int tmp_row = start_row;			// номер текущей строки
+	int tmp_row = start_row + 1;			// номер текущей строки
 	int count_variable_int = num_processor_row + 4 + num_processor_col + 2;
 	for (int i = 0; i < row; i++)
 	{
 		// сдвигаемся на начало матрицы
-		inputFile.Seek((count_variable_int) * sizeof(int) + (tmp_row * col_global + start_col) * sizeof(double), SEEK_SET);
-		inputFile.Read(mtx[i], sizeof(double), col);
+		inputFile.Seek((count_variable_int) * sizeof(int) + (tmp_row * col_global + start_col + 1) * sizeof(double), SEEK_SET);
+		inputFile.Read(matrix + i * col, sizeof(double), col);
 		tmp_row++;
 	}
 }
@@ -105,17 +103,27 @@ bool TestingSystem::Run(
 	int mpi_rank;
 	comm.Rank(&mpi_rank);
 
-	int procI = mpi_rank / (bpNumberJ + 1);
-	int procJ = mpi_rank % (bpNumberJ + 1);
+	int num_processor_row = bpNumberI + 1;
+	int num_processor_col = bpNumberJ + 1;
 
-	int global_index_i = solutionI[procI] + 1;
-	int global_index_j = solutionJ[procJ] + 1;
+	int procI = mpi_rank / num_processor_col;
+	int procJ = mpi_rank % num_processor_col;
 
+	
+	int global_index_i = solutionI[procI];
+	int global_index_j = solutionJ[procJ];
+	if (global_index_i == -1)
+	{
+		global_index_i = 0;
+	}
+	if (global_index_j == -1)
+	{
+		global_index_j = 0;
+	}
 	int col = solutionJ[procJ + 1] - solutionJ[procJ];
 	int row = solutionI[procI + 1] - solutionI[procI];
 
-	int num_processor_row = bpNumberI + 1;
-	int num_processor_col = bpNumberJ + 1;
+	
 
 	clock_t start_time;
 	clock_t finish_time; 

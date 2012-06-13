@@ -15,8 +15,13 @@
 
 #define NEEDS_LOAD_BALANCING true
 
+#define TEST
+
 int main()
 {
+#ifdef TEST
+	//EnvironmentTest();
+
 	RebalancerMoveFromLeftTest();
 	RebalancerMoveFromRightTest();
 	RebalancerMoveFromTopTest();
@@ -34,10 +39,11 @@ int main()
 	//LoadBalancingTest();
 	//LoadBalancingCentralTest();
 
-	TestingSystemStep();
+	//TestingSystemStep();
 	TestingSystemLoadTest();
+	
+#else
 
-	return 0;
 	MPI_Init(NULL, NULL);
 	
 	auto lb = LoadBalancingAlgorithm(6);
@@ -50,4 +56,7 @@ int main()
 	env.Run(comm, ts, lb, rb);
 
 	MPI_Finalize();
+
+#endif
+	return 0;
 }
