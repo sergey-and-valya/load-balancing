@@ -18,6 +18,8 @@ void EnvironmentTest()
 	
 	int localWidth  = 100;
 	int localHeight = 200;
+	int newLocalWidth;
+	int newLocalHeight;
 	
 	int bpNumberI = 10;
 	int bpNumberJ = 5;
@@ -29,6 +31,8 @@ void EnvironmentTest()
 
 	int step = 0;
 	int steps = 10;
+
+	int state = 0;
 
 	auto env = Environment(true);
 
@@ -56,14 +60,27 @@ void EnvironmentTest()
 	);
 
 	auto lb = TestLoadBalancing(
-		[procI, procJ](IMPICommunicator& newcomm, const int time_matrix[], const int oldSolutionI[], const int oldSolutionJ[], int bpNumberI, int bpNumberJ, int newSolutionI[], int newSolutionJ[])
+		[&state, &newLocalWidth, &newLocalHeight, procI](IMPICommunicator& comm, const int time_matrix[], const int oldSolutionI[], const int oldSolutionJ[], int bpNumberI, int bpNumberJ, int newSolutionI[], int newSolutionJ[])
 		{
-			newSolutionI[procI]--;
+			state = (state + 1) % 2;
+			switch(state)
+			{
+			case 0:
+				{
+					newLocalHeight--;
+					newSolutionI[procI]--;
+					break;
+				}
+			default:
+				{
+					assert(false);
+				}
+			}
 		}
 	);
 	
 	auto ts = TestTestingSystem(
-		[localWidth, localHeight](IMPICommunicator& comm, IProblemBuilder& builder)
+		[localWidth, localHeight, bpNumberI, bpNumberJ](IMPICommunicator& comm, IProblemBuilder& builder)
 		{
 			builder.SetBreakPointCount(bpNumberI, bpNumberJ);
 			
@@ -91,7 +108,7 @@ void EnvironmentTest()
 				}
 			}
 		},
-		[&step, steps, localWidth, localHeight](IMPICommunicator& comm, int time_matrix[], const double matrix[], double new_matrix[], const int solutionI[], const int solutionJ[], int bpNumberI, int bpNumberJ)
+		[&step, steps, &localWidth, &localHeight](IMPICommunicator& comm, int time_matrix[], const double matrix[], double new_matrix[], const int solutionI[], const int solutionJ[], int bpNumberI, int bpNumberJ)
 		{
 			for(int i = 0; i < localHeight; i++)
 			{
@@ -114,8 +131,15 @@ void EnvironmentTest()
 	);
 	
 	auto rb = TestRebalancer(
-		[](IMPICommunicator& comm, const int oldSolutionI[], const int oldSolutionJ[], const double oldMatrix[], const int newSolutionI[], const int newSolutionJ[], double newMatrix[], int bpNumberI, int bpNumberJ)
+		[&localWidth, &localHeight](IMPICommunicator& comm, const int oldSolutionI[], const int oldSolutionJ[], const double oldMatrix[], const int newSolutionI[], const int newSolutionJ[], double newMatrix[], int bpNumberI, int bpNumberJ)
 		{
+			for(int i = 0; i < localHeight; i++)
+			{
+				for(int j = 0; j < localWidth; j++)
+				{
+					newMatrix[i * localWidth + j] = i * localWidth + j;
+				}
+			}
 		}
 	);
 

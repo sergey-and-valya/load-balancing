@@ -81,6 +81,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Environment.h" />
+    <ClInclude Include="IInputFile.h" />
     <ClInclude Include="IEnvironment.h" />
     <ClInclude Include="ILoadBalancingAlgorithm.h" />
     <ClInclude Include="IMPI.h" />
@@ -94,7 +95,11 @@
     <ClInclude Include="Rebalancer.h" />
     <ClInclude Include="tests\EnvironmentTest.h" />
     <ClInclude Include="TestingSystem.h" />
+    <ClInclude Include="BinaryFile.h" />
+    <ClInclude Include="tests\LoadBalancingTest.h" />
     <ClInclude Include="tests\RebalancerTest.h" />
+    <ClInclude Include="tests\utils\TestInputFile.h" />
+    <ClInclude Include="tests\utils\TestProblemBuilder.h" />
     <ClInclude Include="tests\utils\TestRebalancer.h" />
     <ClInclude Include="tests\Tests.h" />
     <ClInclude Include="tests\TestingSystemTest.h" />
@@ -105,12 +110,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Environment.cpp" />
+    <ClCompile Include="BinaryFile.cpp" />
     <ClCompile Include="LoadBalancingAlgorithm.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MPIWorldCommunicator.cpp" />
     <ClCompile Include="Rebalancer.cpp" />
-    <ClCompile Include="tests\EnvironmentTest.cpp" />
     <ClCompile Include="TestingSystem.cpp" />
+    <ClCompile Include="tests\LoadBalancingTest.cpp" />
     <ClCompile Include="tests\TestingSystemTest.cpp" />
     <ClCompile Include="tests\RebalancerTest.cpp" />
   </ItemGroup>

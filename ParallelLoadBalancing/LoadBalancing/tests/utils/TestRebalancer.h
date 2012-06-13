@@ -1,7 +1,7 @@
 #ifndef _TESTREBALANCER_H
 #define _TESTREBALANCER_H
 
-#include "../IRebalancer.h"
+#include "../../IRebalancer.h"
 #include <functional>
 
 class TestRebalancer : public IRebalancer

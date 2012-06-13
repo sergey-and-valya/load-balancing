@@ -18,24 +18,6 @@ public:
 		int newSolutionI[],
 		int newSolutionJ[]);
 
-private:
-	void Init(
-		int ***replacedVIAfter,
-		int ***replacedVJAfter,
-		int ***replacedVIBefore,
-		int ***replacedVJBefore,
-		int bpnumberI,
-		int bpnumberJ);
-
-	void EvaluateSumV(
-		int bpNumber1,
-		int bpNumber2,
-		const int oldSolution[],
-		int *newSolution[],
-		int ***replacedVAfter,
-		int ***replacedVBefore,
-		int **sumV);
-
 	int accuracy;
 };
 

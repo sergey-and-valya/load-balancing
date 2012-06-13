@@ -2,11 +2,12 @@
 #define _TESTINGSYSTEM_H
 
 #include "ITestingSystem.h"
+#include "IInputFile.h"
 
 class TestingSystem : public ITestingSystem
 {
 public:
-	TestingSystem(char* filename, int steps);
+	TestingSystem(IInputFile& inputFile, int steps);
 
 	void LoadProblem(IMPICommunicator& comm, IProblemBuilder& builder);
 
@@ -61,7 +62,7 @@ private:
 		double &bottom_right_corner);
 
 private:
-	char* filename;
+	IInputFile& inputFile;
 	int steps;
 	int step;
 };

@@ -7,6 +7,7 @@
 #include "LoadBalancingAlgorithm.h"
 #include "Environment.h"
 #include "Rebalancer.h"
+#include "BinaryFile.h"
 #include "MPIWorldCommunicator.h"
 
 #include <mpi.h>
@@ -29,17 +30,20 @@ int main()
 	RebalancerNoMoveTest();
 	
 	RebalancerMoveFromLeftFromTopTest();
+
 	//LoadBalancingTest();
-	
 	//LoadBalancingCentralTest();
 
+	TestingSystemStep();
+	TestingSystemLoadTest();
 
 	return 0;
 	MPI_Init(NULL, NULL);
 	
 	auto lb = LoadBalancingAlgorithm(6);
 	auto rb = Rebalancer();
-	auto ts = TestingSystem("C:\\StartMatrix\\matrix", 10);
+	auto f = BinaryFile("C:\\StartMatrix\\matrix");
+	auto ts = TestingSystem(f, 10);
 	auto comm = MPIWorldCommunicator();
 	auto env = Environment(NEEDS_LOAD_BALANCING);
 

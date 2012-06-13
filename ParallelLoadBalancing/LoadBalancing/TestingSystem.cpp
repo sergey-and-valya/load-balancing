@@ -7,8 +7,8 @@
 #define PI 3.141592653589793238462643
 #define LIMIT(arr, limit) ((arr > 10.0) ? 10.0 : arr)
 
-TestingSystem::TestingSystem(char* filename, int steps)
-	: filename(filename)
+TestingSystem::TestingSystem(IInputFile& inputFile, int steps)
+	: inputFile(inputFile)
 	, steps(steps)
 	, step(0)
 {
@@ -21,24 +21,22 @@ void TestingSystem::LoadProblem(IMPICommunicator& comm, IProblemBuilder& builder
 	int num_processor_row;
 	int num_processor_col;
 	
-	FILE* file_read;
 	int mpi_rank;
 	comm.Rank(&mpi_rank);
+
 	//загрузить свой кусок матрицы
-	fopen_s(&file_read,filename,"rb"); 
-	
-	fread((void*)&row_global, sizeof(int), 1, file_read);
-	fread((void*)&col_global, sizeof(int), 1, file_read);
-	fread((void*)&num_processor_row, sizeof(int), 1, file_read);
-	fread((void*)&num_processor_col, sizeof(int), 1, file_read);
+	inputFile.Read(&row_global, sizeof(int), 1);
+	inputFile.Read(&col_global, sizeof(int), 1);
+	inputFile.Read(&num_processor_row, sizeof(int), 1);
+	inputFile.Read(&num_processor_col, sizeof(int), 1);
 		
 	builder.SetBreakPointCount(num_processor_row - 1, num_processor_col - 1);
 
 	int* solutionI = builder.CreateSolutionI();
 	int* solutionJ = builder.CreateSolutionJ();
 
-	fread((void*) solutionI, sizeof(int), num_processor_row + 1, file_read);
-	fread((void*) solutionJ, sizeof(int), num_processor_col + 1, file_read);
+	inputFile.Read(solutionI, sizeof(int), num_processor_row + 1);
+	inputFile.Read(solutionJ, sizeof(int), num_processor_col + 1);
 
 	solutionI[0] = -1;
 	solutionJ[0] = -1;
@@ -55,18 +53,18 @@ void TestingSystem::LoadProblem(IMPICommunicator& comm, IProblemBuilder& builder
 	int finish_col;
 		
 	// смещаемся на ind_row переменных int
-	fseek(file_read, ind_row * sizeof(int), SEEK_CUR);
-	fread(&start_row, sizeof(int), 1, file_read);
+	inputFile.Seek(ind_row * sizeof(int), SEEK_CUR);
+	inputFile.Read(&start_row, sizeof(int), 1);
 	if (ind_row != 0) 
 		start_row++;				
-	fread(&finish_row, sizeof(int), 1, file_read);
+	inputFile.Read(&finish_row, sizeof(int), 1);
 		
 	// теперь посчитаем номера столбцов, которые должны считать
-	fseek(file_read, (num_processor_row + 1 + 4 + ind_col) * sizeof(int), SEEK_SET);
-	fread(&start_col, sizeof(int), 1, file_read);		
+	inputFile.Seek((num_processor_row + 1 + 4 + ind_col) * sizeof(int), SEEK_SET);
+	inputFile.Read(&start_col, sizeof(int), 1);		
 	if (ind_col != 0) 
 		start_col++;
-	fread(&finish_col, sizeof(int), 1, file_read);
+	inputFile.Read(&finish_col, sizeof(int), 1);
 
 	// теперь заполним нашу матрицу
 	int row = finish_row - start_row + 1;
@@ -87,12 +85,10 @@ void TestingSystem::LoadProblem(IMPICommunicator& comm, IProblemBuilder& builder
 	for (int i = 0; i < row; i++)
 	{
 		// сдвигаемся на начало матрицы
-		fseek(file_read, (count_variable_int) * sizeof(int) + (tmp_row * col_global + start_col) * sizeof(double), SEEK_SET);
-		fread(mtx[i], sizeof(double), col, file_read);
+		inputFile.Seek((count_variable_int) * sizeof(int) + (tmp_row * col_global + start_col) * sizeof(double), SEEK_SET);
+		inputFile.Read(mtx[i], sizeof(double), col);
 		tmp_row++;
 	}
-
-	fclose(file_read);
 }
 
 bool TestingSystem::Run(
@@ -268,7 +264,7 @@ double TestingSystem::func(double **arr, bool **flag_arr, int global_i, int glob
 				count_elem ++;						
 			}
 
-	int count = 100000;
+	int count = 1000;
 	for (int k = 0; k < count; k++)
 		for (int i = 0; i < SIZE_BLOCK; i++)
 			for (int j = 0; j < SIZE_BLOCK; j++)
