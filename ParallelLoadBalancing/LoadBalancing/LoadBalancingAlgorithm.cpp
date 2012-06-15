@@ -197,7 +197,7 @@ void LoadBalancingAlgorithm::Run(
 						else
 							break;
 					}
-					newSolutionI[i] -= numSteps*step;
+					newSolutionI[i] -= (numSteps + 1)*step;
 					for(int k = 0; k<bpnumberJ+1; k++)
 					{
 						sumV[i-1][k] -= replacedVIBefore[i][k][numSteps]; 
@@ -231,7 +231,7 @@ void LoadBalancingAlgorithm::Run(
 						else
 							break;
 					}
-					newSolutionI[i] += numSteps*step;
+					newSolutionI[i] += (numSteps + 1) *step;
 					for(int k = 0; k<bpnumberJ+1; k++)
 					{
 						sumV[i-1][k] += replacedVIAfter[i][k][numSteps]; 
@@ -284,7 +284,7 @@ void LoadBalancingAlgorithm::Run(
 							break;
 					}
 				
-					newSolutionJ[i] -= numSteps*step;
+					newSolutionJ[i] -= (numSteps + 1)*step;
 					for(int k = 0; k<bpnumberI+1; k++)
 					{
 						sumV[k][i-1] -=  replacedVJBefore[i][k][numSteps];
@@ -317,7 +317,7 @@ void LoadBalancingAlgorithm::Run(
 						else
 							break;
 					}
-					newSolutionJ[i] += numSteps*step;
+					newSolutionJ[i] += (numSteps + 1)*step;
 					for(int k = 0; k<bpnumberI+1; k++)
 					{
 						sumV[k][i-1] += replacedVJAfter[i][k][numSteps]; 
