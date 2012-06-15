@@ -15,7 +15,7 @@
 
 #define NEEDS_LOAD_BALANCING true
 
-#define TEST
+//#define TEST
 
 int main()
 {
@@ -36,10 +36,10 @@ int main()
 	
 	RebalancerMoveFromLeftFromTopTest();
 
-	//LoadBalancingTest();
-	//LoadBalancingCentralTest();
+	LoadBalancingTest();
+	LoadBalancingCentralTest();
 
-	//TestingSystemStep();
+	TestingSystemStep();
 	TestingSystemLoadTest();
 	
 #else

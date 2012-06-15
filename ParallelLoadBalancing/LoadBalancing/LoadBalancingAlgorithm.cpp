@@ -125,8 +125,8 @@ void LoadBalancingAlgorithm::Run(
 			for(int j = i * stepJ; j < (i + 1) * (stepJ); j++)
 				for(int k = 0; k < sizeI; k++)
 				{
-					sum1 += (int)time_matrix[k * sizeI + j];
-					sum2 += (int)time_matrix[k * sizeI + sizeJ - j - 1]; 
+					sum1 += (int)time_matrix[k * sizeJ + j];
+					sum2 += (int)time_matrix[k * sizeJ + sizeJ - j - 1]; 
 				}
 			repVJa[i] = sum1;
 			repVJb[i] = sum2;
@@ -364,10 +364,10 @@ void LoadBalancingAlgorithm::Run(
 		{
 			int sum1 = 0; int sum2 = 0;
 			for(int j = i * stepJ; j < (i + 1) * (stepJ); j++)
-				for(int k = 0; k < sizeJ; k++)
+				for(int k = 0; k < sizeI; k++)
 				{
-					sum1 += (int)time_matrix[k * sizeI + j];
-					sum2 += (int)time_matrix[k * sizeI + sizeJ - j - 1];
+					sum1 += (int)time_matrix[k * sizeJ + j];
+					sum2 += (int)time_matrix[k * sizeJ + sizeJ - j - 1];
 				}
 				repVJa[i] = sum1;
 				repVJb[i] = sum2;
