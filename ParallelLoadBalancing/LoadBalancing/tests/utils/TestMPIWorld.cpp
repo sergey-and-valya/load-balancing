@@ -119,13 +119,43 @@ void TestMPIWorld::RunAndWait()
 				},
 				[_mpiRank, _processors](void* buf, int count, MPI_Datatype datatype, int dest, int tag) -> int
 				{
-					_processors[_mpiRank]->Send(_processors[dest], buf, count * sizeof(int));
+                    int size;
+
+                    switch(datatype)
+                    {
+                    case MPI_INTEGER:
+                        size = sizeof(int);
+                        break;
+                    case MPI_DOUBLE:
+                        size = sizeof(double);
+                        break;
+                    default:
+                        assert(false);
+                        break;
+                    }
+
+					_processors[_mpiRank]->Send(_processors[dest], buf, count * size);
 								
 					return MPI_SUCCESS;
 				},
 				[_mpiRank, _processors](void* buf, int count, MPI_Datatype datatype, int source, int tag, MPI_Status* status) -> int
 				{
-					_processors[_mpiRank]->Receive(_processors[source], buf, count * sizeof(int));
+                    int size;
+
+                    switch(datatype)
+                    {
+                    case MPI_INTEGER:
+                        size = sizeof(int);
+                        break;
+                    case MPI_DOUBLE:
+                        size = sizeof(double);
+                        break;
+                    default:
+                        assert(false);
+                        break;
+                    }
+
+					_processors[_mpiRank]->Receive(_processors[source], buf, count * size);
 								
 					return MPI_SUCCESS;
 				}
