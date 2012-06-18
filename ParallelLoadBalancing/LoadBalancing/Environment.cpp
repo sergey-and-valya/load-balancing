@@ -2,6 +2,7 @@
 
 #include "ProblemBuilder.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <memory.h>
 
@@ -107,9 +108,6 @@ void Environment::Run(IMPICommunicator& comm, ITestingSystem& ts, ILoadBalancing
 				bpNumberI, bpNumberJ,
 				solutionI[newSolution], solutionJ[newSolution]
 				);
-			
-			printf("%d %d\n", solutionI[currentSolution][1], solutionJ[currentSolution][1]);
-			printf("%d %d\n", solutionI[newSolution][1],     solutionJ[newSolution][1]);
 
 			int newMatrix = (currentMatrix + 1) % 2;
 			int newMatrixHeight = solutionI[newSolution][procI + 1] - solutionI[newSolution][procI];

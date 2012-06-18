@@ -13,7 +13,7 @@
 
 void TestingSystemLoadTest()
 {
-	const char* filename = "C:\\StartMatrix\\matrix"; 
+	const char* filename = "matrix"; 
 	FILE* file;
 	fopen_s(&file, filename, "rb"); 
 

@@ -1,7 +1,17 @@
 #ifndef _IMPICOMMUNICATOR_H
 #define _IMPICOMMUNICATOR_H
 
+#ifdef EMULATE_MPI
+typedef int MPI_Datatype;
+typedef int MPI_Status;
+
+#define MPI_SUCCESS 1
+#define MPI_INTEGER 2
+#define MPI_INT     MPI_INTEGER
+#define MPI_DOUBLE  3
+#else
 #include <mpi.h>
+#endif
 
 class IMPICommunicator
 {

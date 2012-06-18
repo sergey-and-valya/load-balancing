@@ -2,7 +2,6 @@
 #define _PROBLEMBUILDER_H
 
 #include "IProblemBuilder.h"
-#include "mpi.h"
 
 typedef void* (*arrayAllocator)(size_t bytes);
 

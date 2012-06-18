@@ -5,6 +5,14 @@
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Emulate MPI Debug|Win32">
+      <Configuration>Emulate MPI Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Emulate MPI Release|Win32">
+      <Configuration>Emulate MPI Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
@@ -21,7 +29,18 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -33,14 +52,26 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -51,6 +82,8 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>C:\Program Files %28x86%29\MPICH2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <UndefinePreprocessorDefinitions>
+      </UndefinePreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -58,6 +91,30 @@
       <AdditionalLibraryDirectories>C:\Program Files %28x86%29\MPICH2\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>mpi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>EMULATE_MPI;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Program Files %28x86%29\MPICH2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <UndefinePreprocessorDefinitions>
+      </UndefinePreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
+    </Link>
+    <CustomBuild>
+      <Command>copy /Y "%(FullPath)" "$(OutputPath)%(Filename)"</Command>
+      <Outputs>$(OutputPath)%(Filename)</Outputs>
+    </CustomBuild>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -77,6 +134,28 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>C:\Program Files %28x86%29\MPICH2\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>mpi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>EMULATE_MPI;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Program Files %28x86%29\MPICH2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -115,7 +194,10 @@
     <ClCompile Include="BinaryFile.cpp" />
     <ClCompile Include="LoadBalancingAlgorithm.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="MPIWorldCommunicator.cpp" />
+    <ClCompile Include="MPIWorldCommunicator.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Rebalancer.cpp" />
     <ClCompile Include="TestingSystem.cpp" />
     <ClCompile Include="tests\EnvironmentTest.cpp" />
@@ -126,24 +208,64 @@
     <ClCompile Include="tests\utils\Testkit.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\matrix">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
+    <CustomBuild Include="res\matrix">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Debug|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Release|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)"</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutputPath)%(Filename)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutputPath)%(Filename)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Debug|Win32'">$(OutputPath)%(Filename)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Release|Win32'">$(OutputPath)%(Filename)</Outputs>
+    </CustomBuild>
     <None Include="res\matrix.txt" />
-    <None Include="res\matrix2">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
+    <CustomBuild Include="res\matrix2">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Debug|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Release|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)"</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutputPath)%(Filename)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutputPath)%(Filename)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Debug|Win32'">$(OutputPath)%(Filename)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Release|Win32'">$(OutputPath)%(Filename)</Outputs>
+    </CustomBuild>
     <None Include="res\matrix2.txt" />
-    <None Include="res\matrix3">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
+    <CustomBuild Include="res\matrix3">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Debug|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Release|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)"</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutputPath)%(Filename)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutputPath)%(Filename)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Debug|Win32'">$(OutputPath)%(Filename)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Release|Win32'">$(OutputPath)%(Filename)</Outputs>
+    </CustomBuild>
     <None Include="res\matrix3.txt" />
-    <None Include="res\matrix_big">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="res\matrix_G1">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
+    <CustomBuild Include="res\matrix_big">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Debug|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Release|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)"</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutputPath)%(Filename)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutputPath)%(Filename)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Debug|Win32'">$(OutputPath)%(Filename)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Release|Win32'">$(OutputPath)%(Filename)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="res\matrix_G1">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Debug|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Release|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)"</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutputPath)%(Filename)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutputPath)%(Filename)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Debug|Win32'">$(OutputPath)%(Filename)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Release|Win32'">$(OutputPath)%(Filename)</Outputs>
+    </CustomBuild>
     <None Include="res\readme.txt" />
     <None Include="res\testmatrix.txt" />
   </ItemGroup>

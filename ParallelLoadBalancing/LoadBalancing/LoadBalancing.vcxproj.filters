@@ -13,6 +13,21 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="matrices">
+      <UniqueIdentifier>{0e6dad51-ba25-4a0e-ae28-355c783c1b76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы исходного кода\tests">
+      <UniqueIdentifier>{5bf82357-d1cd-4088-ad5b-57d9e2cb4549}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы исходного кода\tests\utils">
+      <UniqueIdentifier>{236e5921-43bf-4474-baf6-a721c2d35c79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Заголовочные файлы\tests">
+      <UniqueIdentifier>{4c028df7-4dae-4504-88ea-cab35354e951}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Заголовочные файлы\tests\utils">
+      <UniqueIdentifier>{e32915d4-3d70-4951-8225-a45347dd8050}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ILoadBalancingAlgorithm.h">
@@ -54,53 +69,53 @@
     <ClInclude Include="Rebalancer.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
-    <ClInclude Include="tests\EnvironmentTest.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
-    <ClInclude Include="tests\utils\Assert.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
-    <ClInclude Include="tests\utils\TestCommunicator.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
-    <ClInclude Include="tests\utils\TestLoadBalancing.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
-    <ClInclude Include="tests\TestingSystemTest.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
-    <ClInclude Include="tests\utils\TestTestingSystem.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
-    <ClInclude Include="tests\Tests.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
-    <ClInclude Include="tests\utils\TestRebalancer.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
-    <ClInclude Include="tests\RebalancerTest.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
-    <ClInclude Include="tests\LoadBalancingTest.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
-    <ClInclude Include="tests\utils\TestProblemBuilder.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
     <ClInclude Include="BinaryFile.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
     <ClInclude Include="IInputFile.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
+    <ClInclude Include="tests\utils\Assert.h">
+      <Filter>Заголовочные файлы\tests\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="tests\utils\TestCommunicator.h">
+      <Filter>Заголовочные файлы\tests\utils</Filter>
+    </ClInclude>
     <ClInclude Include="tests\utils\TestInputFile.h">
-      <Filter>Заголовочные файлы</Filter>
+      <Filter>Заголовочные файлы\tests\utils</Filter>
     </ClInclude>
     <ClInclude Include="tests\utils\Testkit.h">
-      <Filter>Заголовочные файлы</Filter>
+      <Filter>Заголовочные файлы\tests\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="tests\utils\TestLoadBalancing.h">
+      <Filter>Заголовочные файлы\tests\utils</Filter>
     </ClInclude>
     <ClInclude Include="tests\utils\TestMPIWorld.h">
-      <Filter>Заголовочные файлы</Filter>
+      <Filter>Заголовочные файлы\tests\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="tests\utils\TestProblemBuilder.h">
+      <Filter>Заголовочные файлы\tests\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="tests\utils\TestRebalancer.h">
+      <Filter>Заголовочные файлы\tests\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="tests\utils\TestTestingSystem.h">
+      <Filter>Заголовочные файлы\tests\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="tests\TestingSystemTest.h">
+      <Filter>Заголовочные файлы\tests</Filter>
+    </ClInclude>
+    <ClInclude Include="tests\Tests.h">
+      <Filter>Заголовочные файлы\tests</Filter>
+    </ClInclude>
+    <ClInclude Include="tests\LoadBalancingTest.h">
+      <Filter>Заголовочные файлы\tests</Filter>
+    </ClInclude>
+    <ClInclude Include="tests\RebalancerTest.h">
+      <Filter>Заголовочные файлы\tests</Filter>
+    </ClInclude>
+    <ClInclude Include="tests\EnvironmentTest.h">
+      <Filter>Заголовочные файлы\tests</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -122,38 +137,60 @@
     <ClCompile Include="Rebalancer.cpp">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
-    <ClCompile Include="tests\TestingSystemTest.cpp">
-      <Filter>Файлы исходного кода</Filter>
-    </ClCompile>
-    <ClCompile Include="tests\RebalancerTest.cpp">
-      <Filter>Файлы исходного кода</Filter>
-    </ClCompile>
-    <ClCompile Include="tests\LoadBalancingTest.cpp">
-      <Filter>Файлы исходного кода</Filter>
-    </ClCompile>
     <ClCompile Include="BinaryFile.cpp">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
-    <ClCompile Include="tests\EnvironmentTest.cpp">
-      <Filter>Файлы исходного кода</Filter>
+    <ClCompile Include="tests\utils\TestMPIWorld.cpp">
+      <Filter>Файлы исходного кода\tests\utils</Filter>
     </ClCompile>
     <ClCompile Include="tests\utils\Testkit.cpp">
-      <Filter>Файлы исходного кода</Filter>
+      <Filter>Файлы исходного кода\tests\utils</Filter>
     </ClCompile>
-    <ClCompile Include="tests\utils\TestMPIWorld.cpp">
-      <Filter>Файлы исходного кода</Filter>
+    <ClCompile Include="tests\TestingSystemTest.cpp">
+      <Filter>Файлы исходного кода\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="tests\RebalancerTest.cpp">
+      <Filter>Файлы исходного кода\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="tests\EnvironmentTest.cpp">
+      <Filter>Файлы исходного кода\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="tests\LoadBalancingTest.cpp">
+      <Filter>Файлы исходного кода\tests</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\matrix" />
-    <None Include="res\testmatrix.txt" />
-    <None Include="res\matrix.txt" />
-    <None Include="res\matrix2" />
-    <None Include="res\matrix2.txt" />
-    <None Include="res\matrix3" />
-    <None Include="res\matrix3.txt" />
-    <None Include="res\matrix_big" />
-    <None Include="res\matrix_G1" />
-    <None Include="res\readme.txt" />
+    <None Include="res\testmatrix.txt">
+      <Filter>matrices</Filter>
+    </None>
+    <None Include="res\matrix.txt">
+      <Filter>matrices</Filter>
+    </None>
+    <None Include="res\matrix2.txt">
+      <Filter>matrices</Filter>
+    </None>
+    <None Include="res\matrix3.txt">
+      <Filter>matrices</Filter>
+    </None>
+    <None Include="res\readme.txt">
+      <Filter>matrices</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="res\matrix_G1">
+      <Filter>matrices</Filter>
+    </CustomBuild>
+    <CustomBuild Include="res\matrix_big">
+      <Filter>matrices</Filter>
+    </CustomBuild>
+    <CustomBuild Include="res\matrix3">
+      <Filter>matrices</Filter>
+    </CustomBuild>
+    <CustomBuild Include="res\matrix2">
+      <Filter>matrices</Filter>
+    </CustomBuild>
+    <CustomBuild Include="res\matrix">
+      <Filter>matrices</Filter>
+    </CustomBuild>
   </ItemGroup>
 </Project>

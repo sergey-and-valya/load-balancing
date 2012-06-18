@@ -2,6 +2,7 @@
 #include <time.h>
 #include <math.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #define SIZE_BLOCK 3
 #define PI 3.141592653589793238462643

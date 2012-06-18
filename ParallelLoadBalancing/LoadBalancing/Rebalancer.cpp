@@ -29,7 +29,7 @@ void Rebalancer::Rebalance(IMPICommunicator& comm, const int oldSolutionI[], con
 	int rightOffset  = oldMatrixWidth  - max(0, oldSolutionJ[procJ + 1] - newSolutionJ[procJ + 1]);
 	int bottomOffset = oldMatrixHeight - max(0, oldSolutionI[procI + 1] - newSolutionI[procI + 1]);
 	int newLeftOffset = max(0, oldSolutionJ[procJ] - newSolutionJ[procJ]);
-	int newTopOffset = max(0, oldSolutionI[procI] - newSolutionI[procI]);
+	int newTopOffset  = max(0, oldSolutionI[procI] - newSolutionI[procI]);
 	
 	int copiedWidth  = rightOffset  - leftOffset;
 	int copiedHeight = bottomOffset - topOffset;
@@ -57,13 +57,12 @@ exchange_left:
 		if(newSolutionJ[procJ] != oldSolutionJ[procJ])
 		{
 			int sendWidth = abs(newSolutionJ[procJ] - oldSolutionJ[procJ]);
-			int sendHeight = bottomOffset - topOffset;
-			int sendCount = sendWidth * sendHeight;
+			int sendCount = sendWidth * copiedHeight;
 			double* tmp = (double*)malloc(sizeof(double) * sendCount);
 
 			if(newSolutionJ[procJ] > oldSolutionJ[procJ])
 			{
-				for(int i = 0; i < sendHeight; i++)
+				for(int i = 0; i < copiedHeight; i++)
 				{
 					for(int j = 0; j < sendWidth; j++)
 					{
@@ -77,7 +76,7 @@ exchange_left:
 			{
 				comm.Recv(tmp, sendCount, MPI_DOUBLE, mpi_rank - 1, 0, &status);
 						
-				for(int i = 0; i < sendHeight; i++)
+				for(int i = 0; i < copiedHeight; i++)
 				{
 					for(int j = 0; j < sendWidth; j++)
 					{
@@ -102,8 +101,7 @@ exchange_right:
 		if(newSolutionJ[procJ + 1] != oldSolutionJ[procJ + 1])
 		{
 			int sendWidth = abs(newSolutionJ[procJ + 1] - oldSolutionJ[procJ + 1]);
-			int sendHeight = bottomOffset - topOffset;
-			int sendCount = sendWidth * sendHeight;
+			int sendCount = sendWidth * copiedHeight;
 			double* tmp = (double*)malloc(sizeof(double) * sendCount);
 
 			if(newSolutionJ[procJ + 1] > oldSolutionJ[procJ + 1])
@@ -112,7 +110,7 @@ exchange_right:
 						
 				int offset = newMatrixWidth - sendWidth;
 
-				for(int i = 0; i < sendHeight; i++)
+				for(int i = 0; i < copiedHeight; i++)
 				{
 					for(int j = 0; j < sendWidth; j++)
 					{
@@ -124,7 +122,7 @@ exchange_right:
 			{
 				int offset = oldMatrixWidth - sendWidth;
 
-				for(int i = 0; i < sendHeight; i++)
+				for(int i = 0; i < copiedHeight; i++)
 				{
 					for(int j = 0; j < sendWidth; j++)
 					{
@@ -165,17 +163,16 @@ exchange_top:
 		if(newSolutionI[procI] != oldSolutionI[procI])
 		{
 			int sendHeight = abs(newSolutionI[procI] - oldSolutionI[procI]);
-			int sendWidth = rightOffset - leftOffset;
-			int sendCount = sendHeight * sendWidth;
+			int sendCount = sendHeight * copiedWidth;
 			double* tmp = (double*)malloc(sizeof(double) * sendCount);
 
 			if(newSolutionI[procI] > oldSolutionI[procI])
 			{
 				for(int i = 0; i < sendHeight; i++)
 				{
-					for(int j = 0; j < sendWidth; j++)
+					for(int j = 0; j < copiedWidth; j++)
 					{
-						tmp[i * sendWidth + j] = oldMatrix[i * oldMatrixWidth + j + leftOffset];
+						tmp[i * copiedWidth + j] = oldMatrix[i * oldMatrixWidth + j + leftOffset];
 					}
 				}
 						
@@ -187,9 +184,9 @@ exchange_top:
 						
 				for(int i = 0; i < sendHeight; i++)
 				{
-					for(int j = 0; j < sendWidth; j++)
+					for(int j = 0; j < copiedWidth; j++)
 					{
-						newMatrix[i * newMatrixWidth + j + newLeftOffset] = tmp[i * sendWidth + j];
+						newMatrix[i * newMatrixWidth + j + newLeftOffset] = tmp[i * copiedWidth + j];
 					}
 				}
 			}
@@ -210,8 +207,7 @@ exchange_bottom:
 		if(newSolutionI[procI + 1] != oldSolutionI[procI + 1])
 		{
 			int sendHeight = abs(newSolutionI[procI + 1] - oldSolutionI[procI + 1]);
-			int sendWidth = rightOffset - leftOffset;
-			int sendCount = sendHeight * sendWidth;
+			int sendCount = sendHeight * copiedWidth;
 			double* tmp = (double*)malloc(sizeof(double) * sendCount);
 
 			if(newSolutionI[procI + 1] > oldSolutionI[procI + 1])
@@ -222,9 +218,9 @@ exchange_bottom:
 
 				for(int i = 0; i < sendHeight; i++)
 				{
-					for(int j = 0; j < sendWidth; j++)
+					for(int j = 0; j < copiedWidth; j++)
 					{
-						newMatrix[(i + offset) * newMatrixWidth + j + newLeftOffset] = tmp[i * sendWidth + j];
+						newMatrix[(i + offset) * newMatrixWidth + j + newLeftOffset] = tmp[i * copiedWidth + j];
 					}
 				}
 			}
@@ -234,9 +230,9 @@ exchange_bottom:
 
 				for(int i = 0; i < sendHeight; i++)
 				{
-					for(int j = 0; j < sendWidth; j++)
+					for(int j = 0; j < copiedWidth; j++)
 					{
-						tmp[i * sendWidth + j] = oldMatrix[(i + offset) * oldMatrixWidth + j + leftOffset];
+						tmp[i * copiedWidth + j] = oldMatrix[(i + offset) * oldMatrixWidth + j + leftOffset];
 					}
 				}
 						

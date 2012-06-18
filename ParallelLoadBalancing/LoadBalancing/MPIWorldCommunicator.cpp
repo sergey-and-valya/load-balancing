@@ -1,5 +1,4 @@
 #include "MPIWorldCommunicator.h"
-#include <mpi.h>
 
 int MPIWorldCommunicator::Size(int* size)
 {
