@@ -5,13 +5,11 @@
 
 #include "../TestingSystem.h"
 
+#include "utils/TestMPIWorld.h"
 #include "utils/TestCommunicator.h"
 #include "utils/TestInputFile.h"
 #include "utils/TestProblemBuilder.h"
 #include "utils/Assert.h"
-#include <agents.h>
-
-using namespace Concurrency;
 
 void TestingSystemLoadTest()
 {
@@ -163,88 +161,9 @@ void TestingSystemLoadTest()
 	fclose(file);
 }
 
-
-class TestMPIProcessor : public agent
-{
-private:
-	struct Message
-	{
-		Message(void* data, int size)
-			: data(data)
-			, size(size)
-		{
-		}
-
-		void* data;
-		int size;
-		TestMPIProcessor* sender;
-	};
-
-public:
-	typedef std::function<void()> RunFunction;
-
-	TestMPIProcessor(RunFunction runImpl)
-		: m_runImpl(runImpl)
-	{
-	}
-
-	void run()
-	{
-		m_runImpl();
-
-		done();
-	}
-
-	void Send(TestMPIProcessor* target, void* data, int size)
-	{
-		assert(this != target);
-		assert(data != 0);
-		assert(size > 0);
-		e.reset();
-		Message message(data, size);
-		message.sender = this;
-		send(target->buffer, message);
-		e.wait();
-	}
-
-	void Receive(TestMPIProcessor* source, void* data, int size)
-	{
-		std::vector<Message> tmpBuffer;
-		assert(this != source);
-		assert(data != 0);
-		assert(size > 0);
-
-		while(true)
-		{
-			Message message = receive(buffer);
-			if(message.sender == source)
-			{
-				source->e.set();
-				assert(message.size == size);
-				memcpy(data, message.data, size);
-				break;
-			}
-			else
-			{
-				tmpBuffer.push_back(message);
-			}
-		}
-
-		for(auto p = tmpBuffer.begin(); p < tmpBuffer.end(); p++)
-		{
-			buffer.enqueue(*p);
-		}
-	}
-	
-private:
-	RunFunction m_runImpl;
-	unbounded_buffer<Message> buffer;
-	event e;
-};
-
 void TestingSystemStep()
 {
-	int steps = 10;
+	int steps = 1;
 
 	double matrix[] = {
 		5   , 6  , 7   , 11  , 100 , 200 , 305 , 40  ,
@@ -320,124 +239,72 @@ void TestingSystemStep()
 		);
 		
 		auto testingSystems = new TestingSystem*[mpiCommSize];
-		auto processors = new TestMPIProcessor*[mpiCommSize];
+		for(int mpiRank = 0; mpiRank < mpiCommSize; mpiRank++)
+		{
+			testingSystems[mpiRank] = new TestingSystem(f, steps);
+		}
 		
-		for(int procI = 0; procI < bpNumberI + 1; procI++)
-		{
-			for(int procJ = 0; procJ < bpNumberJ + 1; procJ++)
-			{
-				testingSystems[procI * (bpNumberJ + 1) + procJ] = new TestingSystem(f, steps);
-			}
-		}
+		auto _steps = steps;
 
-		for(int step = 0; step < steps; step++)
+		TestMPIWorld world(mpiCommSize, [mpiCommSize, solutionI, solutionJ, bpNumberI, bpNumberJ, testingSystems, matrix, _matrixWidth, _matrixHeight, _steps](IMPICommunicator& comm)
 		{
-			bool isLast = step == steps - 1;
-
-			for(int procI = 0; procI < bpNumberI + 1; procI++)
+			for(int step = 0; step < _steps; step++)
 			{
-				for(int procJ = 0; procJ < bpNumberJ + 1; procJ++)
+				bool isLast = step == _steps - 1;
+
+				int mpiRank;
+				comm.Rank(&mpiRank);
+				
+				int procI = mpiRank / (bpNumberJ + 1);
+				int procJ = mpiRank % (bpNumberJ + 1);
+
+				int localWidth  = solutionJ[procJ + 1] - solutionJ[procJ];
+				int localHeight = solutionI[procI + 1] - solutionI[procI];
+
+				int* time_matrix = new int[localWidth * localHeight];
+				double* local_matrix = new double[localWidth * localHeight];
+				double* new_local_matrix = new double[localWidth * localHeight];
+						
+				int globalOffsetI = solutionI[procI] + 1;
+				int globalOffsetJ = solutionJ[procJ] + 1;
+
+				for(int i = 0; i < localHeight; i++)
 				{
-					int mpiRank = procI * (bpNumberJ + 1) + procJ;
-
-					processors[mpiRank] = new TestMPIProcessor([mpiCommSize, mpiRank, procI, procJ, processors, solutionI, solutionJ, bpNumberI, bpNumberJ, testingSystems, matrix, _matrixWidth, _matrixHeight, isLast]()
+					for(int j = 0; j < localWidth; j++)
 					{
-						auto _mpiCommSize = mpiCommSize;
-						auto _mpiRank = mpiRank;
-						auto _processors = processors;
-
-						auto comm = TestCommunicator(
-							[_mpiCommSize](int* size) -> int
-							{
-								*size = _mpiCommSize;
-								return MPI_SUCCESS;
-							},
-							[_mpiRank](int* rank) -> int
-							{
-								*rank = _mpiRank;
-								return MPI_SUCCESS;
-							},
-							[_mpiRank, _processors](void* buf, int count, MPI_Datatype datatype, int dest, int tag) -> int
-							{
-								_processors[_mpiRank]->Send(_processors[dest], buf, count * sizeof(int));
-								
-								return MPI_SUCCESS;
-							},
-							[_mpiRank, _processors](void* buf, int count, MPI_Datatype datatype, int source, int tag, MPI_Status* status) -> int
-							{
-								_processors[_mpiRank]->Receive(_processors[source], buf, count * sizeof(int));
-								
-								return MPI_SUCCESS;
-							}
-						);
-						
-						int localWidth  = solutionJ[procJ + 1] - solutionJ[procJ];
-						int localHeight = solutionI[procI + 1] - solutionI[procI];
-
-						int* time_matrix = new int[localWidth * localHeight];
-						double* local_matrix = new double[localWidth * localHeight];
-						double* new_local_matrix = new double[localWidth * localHeight];
-						
-						int globalOffsetI = solutionI[procI] + 1;
-						int globalOffsetJ = solutionJ[procJ] + 1;
-
-						for(int i = 0; i < localHeight; i++)
-						{
-							for(int j = 0; j < localWidth; j++)
-							{
-								local_matrix[i * localWidth + j] = matrix[(globalOffsetI + i) * _matrixWidth + j + globalOffsetJ];
-							}
-						}
-
-						bool shouldContinue = testingSystems[mpiRank]->Run(comm, time_matrix, local_matrix, new_local_matrix, solutionI, solutionJ, bpNumberI, bpNumberJ);
-						
-						if(isLast)
-						{
-							assert(!shouldContinue);
-						}
-						else
-						{
-							assert(shouldContinue);
-						}
-
-						for(int i = 0; i < localHeight; i++)
-						{
-							for(int j = 0; j < localWidth; j++)
-							{
-								matrix[(globalOffsetI + i) * _matrixWidth + j + globalOffsetJ] = new_local_matrix[i * localWidth + j];
-							}
-						}
-
-						free(time_matrix);
-						free(local_matrix);
-						free(new_local_matrix);
-					});
+						local_matrix[i * localWidth + j] = matrix[(globalOffsetI + i) * _matrixWidth + j + globalOffsetJ];
+					}
 				}
-			}
-			
-			
-			for(int procI = 0; procI < bpNumberI + 1; procI++)
-			{
-				for(int procJ = 0; procJ < bpNumberJ + 1; procJ++)
+
+				bool shouldContinue = testingSystems[mpiRank]->Run(comm, time_matrix, local_matrix, new_local_matrix, solutionI, solutionJ, bpNumberI, bpNumberJ);
+						
+				if(isLast)
 				{
-					int mpiRank = procI * (bpNumberJ + 1) + procJ;
-					
-					processors[mpiRank]->start();
+					assert(!shouldContinue);
 				}
-			}
-
-			for(int procI = 0; procI < bpNumberI + 1; procI++)
-			{
-				for(int procJ = 0; procJ < bpNumberJ + 1; procJ++)
+				else
 				{
-					int mpiRank = procI * (bpNumberJ + 1) + procJ;
-					
-					agent::wait(processors[mpiRank]);
+					assert(shouldContinue);
 				}
+
+				for(int i = 0; i < localHeight; i++)
+				{
+					for(int j = 0; j < localWidth; j++)
+					{
+						matrix[(globalOffsetI + i) * _matrixWidth + j + globalOffsetJ] = new_local_matrix[i * localWidth + j];
+					}
+				}
+
+				free(time_matrix);
+				free(local_matrix);
+				free(new_local_matrix);
+				
 			}
-		}
+		});
+
+		world.RunAndWait();
 	};
-	
+
 	memcpy(newMatrix_A, matrix, sizeof(double) * matrixWidth * matrixHeight);
 	memcpy(newMatrix_B, matrix, sizeof(double) * matrixWidth * matrixHeight);
 

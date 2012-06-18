@@ -15,11 +15,8 @@
 
 void EnvironmentTest()
 {
-	
 	int localWidth  = 100;
 	int localHeight = 200;
-	int newLocalWidth;
-	int newLocalHeight;
 	
 	int bpNumberI = 10;
 	int bpNumberJ = 5;
@@ -32,9 +29,7 @@ void EnvironmentTest()
 	int step = 0;
 	int steps = 10;
 
-	int state = 0;
-
-	auto env = Environment(true);
+	auto env = Environment(true, false);
 
 	auto comm = TestCommunicator(
 		[bpNumberI, bpNumberJ](int* size) -> int
@@ -60,22 +55,9 @@ void EnvironmentTest()
 	);
 
 	auto lb = TestLoadBalancing(
-		[&state, &newLocalWidth, &newLocalHeight, procI](IMPICommunicator& comm, const int time_matrix[], const int oldSolutionI[], const int oldSolutionJ[], int bpNumberI, int bpNumberJ, int newSolutionI[], int newSolutionJ[])
+		[procI](IMPICommunicator& comm, const int time_matrix[], const int oldSolutionI[], const int oldSolutionJ[], int bpNumberI, int bpNumberJ, int newSolutionI[], int newSolutionJ[])
 		{
-			state = (state + 1) % 2;
-			switch(state)
-			{
-			case 0:
-				{
-					newLocalHeight--;
-					newSolutionI[procI]--;
-					break;
-				}
-			default:
-				{
-					assert(false);
-				}
-			}
+			newSolutionI[procI]--;
 		}
 	);
 	
@@ -108,13 +90,13 @@ void EnvironmentTest()
 				}
 			}
 		},
-		[&step, steps, &localWidth, &localHeight](IMPICommunicator& comm, int time_matrix[], const double matrix[], double new_matrix[], const int solutionI[], const int solutionJ[], int bpNumberI, int bpNumberJ) -> bool
+		[&step, steps, localWidth, localHeight](IMPICommunicator& comm, int time_matrix[], const double matrix[], double new_matrix[], const int solutionI[], const int solutionJ[], int bpNumberI, int bpNumberJ) -> bool
 		{
 			for(int i = 0; i < localHeight; i++)
 			{
 				for(int j = 0; j < localWidth; j++)
 				{
-					assert(matrix[i * localWidth + j] == i * localWidth + j);
+					assert(matrix[i * localWidth + j] == i * localWidth + j + step * (bpNumberI + 1) * (bpNumberJ + 1));
 				}
 			}
 
@@ -123,16 +105,18 @@ void EnvironmentTest()
 				for(int j = 0; j < localWidth; j++)
 				{
 					time_matrix[i * localWidth + j] = i * localWidth + j;
-					time_matrix[i * localWidth + j] = i * localWidth + j;
+					new_matrix[i * localWidth + j]  = i * localWidth + j + (step + 1) * (bpNumberI + 1) * (bpNumberJ + 1);
 				}
 			}
+
 			return ++step < steps;
 		}
 	);
 	
 	auto rb = TestRebalancer(
-		[&localWidth, &localHeight](IMPICommunicator& comm, const int oldSolutionI[], const int oldSolutionJ[], const double oldMatrix[], const int newSolutionI[], const int newSolutionJ[], double newMatrix[], int bpNumberI, int bpNumberJ)
+		[localWidth, localHeight](IMPICommunicator& comm, const int oldSolutionI[], const int oldSolutionJ[], const double oldMatrix[], const int newSolutionI[], const int newSolutionJ[], double newMatrix[], int bpNumberI, int bpNumberJ)
 		{
+			assert(oldSolutionI);
 			for(int i = 0; i < localHeight; i++)
 			{
 				for(int j = 0; j < localWidth; j++)

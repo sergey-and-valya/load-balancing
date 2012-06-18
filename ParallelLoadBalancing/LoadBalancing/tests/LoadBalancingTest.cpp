@@ -329,44 +329,52 @@ void LoadBalancingCentralTest()
 	);
 
 	auto lb = LoadBalancingAlgorithm(accuracy);
-	/*
+	
 	auto time_matrix = new int[8];
 	
 	for(int i = 0; i < 8; i++)
+		time_matrix[i] = 1;
+	
+	/*auto time_matrix = new int[20];
+	
+	for(int i = 0; i < 20; i++)
 		time_matrix[i] = i;*/
-	
-	auto time_matrix = new int[16];
-	
-	for(int i = 0; i < 16; i++)
-		time_matrix[i] = i;
 
 	auto oldSolutionI = new int[3];
 	auto oldSolutionJ = new int[3];	
 	
-	/*oldSolutionI[0] = -1;
+	oldSolutionI[0] = -1;
 	oldSolutionI[1] = 1;
 	oldSolutionI[2] = 5;
 
 	oldSolutionJ[0] = -1;
 	oldSolutionJ[1] = 3;
-	oldSolutionJ[2] = 5;*/
-	oldSolutionI[0] = -1;
+	oldSolutionJ[2] = 5;
+	/*oldSolutionI[0] = -1;
 	oldSolutionI[1] = 3;
 	oldSolutionI[2] = 5;
 
 	oldSolutionJ[0] = -1;
-	oldSolutionJ[1] = 3;
-	oldSolutionJ[2] = 5;
+	oldSolutionJ[1] = 4;
+	oldSolutionJ[2] = 5;*/
 
 	auto newSolutionI = new int[3];
 	auto newSolutionJ = new int[3];
+
+	newSolutionI[0] = -1;
+	newSolutionI[1] = 1;
+	newSolutionI[2] = 5;
+	
+	newSolutionJ[0] = -1;
+	newSolutionJ[1] = 3;
+	newSolutionJ[2] = 5;
 	
 	lb.Run(comm, time_matrix, oldSolutionI, oldSolutionJ, bpNumberI, bpNumberJ, newSolutionI, newSolutionJ);
-
-	assert(oldSolutionI[1] == 3 && oldSolutionJ[1] == 3);
-}
-
-
+	
+	assert(newSolutionI[1] == 2 && newSolutionJ[1] == 2);
+}	
+	
+	
 
 //void LoadBalancingCentralTest()
 //{

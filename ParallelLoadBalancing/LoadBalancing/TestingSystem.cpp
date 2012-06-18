@@ -158,14 +158,12 @@ bool TestingSystem::Run(
 	Global_Sending(comm, col, row, num_processor_col, matrix, top_row,	bottom_row,	left_column, right_column, top_left_corner, top_right_corner, bottom_left_corner, bottom_right_corner);
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	double* tmp_matrix_tmp = new double[row * col];
-	double** matrix_tmp = &new_matrix;
+	double** matrix_tmp = new double*[row];
 	
 	for (int i = 0; i < row; i++)
 	{
-		matrix_tmp[i] = &tmp_matrix_tmp[i * col];
+		matrix_tmp[i] = &new_matrix[i * col];
 	}
-	tmp_matrix_tmp = NULL;
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// высчитываем "внутренность"
@@ -241,6 +239,7 @@ bool TestingSystem::Run(
 	}
 	delete [] arr;
 	delete [] flag_arr;
+	delete [] matrix_tmp;
 
 	return ++step < steps;
 }
@@ -272,7 +271,7 @@ double TestingSystem::func(double **arr, bool **flag_arr, int global_i, int glob
 				count_elem ++;						
 			}
 
-	int count = 1000;
+	int count = 1;
 	for (int k = 0; k < count; k++)
 		for (int i = 0; i < SIZE_BLOCK; i++)
 			for (int j = 0; j < SIZE_BLOCK; j++)

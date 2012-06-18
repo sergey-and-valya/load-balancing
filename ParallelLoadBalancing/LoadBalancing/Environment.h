@@ -6,8 +6,9 @@
 class Environment : public IEnvironment
 {
 public:
-	Environment(bool needLoadBalancing)
+	Environment(bool needLoadBalancing, bool printResults)
 		: needLoadBalancing(needLoadBalancing)
+		, printResults(printResults)
 	{
 	}
 
@@ -15,6 +16,7 @@ public:
 
 private:
 	bool needLoadBalancing;
+	bool printResults;
 };
 
 #endif

@@ -12,51 +12,129 @@
 
 #include <mpi.h>
 #include "tests\Tests.h"
+#include "tests\utils\Testkit.h"
+#include "tests\utils\TestMPIWorld.h"
 
-#define NEEDS_LOAD_BALANCING true
+#include <time.h>
 
-//#define TEST
-
-int main()
+void Usage()
 {
-#ifdef TEST
-	//EnvironmentTest();
+	printf(
+		"loadbalancing [-t] [-e] [-lb] [-p] [-s <steps>] [-a <accuracy>] [-f <matrix-file>]\n"
+		"   -t               - run tests\n"
+		"   -e               - emulate mpi\n"
+		"   -lb              - use load balancing\n"
+		"   -p               - print results\n"
+		"   -s <steps>       - number of steps for test system (default 10)\n"
+		"   -a <accuracy>    - accuracy for load balancing (default 6)\n"
+		"   -f <matrix-file> - used matrix file\n"
+	);
+}
 
-	RebalancerMoveFromLeftTest();
-	RebalancerMoveFromRightTest();
-	RebalancerMoveFromTopTest();
-	RebalancerMoveFromBottomTest();
+int main(int argc, char* argv[])
+{
+	bool runTests         = false;
+	bool useLoadBalancing = false;
+	bool emulate          = false;
+	bool printResults     = false;
+	int steps             = 10;
+	int accuracy          = 6;
+	const char* file      = "C:\\StartMatrix\\matrix_big";
+
+	for(int i = 1; i < argc; i++)
+	{
+		if(strcmp(argv[i], "-t") == 0)
+		{
+			runTests = true;
+		}
+		else if(strcmp(argv[i], "-lb") == 0)
+		{
+			useLoadBalancing = true;
+		}
+		else if(strcmp(argv[i], "-e") == 0)
+		{
+			emulate = true;
+		}
+		else if(strcmp(argv[i], "-p") == 0)
+		{
+			printResults = true;
+		}
+		else if(strcmp(argv[i], "-s") == 0)
+		{
+			steps = atoi(argv[++i]);
+		}
+		else if(strcmp(argv[i], "-a") == 0)
+		{
+			accuracy = atoi(argv[++i]);
+		}
+		else if(strcmp(argv[i], "-f") == 0)
+		{
+			file = argv[++i];
+		}
+		else
+		{
+			Usage();
+			exit(1);
+		}
+	}
+
+	if(runTests)
+	{
+		//TEST(EnvironmentTest);
+
+		TEST(RebalancerMoveFromLeftTest);
+		TEST(RebalancerMoveFromRightTest);
+		TEST(RebalancerMoveFromTopTest);
+		TEST(RebalancerMoveFromBottomTest);
 	
-	RebalancerMoveToLeftTest();
-	RebalancerMoveToRightTest();
-	RebalancerMoveToTopTest();
-	RebalancerMoveToBottomTest();
+		TEST(RebalancerMoveToLeftTest);
+		TEST(RebalancerMoveToRightTest);
+		TEST(RebalancerMoveToTopTest);
+		TEST(RebalancerMoveToBottomTest);
 
-	RebalancerNoMoveTest();
+		TEST(RebalancerNoMoveTest);
 	
-	RebalancerMoveFromLeftFromTopTest();
+		TEST(RebalancerMoveFromLeftFromTopTest);
 
-	LoadBalancingTest();
-	LoadBalancingCentralTest();
+		TEST(TestingSystemStep);
+		TEST(TestingSystemLoadTest);
 
-	TestingSystemStep();
-	TestingSystemLoadTest();
+		TEST(LoadBalancingTest);
+		TEST(LoadBalancingCentralTest);
+	}
+	else if(emulate)
+	{
+		clock_t start_time = clock();
+		TestMPIWorld world(2 * 2, [useLoadBalancing, accuracy, steps, printResults, file](IMPICommunicator& comm)
+		{
+			auto lb = LoadBalancingAlgorithm(accuracy);
+			auto rb = Rebalancer();
+			auto f = BinaryFile(file);
+			auto ts = TestingSystem(f, steps);
+			auto env = Environment(useLoadBalancing, printResults);
+
+			env.Run(comm, ts, lb, rb);
+		});
+
+		world.RunAndWait();
 	
-#else
-
-	MPI_Init(NULL, NULL);
+		printf("with%s load balancing %f\n", useLoadBalancing ? "" : "out", (float)(clock() - start_time) / CLOCKS_PER_SEC);
+	}
+	else
+	{
+		MPI_Init(NULL, NULL);
 	
-	auto lb = LoadBalancingAlgorithm(6);
-	auto rb = Rebalancer();
-	auto f = BinaryFile("C:\\StartMatrix\\matrix");
-	auto ts = TestingSystem(f, 10);
-	auto comm = MPIWorldCommunicator();
-	auto env = Environment(NEEDS_LOAD_BALANCING);
+		auto lb = LoadBalancingAlgorithm(accuracy);
+		auto rb = Rebalancer();
+		auto f = BinaryFile(file);
+		auto ts = TestingSystem(f, steps);
+		auto comm = MPIWorldCommunicator();
+		auto env = Environment(useLoadBalancing, printResults);
 
-	env.Run(comm, ts, lb, rb);
+		env.Run(comm, ts, lb, rb);
 
-	MPI_Finalize();
+		MPI_Finalize();
+	}
 
-#endif
 	return 0;
 }

@@ -1,8 +1,8 @@
 #ifndef _ASSERT_H
 #define _ASSERT_H
 
-#include <stdlib.h>
+void __fail(const char* file, int line);
 
-#define assert(x) { if(!(x)) { printf("test failed at %s:%d\n", __FILE__, __LINE__); exit(0); } }
+#define assert(x) { if(!(x)) __fail(__FILE__, __LINE__); }
 
 #endif

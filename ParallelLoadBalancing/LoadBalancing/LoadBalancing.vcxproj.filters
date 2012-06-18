@@ -96,6 +96,12 @@
     <ClInclude Include="tests\utils\TestInputFile.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
+    <ClInclude Include="tests\utils\Testkit.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="tests\utils\TestMPIWorld.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -131,5 +137,23 @@
     <ClCompile Include="tests\EnvironmentTest.cpp">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
+    <ClCompile Include="tests\utils\Testkit.cpp">
+      <Filter>Файлы исходного кода</Filter>
+    </ClCompile>
+    <ClCompile Include="tests\utils\TestMPIWorld.cpp">
+      <Filter>Файлы исходного кода</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\matrix" />
+    <None Include="res\testmatrix.txt" />
+    <None Include="res\matrix.txt" />
+    <None Include="res\matrix2" />
+    <None Include="res\matrix2.txt" />
+    <None Include="res\matrix3" />
+    <None Include="res\matrix3.txt" />
+    <None Include="res\matrix_big" />
+    <None Include="res\matrix_G1" />
+    <None Include="res\readme.txt" />
   </ItemGroup>
 </Project>

@@ -323,7 +323,7 @@ exchange_right_bottom:
 			int sendCount = sendWidth * sendHeight;
 			double* tmp = (double*)malloc(sizeof(double) * sendCount);
 
-			if(newSolutionJ[procJ + 1] > oldSolutionJ[procJ + 1] && newSolutionI[procI + 1] > oldSolutionI[procI + 1])
+			if(newSolutionJ[procJ + 1] < oldSolutionJ[procJ + 1] && newSolutionI[procI + 1] < oldSolutionI[procI + 1])
 			{
 				int offsetJ = oldMatrixWidth - sendWidth;
 				int offsetI = oldMatrixHeight - sendHeight;
@@ -382,14 +382,14 @@ end_lefttop_rightbottom_exchange:;
 		}
 
 exchange_right_top:
-		if((newSolutionJ[procJ + 1] - oldSolutionJ[procJ + 1]) * (newSolutionI[procI] - oldSolutionI[procI]) > 0)
+		if((newSolutionJ[procJ + 1] - oldSolutionJ[procJ + 1]) * (newSolutionI[procI] - oldSolutionI[procI]) < 0)
 		{
 			int sendWidth = abs(newSolutionJ[procJ + 1] - oldSolutionJ[procJ + 1]);
 			int sendHeight = abs(newSolutionI[procI] - oldSolutionI[procI]);
 			int sendCount = sendWidth * sendHeight;
 			double* tmp = (double*)malloc(sizeof(double) * sendCount);
 
-			if(newSolutionJ[procJ + 1] > oldSolutionJ[procJ + 1] && newSolutionI[procI] > oldSolutionI[procI])
+			if(newSolutionJ[procJ + 1] < oldSolutionJ[procJ + 1] && newSolutionI[procI] > oldSolutionI[procI])
 			{
 				int offsetJ = oldMatrixWidth - sendWidth;
 						
@@ -431,14 +431,14 @@ exchange_right_top:
 		}
 
 exchange_left_bottom:
-		if((newSolutionJ[procJ] - oldSolutionJ[procJ]) * (newSolutionI[procI + 1] - oldSolutionI[procI + 1]) > 0)
+		if((newSolutionJ[procJ] - oldSolutionJ[procJ]) * (newSolutionI[procI + 1] - oldSolutionI[procI + 1]) < 0)
 		{
 			int sendWidth = abs(newSolutionJ[procJ] - oldSolutionJ[procJ]);
 			int sendHeight = abs(newSolutionI[procI + 1] - oldSolutionI[procI + 1]);
 			int sendCount = sendWidth * sendHeight;
 			double* tmp = (double*)malloc(sizeof(double) * sendCount);
 
-			if(newSolutionJ[procJ] > oldSolutionJ[procJ] && newSolutionI[procI + 1] > oldSolutionI[procI + 1])
+			if(newSolutionJ[procJ] > oldSolutionJ[procJ] && newSolutionI[procI + 1] < oldSolutionI[procI + 1])
 			{
 				int offsetI = oldMatrixHeight - sendHeight;
 

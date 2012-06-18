@@ -37,17 +37,69 @@ void Environment::Run(IMPICommunicator& comm, ITestingSystem& ts, ILoadBalancing
 	matrix[(currentMatrix + 1) % 2] = (double*)malloc(sizeof(double) * matrixHeight * matrixWidth);
 	int *time_matrix = (int*)malloc(sizeof(int) * matrixHeight * matrixWidth);
 
-	while(true)
+	while(ts.Run(comm, time_matrix, matrix[currentMatrix], matrix[(currentMatrix + 1) % 2], solutionI[currentSolution], solutionJ[currentSolution], bpNumberI, bpNumberJ))
 	{
-		ts.Run(comm, time_matrix, matrix[currentMatrix], matrix[(currentMatrix + 1) % 2], solutionI[currentSolution], solutionJ[currentSolution], bpNumberI, bpNumberJ);
-	
 		currentMatrix = (currentMatrix + 1) % 2;
+
+		if(printResults)
+		{
+			int _;
+
+			if(procJ == 0)
+			{
+				if(procI > 0)
+				{
+					comm.Recv(&_, 1, MPI_INTEGER, mpi_rank - 1, 0, NULL);
+				}
+				else
+				{
+					printf("before\n");
+				}
+			}
+
+			for(int i = 0; i < matrixHeight; i++)
+			{
+				if(procJ > 0)
+				{
+					comm.Recv(&_, 1, MPI_INTEGER, mpi_rank - 1, 0, NULL);
+				}
+				else if(i > 0)
+				{
+					comm.Recv(&_, 1, MPI_INTEGER, mpi_rank + bpNumberJ, 0, NULL);
+				}
+
+				for(int j = 0; j < matrixWidth; j++)
+				{
+					printf("%-8lg ", matrix[currentMatrix][i * matrixWidth + j]);
+				}
+	
+				if(procJ < bpNumberJ)
+				{
+					comm.Send(&_, 1, MPI_INTEGER, mpi_rank + 1, 0);
+				}
+				else
+				{
+					printf("\n");
+				
+					if(i < matrixHeight - 1)
+					{
+				
+						comm.Send(&_, 1, MPI_INTEGER, mpi_rank - bpNumberJ, 0);
+					}
+				}
+			}
+	
+			if(procI < bpNumberI && procJ == bpNumberJ)
+			{
+				comm.Send(&_, 1, MPI_INTEGER, mpi_rank + 1, 0);
+			}
+		}
 
 		if(needLoadBalancing)
 		{
 			int newSolution = (currentSolution + 1) % 2;
 			memcpy(solutionI[newSolution], solutionI[currentSolution], (bpNumberI + 2) * sizeof(int));
-			memcpy(solutionJ[newSolution], solutionJ[currentSolution], (bpNumberI + 2) * sizeof(int));
+			memcpy(solutionJ[newSolution], solutionJ[currentSolution], (bpNumberJ + 2) * sizeof(int));
 
 			lb.Run(comm,
 				time_matrix,
@@ -56,6 +108,9 @@ void Environment::Run(IMPICommunicator& comm, ITestingSystem& ts, ILoadBalancing
 				solutionI[newSolution], solutionJ[newSolution]
 				);
 			
+			printf("%d %d\n", solutionI[currentSolution][1], solutionJ[currentSolution][1]);
+			printf("%d %d\n", solutionI[newSolution][1],     solutionJ[newSolution][1]);
+
 			int newMatrix = (currentMatrix + 1) % 2;
 			int newMatrixHeight = solutionI[newSolution][procI + 1] - solutionI[newSolution][procI];
 			int newMatrixWidth = solutionJ[newSolution][procJ + 1] - solutionJ[newSolution][procJ];
@@ -74,9 +129,67 @@ void Environment::Run(IMPICommunicator& comm, ITestingSystem& ts, ILoadBalancing
 				matrix[currentMatrix] = (double*)realloc(matrix[currentMatrix], sizeof(double) * newMatrixHeight * newMatrixWidth);
 				time_matrix           = (int*)realloc(time_matrix,              sizeof(int)    * newMatrixHeight * newMatrixWidth);
 			}
+			
+			matrixWidth   = newMatrixWidth;
+			matrixHeight  = newMatrixHeight;
+			currentMatrix = newMatrix;
+			
+			if(printResults)
+			{
+				int _;
+
+				if(procJ == 0)
+				{
+					if(procI > 0)
+					{
+						comm.Recv(&_, 1, MPI_INTEGER, mpi_rank - 1, 0, NULL);
+					}
+					else
+					{
+						printf("after\n");
+					}
+				}
+	
+				for(int i = 0; i < matrixHeight; i++)
+				{
+					if(procJ > 0)
+					{
+						comm.Recv(&_, 1, MPI_INTEGER, mpi_rank - 1, 0, NULL);
+					}
+					else if(i > 0)
+					{
+						comm.Recv(&_, 1, MPI_INTEGER, mpi_rank + bpNumberJ, 0, NULL);
+					}
+
+					for(int j = 0; j < matrixWidth; j++)
+					{
+						printf("%-8lg ", matrix[currentMatrix][i * matrixWidth + j]);
+					}
+	
+					if(procJ < bpNumberJ)
+					{
+						comm.Send(&_, 1, MPI_INTEGER, mpi_rank + 1, 0);
+					}
+					else
+					{
+						printf("\n");
+				
+						if(i < matrixHeight - 1)
+						{
+				
+							comm.Send(&_, 1, MPI_INTEGER, mpi_rank - bpNumberJ, 0);
+						}
+					}
+				}
+	
+				if(procI < bpNumberI && procJ == bpNumberJ)
+				{
+					comm.Send(&_, 1, MPI_INTEGER, mpi_rank + 1, 0);
+				}
+			}
 		}
 	}
-	
+
 	free(solutionI[0]);
 	free(solutionJ[0]);
 	free(solutionI[1]);

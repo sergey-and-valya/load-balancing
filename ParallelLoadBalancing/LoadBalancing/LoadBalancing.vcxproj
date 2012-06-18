@@ -98,12 +98,14 @@
     <ClInclude Include="BinaryFile.h" />
     <ClInclude Include="tests\LoadBalancingTest.h" />
     <ClInclude Include="tests\RebalancerTest.h" />
+    <ClInclude Include="tests\utils\TestMPIWorld.h" />
     <ClInclude Include="tests\utils\TestInputFile.h" />
     <ClInclude Include="tests\utils\TestProblemBuilder.h" />
     <ClInclude Include="tests\utils\TestRebalancer.h" />
     <ClInclude Include="tests\Tests.h" />
     <ClInclude Include="tests\TestingSystemTest.h" />
     <ClInclude Include="tests\utils\TestCommunicator.h" />
+    <ClInclude Include="tests\utils\Testkit.h" />
     <ClInclude Include="tests\utils\TestTestingSystem.h" />
     <ClInclude Include="tests\utils\TestLoadBalancing.h" />
     <ClInclude Include="tests\utils\Assert.h" />
@@ -120,6 +122,30 @@
     <ClCompile Include="tests\LoadBalancingTest.cpp" />
     <ClCompile Include="tests\TestingSystemTest.cpp" />
     <ClCompile Include="tests\RebalancerTest.cpp" />
+    <ClCompile Include="tests\utils\TestMPIWorld.cpp" />
+    <ClCompile Include="tests\utils\Testkit.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\matrix">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="res\matrix.txt" />
+    <None Include="res\matrix2">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="res\matrix2.txt" />
+    <None Include="res\matrix3">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="res\matrix3.txt" />
+    <None Include="res\matrix_big">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="res\matrix_G1">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="res\readme.txt" />
+    <None Include="res\testmatrix.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
