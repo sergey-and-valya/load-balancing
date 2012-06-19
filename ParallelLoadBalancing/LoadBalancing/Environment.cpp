@@ -1,6 +1,7 @@
 #include "Environment.h"
 
 #include "ProblemBuilder.h"
+#include "Utils.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -42,60 +43,6 @@ void Environment::Run(IMPICommunicator& comm, ITestingSystem& ts, ILoadBalancing
 	{
 		currentMatrix = (currentMatrix + 1) % 2;
 
-		if(printResults)
-		{
-			int _;
-
-			if(procJ == 0)
-			{
-				if(procI > 0)
-				{
-					comm.Recv(&_, 1, MPI_INTEGER, mpi_rank - 1, 0, NULL);
-				}
-				else
-				{
-					printf("before\n");
-				}
-			}
-
-			for(int i = 0; i < matrixHeight; i++)
-			{
-				if(procJ > 0)
-				{
-					comm.Recv(&_, 1, MPI_INTEGER, mpi_rank - 1, 0, NULL);
-				}
-				else if(i > 0)
-				{
-					comm.Recv(&_, 1, MPI_INTEGER, mpi_rank + bpNumberJ, 0, NULL);
-				}
-
-				for(int j = 0; j < matrixWidth; j++)
-				{
-					printf("%-8lg ", matrix[currentMatrix][i * matrixWidth + j]);
-				}
-	
-				if(procJ < bpNumberJ)
-				{
-					comm.Send(&_, 1, MPI_INTEGER, mpi_rank + 1, 0);
-				}
-				else
-				{
-					printf("\n");
-				
-					if(i < matrixHeight - 1)
-					{
-				
-						comm.Send(&_, 1, MPI_INTEGER, mpi_rank - bpNumberJ, 0);
-					}
-				}
-			}
-	
-			if(procI < bpNumberI && procJ == bpNumberJ)
-			{
-				comm.Send(&_, 1, MPI_INTEGER, mpi_rank + 1, 0);
-			}
-		}
-
 		if(needLoadBalancing)
 		{
 			int newSolution = (currentSolution + 1) % 2;
@@ -131,61 +78,13 @@ void Environment::Run(IMPICommunicator& comm, ITestingSystem& ts, ILoadBalancing
 			matrixWidth   = newMatrixWidth;
 			matrixHeight  = newMatrixHeight;
 			currentMatrix = newMatrix;
-			
-			if(printResults)
-			{
-				int _;
-
-				if(procJ == 0)
-				{
-					if(procI > 0)
-					{
-						comm.Recv(&_, 1, MPI_INTEGER, mpi_rank - 1, 0, NULL);
-					}
-					else
-					{
-						printf("after\n");
-					}
-				}
-	
-				for(int i = 0; i < matrixHeight; i++)
-				{
-					if(procJ > 0)
-					{
-						comm.Recv(&_, 1, MPI_INTEGER, mpi_rank - 1, 0, NULL);
-					}
-					else if(i > 0)
-					{
-						comm.Recv(&_, 1, MPI_INTEGER, mpi_rank + bpNumberJ, 0, NULL);
-					}
-
-					for(int j = 0; j < matrixWidth; j++)
-					{
-						printf("%-8lg ", matrix[currentMatrix][i * matrixWidth + j]);
-					}
-	
-					if(procJ < bpNumberJ)
-					{
-						comm.Send(&_, 1, MPI_INTEGER, mpi_rank + 1, 0);
-					}
-					else
-					{
-						printf("\n");
-				
-						if(i < matrixHeight - 1)
-						{
-				
-							comm.Send(&_, 1, MPI_INTEGER, mpi_rank - bpNumberJ, 0);
-						}
-					}
-				}
-	
-				if(procI < bpNumberI && procJ == bpNumberJ)
-				{
-					comm.Send(&_, 1, MPI_INTEGER, mpi_rank + 1, 0);
-				}
-			}
 		}
+	}
+
+	
+	if(printResults)
+	{
+		PrintDistributedMatrix(comm, bpNumberI, bpNumberJ, matrix[currentMatrix], matrixWidth, matrixHeight);
 	}
 
 	free(solutionI[0]);

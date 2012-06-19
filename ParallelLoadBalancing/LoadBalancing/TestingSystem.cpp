@@ -111,16 +111,9 @@ bool TestingSystem::Run(
 	int procJ = mpi_rank % num_processor_col;
 
 	
-	int global_index_i = solutionI[procI];
-	int global_index_j = solutionJ[procJ];
-	if (global_index_i == -1)
-	{
-		global_index_i = 0;
-	}
-	if (global_index_j == -1)
-	{
-		global_index_j = 0;
-	}
+	int global_index_i = solutionI[procI] + 1;
+	int global_index_j = solutionJ[procJ] + 1;
+
 	int col = solutionJ[procJ + 1] - solutionJ[procJ];
 	int row = solutionI[procI + 1] - solutionI[procI];
 
@@ -159,14 +152,6 @@ bool TestingSystem::Run(
 	Global_Sending(comm, col, row, num_processor_col, matrix, top_row,	bottom_row,	left_column, right_column, top_left_corner, top_right_corner, bottom_left_corner, bottom_right_corner);
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	double** matrix_tmp = new double*[row];
-	
-	for (int i = 0; i < row; i++)
-	{
-		matrix_tmp[i] = &new_matrix[i * col];
-	}
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// высчитываем "внутренность"
 	for (int i = 1; i < row - 1; i++)
 	{
@@ -175,7 +160,7 @@ bool TestingSystem::Run(
 			start_time = clock();
 			// формируем нужный нам массив
 			CreateArr(matrix, col, arr, i, j);			
-			matrix_tmp[i][j] = func(arr, flag_arr, global_index_i + i, global_index_j + j);
+			new_matrix[i * col + j] = func(arr, flag_arr, global_index_i + i, global_index_j + j);
 			finish_time = clock();
 			time_matrix[i * col + j] = (int)(finish_time - start_time);
 		}
@@ -188,7 +173,7 @@ bool TestingSystem::Run(
 	{
 		CreateArrSide(comm, col, row, num_processor_col, num_processor_row, matrix, arr, flag_arr, i, j, top_row,	bottom_row,	left_column, right_column, top_left_corner, top_right_corner, bottom_left_corner, bottom_right_corner);
 		start_time = clock();
-		matrix_tmp[i][j] = func(arr, flag_arr, global_index_i + i, global_index_j + j);
+		new_matrix[i * col + j] = func(arr, flag_arr, global_index_i + i, global_index_j + j);
 		finish_time = clock();
 		time_matrix[i * col + j] = (int)(finish_time - start_time);
 	}
@@ -199,7 +184,7 @@ bool TestingSystem::Run(
 	{
 		CreateArrSide(comm, col, row, num_processor_col, num_processor_row, matrix, arr, flag_arr, i, j, top_row,	bottom_row,	left_column, right_column, top_left_corner, top_right_corner, bottom_left_corner, bottom_right_corner);
 		start_time = clock();
-		matrix_tmp[i][j] = func(arr, flag_arr, global_index_i + i, global_index_j + j);
+		new_matrix[i * col + j] = func(arr, flag_arr, global_index_i + i, global_index_j + j);
 		finish_time = clock();
 		time_matrix[i * col + j] = (int)(finish_time - start_time);
 	}
@@ -210,7 +195,7 @@ bool TestingSystem::Run(
 	{
 		CreateArrSide(comm, col, row, num_processor_col, num_processor_row, matrix, arr, flag_arr, i, j, top_row,	bottom_row,	left_column, right_column, top_left_corner, top_right_corner, bottom_left_corner, bottom_right_corner);
 		start_time = clock();
-		matrix_tmp[i][j] = func(arr, flag_arr, global_index_i + i, global_index_j + j);
+		new_matrix[i * col + j] = func(arr, flag_arr, global_index_i + i, global_index_j + j);
 		finish_time = clock();
 		time_matrix[i * col + j] = (int)(finish_time - start_time);
 	}
@@ -221,7 +206,7 @@ bool TestingSystem::Run(
 	{
 		CreateArrSide(comm, col, row, num_processor_col, num_processor_row, matrix, arr, flag_arr, i, j, top_row,	bottom_row,	left_column, right_column, top_left_corner, top_right_corner, bottom_left_corner, bottom_right_corner);
 		start_time = clock();
-		matrix_tmp[i][j] = func(arr, flag_arr, global_index_i + i, global_index_j + j);
+		new_matrix[i * col + j] = func(arr, flag_arr, global_index_i + i, global_index_j + j);
 		finish_time = clock();
 		time_matrix[i * col + j] = (int)(finish_time - start_time);
 	}
@@ -240,7 +225,6 @@ bool TestingSystem::Run(
 	}
 	delete [] arr;
 	delete [] flag_arr;
-	delete [] matrix_tmp;
 
 	return ++step < steps;
 }
@@ -272,7 +256,8 @@ double TestingSystem::func(double **arr, bool **flag_arr, int global_i, int glob
 				count_elem ++;						
 			}
 
-	int count = 1;
+	int count = 1 + (LIMIT(arr[SIZE_BLOCK / 2][SIZE_BLOCK / 2] / 2.0, 1.0)) * 3;
+	
 	for (int k = 0; k < count; k++)
 		for (int i = 0; i < SIZE_BLOCK; i++)
 			for (int j = 0; j < SIZE_BLOCK; j++)
@@ -560,7 +545,7 @@ void TestingSystem::Global_Sending(
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	bottom_row_send = matrix + row - 1; // Нижняя строчка
+	bottom_row_send = matrix + (row - 1) * col; // Нижняя строчка
 
 	if (mpi_rank >= mpi_size - num_processor_col) 
 		// процессорам последней блок-строки нужно только получить верхнюю строчку

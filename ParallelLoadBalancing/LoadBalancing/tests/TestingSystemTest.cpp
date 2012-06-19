@@ -4,6 +4,7 @@
 #include "../IMPICommunicator.h"
 
 #include "../TestingSystem.h"
+#include "../Utils.h"
 
 #include "utils/TestMPIWorld.h"
 #include "utils/TestCommunicator.h"
@@ -167,7 +168,7 @@ void TestingSystemStep()
 
 	double matrix[] = {
 		5   , 6  , 7   , 11  , 100 , 200 , 305 , 40  ,
-		4   , 15 , 23  , 44  , 5   , 6   , 8   , 100 ,
+		4   , 99 , 23  , 44  , 5   , 6   , 8   , 100 ,
 		1   , 0  , 156 , 346 , 67  , 5   , 46  , 55	 ,
 		500 , 30 , 56  , 89  , 65  , 12  , 4   , 8	 ,
 		3   , 45 , 67  , 78  , 888 , 567 , 16  , 900 ,
@@ -178,6 +179,9 @@ void TestingSystemStep()
 	int matrixWidth = 8;
 	int matrixHeight = 7;
 
+	double* newMatrix_A = new double[matrixWidth * matrixHeight];
+	double* newMatrix_B = new double[matrixWidth * matrixHeight];
+	
 	// случай A
 	//  5    6  | 7    11   100 | 200  305  40
 	//  4    15 | 23   44   5   | 6    8    100
@@ -196,8 +200,6 @@ void TestingSystemStep()
 	int solutionI_A[] = {-1, 1, 4, 6};
 	int solutionJ_A[] = {-1, 1, 4, 7};
 	
-	double* newMatrix_A = new double[matrixWidth * matrixHeight];
-	double* newMatrix_B = new double[matrixWidth * matrixHeight];
 	
 
 	
@@ -238,26 +240,20 @@ void TestingSystemStep()
 			}
 		);
 		
-		auto testingSystems = new TestingSystem*[mpiCommSize];
-		for(int mpiRank = 0; mpiRank < mpiCommSize; mpiRank++)
-		{
-			testingSystems[mpiRank] = new TestingSystem(f, steps);
-		}
-		
 		auto _steps = steps;
+		auto _f = f;
 
-		TestMPIWorld world(mpiCommSize, [mpiCommSize, solutionI, solutionJ, bpNumberI, bpNumberJ, testingSystems, matrix, _matrixWidth, _matrixHeight, _steps](IMPICommunicator& comm)
+		TestMPIWorld world(mpiCommSize, [mpiCommSize, solutionI, solutionJ, bpNumberI, bpNumberJ, &_f, matrix, _matrixWidth, _matrixHeight, _steps](IMPICommunicator& comm)
 		{
+			auto ts = TestingSystem(_f, _steps);
+			int mpiRank;
+			comm.Rank(&mpiRank);
+				
+			int procI = mpiRank / (bpNumberJ + 1);
+			int procJ = mpiRank % (bpNumberJ + 1);
+
 			for(int step = 0; step < _steps; step++)
 			{
-				bool isLast = step == _steps - 1;
-
-				int mpiRank;
-				comm.Rank(&mpiRank);
-				
-				int procI = mpiRank / (bpNumberJ + 1);
-				int procJ = mpiRank % (bpNumberJ + 1);
-
 				int localWidth  = solutionJ[procJ + 1] - solutionJ[procJ];
 				int localHeight = solutionI[procI + 1] - solutionI[procI];
 
@@ -276,9 +272,9 @@ void TestingSystemStep()
 					}
 				}
 
-				bool shouldContinue = testingSystems[mpiRank]->Run(comm, time_matrix, local_matrix, new_local_matrix, solutionI, solutionJ, bpNumberI, bpNumberJ);
+				bool shouldContinue = ts.Run(comm, time_matrix, local_matrix, new_local_matrix, solutionI, solutionJ, bpNumberI, bpNumberJ);
 						
-				if(isLast)
+				if(step == _steps - 1)
 				{
 					assert(!shouldContinue);
 				}
@@ -310,7 +306,6 @@ void TestingSystemStep()
 
 	run(bpNumberI_A, bpNumberJ_A, solutionI_A, solutionJ_A, newMatrix_A);
 	run(bpNumberI_B, bpNumberJ_B, solutionI_B, solutionJ_B, newMatrix_B);
-	
 	
 	for(int i = 0; i < matrixHeight; i++)
 	{

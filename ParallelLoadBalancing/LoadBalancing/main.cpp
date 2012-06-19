@@ -19,11 +19,12 @@
 void Usage()
 {
 	printf(
-		"loadbalancing [-t] [-lb] [-p] [-s <steps>] [-a <accuracy>] [-f <matrix-file>]\n"
+		"loadbalancing [-t] [-lb] [-p] [-s <steps>] [-w <world-size>] [-a <accuracy>] [-f <matrix-file>]\n"
 		"   -t               - run tests (default false)\n"
 		"   -lb              - use load balancing (default false)\n"
 		"   -p               - print results (default false)\n"
 		"   -s <steps>       - number of steps for test system (default 10)\n"
+		"   -w <world-size>  - number of emulated processors (default 4)\n"
 		"   -a <accuracy>    - accuracy for load balancing (default 6)\n"
         "   -f <matrix-file> - used matrix file (default matrix_big)\n"
 	);
@@ -36,6 +37,7 @@ int main(int argc, char* argv[])
 	bool printResults     = false;
 	int steps             = 10;
 	int accuracy          = 6;
+	int world_size        = 4;
 	const char* file      = "matrix_big";
 
 	for(int i = 1; i < argc; i++)
@@ -59,6 +61,10 @@ int main(int argc, char* argv[])
 		else if(strcmp(argv[i], "-a") == 0)
 		{
 			accuracy = atoi(argv[++i]);
+		}
+		else if(strcmp(argv[i], "-w") == 0)
+		{
+			world_size = atoi(argv[++i]);
 		}
 		else if(strcmp(argv[i], "-f") == 0)
 		{
@@ -88,7 +94,7 @@ int main(int argc, char* argv[])
 		TEST(RebalancerNoMoveTest);
 	
 		TEST(RebalancerMoveFromLeftFromTopTest);
-
+		
 		TEST(TestingSystemStep);
 		TEST(TestingSystemLoadTest);
 
@@ -99,7 +105,7 @@ int main(int argc, char* argv[])
     {
 #ifdef EMULATE_MPI
 	    clock_t start_time = clock();
-	    TestMPIWorld world(2 * 2, [useLoadBalancing, accuracy, steps, printResults, file](IMPICommunicator& comm)
+	    TestMPIWorld world(world_size, [useLoadBalancing, accuracy, steps, printResults, file](IMPICommunicator& comm)
 	    {
 		    auto lb = LoadBalancingAlgorithm(accuracy);
 		    auto rb = Rebalancer();

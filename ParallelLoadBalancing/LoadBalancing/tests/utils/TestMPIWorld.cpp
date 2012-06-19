@@ -42,9 +42,6 @@ public:
 
 	void Send(TestMPIProcessor* target, void* data, int size)
 	{
-		assert(this != target);
-		assert(data != 0);
-		assert(size > 0);
 		e.reset();
 		Message message(data, size);
 		message.sender = this;
@@ -55,9 +52,6 @@ public:
 	void Receive(TestMPIProcessor* source, void* data, int size)
 	{
 		std::vector<Message> tmpBuffer;
-		assert(this != source);
-		assert(data != 0);
-		assert(size > 0);
 
 		while(true)
 		{
@@ -117,9 +111,15 @@ void TestMPIWorld::RunAndWait()
 					*rank = _mpiRank;
 					return MPI_SUCCESS;
 				},
-				[_mpiRank, _processors](void* buf, int count, MPI_Datatype datatype, int dest, int tag) -> int
+				[_mpiRank, _mpiCommSize, _processors](void* buf, int count, MPI_Datatype datatype, int dest, int tag) -> int
 				{
-                    int size;
+					assert(buf != 0);
+					assert(count > 0);				
+					assert(dest != _mpiRank);
+					assert(dest >= 0);
+					assert(dest < _mpiCommSize);
+                    
+					int size;
 
                     switch(datatype)
                     {
@@ -138,9 +138,15 @@ void TestMPIWorld::RunAndWait()
 								
 					return MPI_SUCCESS;
 				},
-				[_mpiRank, _processors](void* buf, int count, MPI_Datatype datatype, int source, int tag, MPI_Status* status) -> int
+				[_mpiRank, _mpiCommSize, _processors](void* buf, int count, MPI_Datatype datatype, int source, int tag, MPI_Status* status) -> int
 				{
-                    int size;
+					assert(buf != 0);
+					assert(count > 0);				
+					assert(source != _mpiRank);
+					assert(source >= 0);
+					assert(source < _mpiCommSize);
+                    
+					int size;
 
                     switch(datatype)
                     {
@@ -154,7 +160,7 @@ void TestMPIWorld::RunAndWait()
                         assert(false);
                         break;
                     }
-
+					
 					_processors[_mpiRank]->Receive(_processors[source], buf, count * size);
 								
 					return MPI_SUCCESS;
