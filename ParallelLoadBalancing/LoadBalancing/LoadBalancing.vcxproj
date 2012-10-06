@@ -81,16 +81,19 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Program Files %28x86%29\MPICH2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\..\thirdparty\lua5.2\include;C:\Program Files %28x86%29\MPICH2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <UndefinePreprocessorDefinitions>
       </UndefinePreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Program Files %28x86%29\MPICH2\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>mpi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\..\thirdparty\lua5.2;C:\Program Files %28x86%29\MPICH2\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>liblua52.a;mpi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>copy /Y  "$(SolutionDir)..\thirdparty\lua5.2\lua52.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Debug|Win32'">
     <ClCompile>
@@ -99,23 +102,23 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>EMULATE_MPI;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>
-      </AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\..\thirdparty\lua5.2\include;</AdditionalIncludeDirectories>
       <UndefinePreprocessorDefinitions>
       </UndefinePreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>
-      </AdditionalLibraryDirectories>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\..\thirdparty\lua5.2;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>liblua52.a;</AdditionalDependencies>
     </Link>
     <CustomBuild>
       <Command>copy /Y "%(FullPath)" "$(OutputPath)%(Filename)"</Command>
       <Outputs>$(OutputPath)%(Filename)</Outputs>
     </CustomBuild>
+    <PostBuildEvent>
+      <Command>copy /Y  "$(SolutionDir)..\thirdparty\lua5.2\lua52.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -126,16 +129,19 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Program Files %28x86%29\MPICH2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\..\thirdparty\lua5.2\include;C:\Program Files %28x86%29\MPICH2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>C:\Program Files %28x86%29\MPICH2\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>mpi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\..\thirdparty\lua5.2;C:\Program Files %28x86%29\MPICH2\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>liblua52.a;mpi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>copy /Y  "$(SolutionDir)..\thirdparty\lua5.2\lua52.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Release|Win32'">
     <ClCompile>
@@ -146,19 +152,19 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>EMULATE_MPI;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>
-      </AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\..\thirdparty\lua5.2\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>
-      </AdditionalLibraryDirectories>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\..\thirdparty\lua5.2;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>liblua52.a;</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>copy /Y  "$(SolutionDir)..\thirdparty\lua5.2\lua52.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Environment.h" />
@@ -214,61 +220,72 @@
   <ItemGroup>
     <CustomBuild Include="res\matrix">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Debug|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Release|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)"</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutputPath)%(Filename)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutputPath)%(Filename)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Debug|Win32'">$(OutputPath)%(Filename)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Release|Win32'">$(OutputPath)%(Filename)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)%(Extension)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)%(Extension)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Debug|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)%(Extension)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Release|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)%(Extension)"</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutputPath)%(Filename)%(Extension)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutputPath)%(Filename)%(Extension)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Debug|Win32'">$(OutputPath)%(Filename)%(Extension)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Release|Win32'">$(OutputPath)%(Filename)%(Extension)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="config.default.lua">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)%(Extension)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Debug|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)%(Extension)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Release|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)%(Extension)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)%(Extension)"</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutputPath)%(Filename)%(Extension)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Debug|Win32'">$(OutputPath)%(Filename)%(Extension)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Release|Win32'">$(OutputPath)%(Filename)%(Extension)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutputPath)%(Filename)%(Extension)</Outputs>
     </CustomBuild>
     <None Include="res\matrix.txt" />
     <CustomBuild Include="res\matrix2">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Debug|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Release|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)"</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutputPath)%(Filename)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutputPath)%(Filename)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Debug|Win32'">$(OutputPath)%(Filename)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Release|Win32'">$(OutputPath)%(Filename)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)%(Extension)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)%(Extension)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Debug|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)%(Extension)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Release|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)%(Extension)"</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutputPath)%(Filename)%(Extension)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutputPath)%(Filename)%(Extension)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Debug|Win32'">$(OutputPath)%(Filename)%(Extension)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Release|Win32'">$(OutputPath)%(Filename)%(Extension)</Outputs>
     </CustomBuild>
     <None Include="res\matrix2.txt" />
     <CustomBuild Include="res\matrix3">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Debug|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Release|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)"</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutputPath)%(Filename)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutputPath)%(Filename)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Debug|Win32'">$(OutputPath)%(Filename)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Release|Win32'">$(OutputPath)%(Filename)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)%(Extension)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)%(Extension)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Debug|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)%(Extension)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Release|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)%(Extension)"</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutputPath)%(Filename)%(Extension)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutputPath)%(Filename)%(Extension)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Debug|Win32'">$(OutputPath)%(Filename)%(Extension)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Release|Win32'">$(OutputPath)%(Filename)%(Extension)</Outputs>
     </CustomBuild>
     <None Include="res\matrix3.txt" />
     <CustomBuild Include="res\matrix_big">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Debug|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Release|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)"</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutputPath)%(Filename)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutputPath)%(Filename)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Debug|Win32'">$(OutputPath)%(Filename)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Release|Win32'">$(OutputPath)%(Filename)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)%(Extension)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)%(Extension)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Debug|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)%(Extension)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Release|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)%(Extension)"</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutputPath)%(Filename)%(Extension)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutputPath)%(Filename)%(Extension)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Debug|Win32'">$(OutputPath)%(Filename)%(Extension)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Release|Win32'">$(OutputPath)%(Filename)%(Extension)</Outputs>
     </CustomBuild>
     <CustomBuild Include="res\matrix_G1">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Debug|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Release|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)"</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutputPath)%(Filename)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutputPath)%(Filename)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Debug|Win32'">$(OutputPath)%(Filename)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Release|Win32'">$(OutputPath)%(Filename)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)%(Extension)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)%(Extension)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Debug|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)%(Extension)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Release|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)%(Extension)"</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutputPath)%(Filename)%(Extension)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutputPath)%(Filename)%(Extension)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Debug|Win32'">$(OutputPath)%(Filename)%(Extension)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Release|Win32'">$(OutputPath)%(Filename)%(Extension)</Outputs>
     </CustomBuild>
     <None Include="res\readme.txt" />
     <None Include="res\testmatrix.txt" />

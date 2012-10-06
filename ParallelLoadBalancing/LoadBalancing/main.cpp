@@ -33,60 +33,25 @@
 #include "tests\utils\TestMPIWorld.h"
 
 #include <time.h>
+#include <lua.hpp>
 
 void Usage()
 {
 	printf(
-		"loadbalancing [-t] [-lb] [-p] [-s <steps>] [-w <world-size>] [-a <accuracy>] [-f <matrix-file>]\n"
-		"   -t               - run tests (default false)\n"
-		"   -lb              - use load balancing (default false)\n"
-		"   -p               - print results (default false)\n"
-		"   -s <steps>       - number of steps for test system (default 10)\n"
-		"   -w <world-size>  - number of emulated processors (default 4)\n"
-		"   -a <accuracy>    - accuracy for load balancing (default 6)\n"
-        "   -f <matrix-file> - used matrix file (default matrix_big)\n"
+		"loadbalancing [-c <config-file>]\n"
+		"   -c               - use specific lua config file (default: config.default.lua)\n"
 	);
 }
 
 int main(int argc, char* argv[])
 {
-	bool runTests         = false;
-	bool useLoadBalancing = false;
-	bool printResults     = false;
-	int steps             = 10;
-	int accuracy          = 6;
-	int world_size        = 4;
-	const char* file      = "matrix_big";
+	const char* config_file = "config.default.lua";
 
 	for(int i = 1; i < argc; i++)
 	{
-		if(strcmp(argv[i], "-t") == 0)
+		if(strcmp(argv[i], "-c") == 0)
 		{
-			runTests = true;
-		}
-		else if(strcmp(argv[i], "-lb") == 0)
-		{
-			useLoadBalancing = true;
-		}
-		else if(strcmp(argv[i], "-p") == 0)
-		{
-			printResults = true;
-		}
-		else if(strcmp(argv[i], "-s") == 0)
-		{
-			steps = atoi(argv[++i]);
-		}
-		else if(strcmp(argv[i], "-a") == 0)
-		{
-			accuracy = atoi(argv[++i]);
-		}
-		else if(strcmp(argv[i], "-w") == 0)
-		{
-			world_size = atoi(argv[++i]);
-		}
-		else if(strcmp(argv[i], "-f") == 0)
-		{
-			file = argv[++i];
+			config_file = argv[++i];
 		}
 		else
 		{
@@ -94,6 +59,54 @@ int main(int argc, char* argv[])
 			exit(1);
 		}
 	}
+
+	bool runTests;
+	bool useLoadBalancing;
+	bool printResults;
+	int steps;
+	int accuracy;
+	int world_size;
+	std::string file;
+
+	lua_State* L = luaL_newstate();
+	luaL_openlibs(L);
+	
+	if(luaL_loadfile(L, config_file))
+	{
+		printf("config file '%s' is not found\n", config_file);
+		exit(1);
+	}
+	
+	if(lua_pcall(L, 0, 0, 0))
+	{
+		printf("problem executing config file '%s':\n%s\n", config_file, lua_tostring(L, -1));
+		exit(1);
+	}
+
+
+	lua_getglobal(L, "load_balancing");
+	useLoadBalancing = lua_toboolean(L, -1);
+	
+
+	lua_getglobal(L,  "steps");
+	steps = lua_tointeger(L, -1);
+	
+	lua_getglobal(L, "world_size");
+	world_size = lua_tointeger(L, -1);
+
+	lua_getglobal(L, "accuracy");
+	accuracy = lua_tointeger(L, -1);
+
+	lua_getglobal(L, "matrix_file");
+	file = std::string(lua_tostring(L, -1));
+
+	lua_getglobal(L, "print_results");
+	printResults = lua_toboolean(L, -1);
+
+	lua_getglobal(L, "unit_tests");
+	runTests = lua_toboolean(L, -1);
+
+	lua_close(L);
 
 	if(runTests)
 	{
@@ -127,7 +140,7 @@ int main(int argc, char* argv[])
 	    {
 		    auto lb = LoadBalancingAlgorithm(accuracy);
 		    auto rb = Rebalancer();
-		    auto f = BinaryFile(file);
+		    auto f = BinaryFile(file.c_str());
 		    auto ts = TestingSystem(f, steps);
 		    auto env = Environment(useLoadBalancing, printResults);
 
@@ -142,7 +155,7 @@ int main(int argc, char* argv[])
 	
 	    auto lb = LoadBalancingAlgorithm(accuracy);
 	    auto rb = Rebalancer();
-	    auto f = BinaryFile(file);
+	    auto f = BinaryFile(file.c_str());
 	    auto ts = TestingSystem(f, steps);
 	    auto comm = MPIWorldCommunicator();
 	    auto env = Environment(useLoadBalancing, printResults);
