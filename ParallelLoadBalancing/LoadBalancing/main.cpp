@@ -39,19 +39,43 @@ void Usage()
 {
 	printf(
 		"loadbalancing [-c <config-file>]\n"
-		"   -c               - use specific lua config file (default: config.default.lua)\n"
+		"   -c               - use specific lua config file\n"
 	);
 }
 
-int main(int argc, char* argv[])
+struct Config
 {
-	const char* config_file = "config.default.lua";
+	std::string config_file;
+	
+	std::string matrix_file;
+	bool runTests;
+	bool useLoadBalancing;
+	bool printResults;
+	int steps;
+	int accuracy;
+	int world_size;
 
+	
+	
+	Config() : config_file()
+		     , runTests(false)
+			 , useLoadBalancing(false)
+			 , printResults(false)
+			 , steps(10)
+			 , accuracy(6)
+			 , world_size(4)
+			 , matrix_file("matrix_big")
+	{
+	}
+};
+
+void ParseCommandLine(int argc, char* argv[], Config* cfg)
+{
 	for(int i = 1; i < argc; i++)
 	{
 		if(strcmp(argv[i], "-c") == 0)
 		{
-			config_file = argv[++i];
+			cfg->config_file = argv[++i];
 		}
 		else
 		{
@@ -59,57 +83,84 @@ int main(int argc, char* argv[])
 			exit(1);
 		}
 	}
+}
 
-	bool runTests;
-	bool useLoadBalancing;
-	bool printResults;
-	int steps;
-	int accuracy;
-	int world_size;
-	std::string file;
-
+void LoadConfig(Config* cfg)
+{	
 	lua_State* L = luaL_newstate();
 	luaL_openlibs(L);
 	
-	if(luaL_loadfile(L, config_file))
+	if(luaL_loadfile(L, cfg->config_file.c_str()))
 	{
-		printf("config file '%s' is not found\n", config_file);
+		printf("config file '%s' is not found\n", cfg->config_file);
 		exit(1);
 	}
 	
 	if(lua_pcall(L, 0, 0, 0))
 	{
-		printf("problem executing config file '%s':\n%s\n", config_file, lua_tostring(L, -1));
+		printf("problem executing config file '%s':\n%s\n", cfg->config_file.c_str(), lua_tostring(L, -1));
 		exit(1);
 	}
 
-
 	lua_getglobal(L, "load_balancing");
-	useLoadBalancing = lua_toboolean(L, -1);
-	
+	if(!lua_isnil(L, -1))
+	{
+		cfg->useLoadBalancing = lua_toboolean(L, -1);
+	}
 
 	lua_getglobal(L,  "steps");
-	steps = lua_tointeger(L, -1);
+	if(!lua_isnil(L, -1))
+	{
+		cfg->steps = lua_tointeger(L, -1);
+	}
 	
 	lua_getglobal(L, "world_size");
-	world_size = lua_tointeger(L, -1);
+	if(!lua_isnil(L, -1))
+	{
+		cfg->world_size = lua_tointeger(L, -1);
+	}
 
 	lua_getglobal(L, "accuracy");
-	accuracy = lua_tointeger(L, -1);
+	if(!lua_isnil(L, -1))
+	{
+		cfg->accuracy = lua_tointeger(L, -1);
+	}
 
 	lua_getglobal(L, "matrix_file");
-	file = std::string(lua_tostring(L, -1));
+	if(!lua_isnil(L, -1))
+	{
+		cfg->matrix_file = lua_tostring(L, -1);
+	}
 
 	lua_getglobal(L, "print_results");
-	printResults = lua_toboolean(L, -1);
+	if(!lua_isnil(L, -1))
+	{
+		cfg->printResults = lua_toboolean(L, -1);
+	}
 
 	lua_getglobal(L, "unit_tests");
-	runTests = lua_toboolean(L, -1);
-
-	lua_close(L);
-
-	if(runTests)
+	if(!lua_isnil(L, -1))
 	{
+		cfg->runTests = lua_toboolean(L, -1);
+	}
+
+	lua_close(L);	
+}
+
+int main(int argc, char* argv[])
+{
+	Config cfg;
+
+	ParseCommandLine(argc, argv, &cfg);
+
+	if(!cfg.config_file.empty())
+	{
+		LoadConfig(&cfg);
+	}
+
+	if(cfg.runTests)
+	{
+		// TODO: Add enviroment test system
 		//TEST(EnvironmentTest);
 
 		TEST(RebalancerMoveFromLeftTest);
@@ -136,29 +187,29 @@ int main(int argc, char* argv[])
     {
 #ifdef EMULATE_MPI
 	    clock_t start_time = clock();
-	    TestMPIWorld world(world_size, [useLoadBalancing, accuracy, steps, printResults, file](IMPICommunicator& comm)
+	    TestMPIWorld world(cfg.world_size, [&cfg](IMPICommunicator& comm)
 	    {
-		    auto lb = LoadBalancingAlgorithm(accuracy);
+		    auto lb = LoadBalancingAlgorithm(cfg.accuracy);
 		    auto rb = Rebalancer();
-		    auto f = BinaryFile(file.c_str());
-		    auto ts = TestingSystem(f, steps);
-		    auto env = Environment(useLoadBalancing, printResults);
+		    auto f = BinaryFile(cfg.matrix_file.c_str());
+		    auto ts = TestingSystem(f, cfg.steps);
+		    auto env = Environment(cfg.useLoadBalancing, cfg.printResults);
 
 		    env.Run(comm, ts, lb, rb);
 	    });
 
 	    world.RunAndWait();
 	
-	    printf("with%s load balancing %f\n", useLoadBalancing ? "" : "out", (float)(clock() - start_time) / CLOCKS_PER_SEC);
+	    printf("with%s load balancing %f\n", cfg.useLoadBalancing ? "" : "out", (float)(clock() - start_time) / CLOCKS_PER_SEC);
 #else
 	    MPI_Init(NULL, NULL);
 	
-	    auto lb = LoadBalancingAlgorithm(accuracy);
+	    auto lb = LoadBalancingAlgorithm(cfg.accuracy);
 	    auto rb = Rebalancer();
-	    auto f = BinaryFile(file.c_str());
-	    auto ts = TestingSystem(f, steps);
+	    auto f = BinaryFile(cfg.matrix_file.c_str());
+	    auto ts = TestingSystem(f, cfg.steps);
 	    auto comm = MPIWorldCommunicator();
-	    auto env = Environment(useLoadBalancing, printResults);
+	    auto env = Environment(cfg.useLoadBalancing, cfg.printResults);
 
 	    env.Run(comm, ts, lb, rb);
 

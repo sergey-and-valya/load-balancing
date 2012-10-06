@@ -229,8 +229,7 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Debug|Win32'">$(OutputPath)%(Filename)%(Extension)</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Release|Win32'">$(OutputPath)%(Filename)%(Extension)</Outputs>
     </CustomBuild>
-    <CustomBuild Include="config.default.lua">
-      <FileType>Document</FileType>
+    <None Include="config.template.lua">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)%(Extension)"</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Debug|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)%(Extension)"</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Release|Win32'">copy /Y "%(FullPath)" "$(OutputPath)%(Filename)%(Extension)"</Command>
@@ -239,7 +238,8 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Debug|Win32'">$(OutputPath)%(Filename)%(Extension)</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Release|Win32'">$(OutputPath)%(Filename)%(Extension)</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutputPath)%(Filename)%(Extension)</Outputs>
-    </CustomBuild>
+      <FileType>Document</FileType>
+    </None>
     <None Include="res\matrix.txt" />
     <CustomBuild Include="res\matrix2">
       <FileType>Document</FileType>

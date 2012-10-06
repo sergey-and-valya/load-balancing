@@ -184,6 +184,9 @@
     <None Include="res\readme.txt">
       <Filter>matrices</Filter>
     </None>
+    <None Include="config.template.lua">
+      <Filter>lua</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="res\matrix_G1">
@@ -200,9 +203,6 @@
     </CustomBuild>
     <CustomBuild Include="res\matrix">
       <Filter>matrices</Filter>
-    </CustomBuild>
-    <CustomBuild Include="config.default.lua">
-      <Filter>lua</Filter>
     </CustomBuild>
   </ItemGroup>
 </Project>

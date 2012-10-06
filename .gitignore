@@ -6,3 +6,13 @@ bin
 /ParallelLoadBalancing/*.suo
 /ParallelLoadBalancing/doc
 /ParallelLoadBalancing/_ReSharper.LoadBalancing
+/ParallelLoadBalancing/Debug
+/ParallelLoadBalancing/Emulate MPI Release
+/ParallelLoadBalancing/Emulate MPI Debug
+/ParallelLoadBalancing/ipch
+/ParallelLoadBalancing/LoadBalancing/Debug
+/ParallelLoadBalancing/LoadBalancing/Emulate MPI Debug
+/ParallelLoadBalancing/LoadBalancing/Emulate MPI Release
+/ParallelLoadBalancing/LoadBalancing/LoadBalancing.vcxproj.user
+/LoadBalancing/LoadBalancing.suo
+/LoadBalancing/LoadBalancing.sln.docstates.suo
