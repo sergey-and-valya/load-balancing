@@ -16,3 +16,7 @@ bin
 /ParallelLoadBalancing/LoadBalancing/LoadBalancing.vcxproj.user
 /LoadBalancing/LoadBalancing.suo
 /LoadBalancing/LoadBalancing.sln.docstates.suo
+/ParallelLoadBalancing/Debug Emulate MPI
+/ParallelLoadBalancing/Debug MPI
+/ParallelLoadBalancing/LoadBalancing/Debug Emulate MPI
+/ParallelLoadBalancing/LoadBalancing/Debug MPI

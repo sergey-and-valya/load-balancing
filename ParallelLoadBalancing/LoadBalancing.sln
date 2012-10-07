@@ -5,20 +5,20 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LoadBalancing", "LoadBalanc
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Win32 = Debug|Win32
-		Emulate MPI Debug|Win32 = Emulate MPI Debug|Win32
-		Emulate MPI Release|Win32 = Emulate MPI Release|Win32
-		Release|Win32 = Release|Win32
+		Debug Emulate MPI|Win32 = Debug Emulate MPI|Win32
+		Debug MPI|Win32 = Debug MPI|Win32
+		Release Emulate MPI|Win32 = Release Emulate MPI|Win32
+		Release MPI|Win32 = Release MPI|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F6D8C100-9EA9-45B4-A27F-E1F38D0AC83E}.Debug|Win32.ActiveCfg = Debug|Win32
-		{F6D8C100-9EA9-45B4-A27F-E1F38D0AC83E}.Debug|Win32.Build.0 = Debug|Win32
-		{F6D8C100-9EA9-45B4-A27F-E1F38D0AC83E}.Emulate MPI Debug|Win32.ActiveCfg = Emulate MPI Debug|Win32
-		{F6D8C100-9EA9-45B4-A27F-E1F38D0AC83E}.Emulate MPI Debug|Win32.Build.0 = Emulate MPI Debug|Win32
-		{F6D8C100-9EA9-45B4-A27F-E1F38D0AC83E}.Emulate MPI Release|Win32.ActiveCfg = Emulate MPI Release|Win32
-		{F6D8C100-9EA9-45B4-A27F-E1F38D0AC83E}.Emulate MPI Release|Win32.Build.0 = Emulate MPI Release|Win32
-		{F6D8C100-9EA9-45B4-A27F-E1F38D0AC83E}.Release|Win32.ActiveCfg = Release|Win32
-		{F6D8C100-9EA9-45B4-A27F-E1F38D0AC83E}.Release|Win32.Build.0 = Release|Win32
+		{F6D8C100-9EA9-45B4-A27F-E1F38D0AC83E}.Debug Emulate MPI|Win32.ActiveCfg = Debug Emulate MPI|Win32
+		{F6D8C100-9EA9-45B4-A27F-E1F38D0AC83E}.Debug Emulate MPI|Win32.Build.0 = Debug Emulate MPI|Win32
+		{F6D8C100-9EA9-45B4-A27F-E1F38D0AC83E}.Debug MPI|Win32.ActiveCfg = Debug MPI|Win32
+		{F6D8C100-9EA9-45B4-A27F-E1F38D0AC83E}.Debug MPI|Win32.Build.0 = Debug MPI|Win32
+		{F6D8C100-9EA9-45B4-A27F-E1F38D0AC83E}.Release Emulate MPI|Win32.ActiveCfg = Release Emulate MPI|Win32
+		{F6D8C100-9EA9-45B4-A27F-E1F38D0AC83E}.Release Emulate MPI|Win32.Build.0 = Release Emulate MPI|Win32
+		{F6D8C100-9EA9-45B4-A27F-E1F38D0AC83E}.Release MPI|Win32.ActiveCfg = Release MPI|Win32
+		{F6D8C100-9EA9-45B4-A27F-E1F38D0AC83E}.Release MPI|Win32.Build.0 = Release MPI|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
