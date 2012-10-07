@@ -178,6 +178,7 @@
     <ClInclude Include="IRebalancer.h" />
     <ClInclude Include="IDomainModel.h" />
     <ClInclude Include="LoadBalancingAlgorithm.h" />
+    <ClInclude Include="LuaFunction.h" />
     <ClInclude Include="MPIWorldCommunicator.h" />
     <ClInclude Include="ProblemBuilder.h" />
     <ClInclude Include="Rebalancer.h" />
@@ -205,6 +206,7 @@
     <ClCompile Include="Environment.cpp" />
     <ClCompile Include="BinaryFile.cpp" />
     <ClCompile Include="LoadBalancingAlgorithm.cpp" />
+    <ClCompile Include="LuaFunction.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MPIWorldCommunicator.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Debug|Win32'">true</ExcludedFromBuild>
@@ -244,6 +246,11 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutputPath)%(Filename)%(Extension)</Outputs>
       <FileType>Document</FileType>
     </None>
+    <CustomBuild Include="lua\domain_functions\sample1.lua">
+      <FileType>Document</FileType>
+      <Command>copy /Y "%(FullPath)" "$(OutputPath)%(RelativeDir)%(Filename)%(Extension)"</Command>
+      <Outputs>$(OutputPath)%(RelativeDir)%(Filename)%(Extension)</Outputs>
+    </CustomBuild>
     <None Include="res\matrix.txt" />
     <CustomBuild Include="res\matrix2">
       <FileType>Document</FileType>

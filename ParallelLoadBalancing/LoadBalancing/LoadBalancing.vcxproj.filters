@@ -31,6 +31,9 @@
     <Filter Include="lua">
       <UniqueIdentifier>{459e8d5e-c216-4658-bdf3-a9816ed2d9eb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="lua\domain_functions">
+      <UniqueIdentifier>{66aeb7c1-8e9a-4f9e-8c86-da1b430188e4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ILoadBalancingAlgorithm.h">
@@ -132,6 +135,9 @@
     <ClInclude Include="SampleFunction.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
+    <ClInclude Include="LuaFunction.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -179,6 +185,9 @@
     <ClCompile Include="SampleFunction.cpp">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
+    <ClCompile Include="LuaFunction.cpp">
+      <Filter>Файлы исходного кода</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\testmatrix.txt">
@@ -215,6 +224,9 @@
     </CustomBuild>
     <CustomBuild Include="res\matrix">
       <Filter>matrices</Filter>
+    </CustomBuild>
+    <CustomBuild Include="lua\domain_functions\sample1.lua">
+      <Filter>lua\domain_functions</Filter>
     </CustomBuild>
   </ItemGroup>
 </Project>
