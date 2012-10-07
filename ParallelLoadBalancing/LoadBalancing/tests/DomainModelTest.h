@@ -16,25 +16,10 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************
 
-#ifndef _ENVIRONMENT_H
-#define _ENVIRONMENT_H
+#ifndef _TESTINGSYSTEMTEST_H
+#define _TESTINGSYSTEMTEST_H
 
-#include "IEnvironment.h"
-
-class Environment : public IEnvironment
-{
-public:
-	Environment(bool needLoadBalancing, bool printResults)
-		: needLoadBalancing(needLoadBalancing)
-		, printResults(printResults)
-	{
-	}
-
-	void Run(IMPICommunicator& comm, IDomainModel& ts, ILoadBalancingAlgorithm& lb, IRebalancer& rb);
-
-private:
-	bool needLoadBalancing;
-	bool printResults;
-};
+void DomainModelLoadTest();
+void DomainModelStep();
 
 #endif

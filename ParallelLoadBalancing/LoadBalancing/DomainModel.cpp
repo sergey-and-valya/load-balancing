@@ -16,24 +16,23 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************
 
-#include "TestingSystem.h"
+#include "DomainModel.h"
 #include <time.h>
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
 
 #define SIZE_BLOCK 3
-#define PI 3.141592653589793238462643
-#define LIMIT(arr, limit) ((arr > 10.0) ? 10.0 : arr)
 
-TestingSystem::TestingSystem(IInputFile& inputFile, int steps)
+DomainModel::DomainModel(IInputFile& inputFile, IFunction& func, int steps)
 	: inputFile(inputFile)
+	, func(func)
 	, steps(steps)
 	, step(0)
 {
 }
 
-void TestingSystem::LoadProblem(IMPICommunicator& comm, IProblemBuilder& builder)
+void DomainModel::LoadProblem(IMPICommunicator& comm, IProblemBuilder& builder)
 {
 	int row_global;
 	int col_global;
@@ -108,7 +107,7 @@ void TestingSystem::LoadProblem(IMPICommunicator& comm, IProblemBuilder& builder
 	}
 }
 
-bool TestingSystem::Run(
+bool DomainModel::Run(
 	IMPICommunicator& comm,
 	int time_matrix[],
 	const double matrix[],
@@ -140,21 +139,7 @@ bool TestingSystem::Run(
 	clock_t start_time;
 	clock_t finish_time; 
 
-	double** arr = new double*[SIZE_BLOCK];
-	bool** flag_arr = new bool*[SIZE_BLOCK];
-	for (int i = 0; i < SIZE_BLOCK; i++)
-	{
-		arr[i] = new double[SIZE_BLOCK];
-		flag_arr[i] = new bool[SIZE_BLOCK];
-	}
-	
-	// считаем, чтов  общем случае - есть все 8 соседних €чеек
-	for (int i = 0; i < SIZE_BLOCK; i++)
-		for (int j = 0; j < SIZE_BLOCK; j++)
-		{
-			flag_arr[i][j] = true;
-		}
-	
+	Values values(SIZE_BLOCK);
 	// сюда € буду принимать и потом с этим "работать"
 	double* top_row = new double[col];		// верхн€€ строка
 	double* bottom_row = new double[col];	// нижнн€€ строка
@@ -177,8 +162,14 @@ bool TestingSystem::Run(
 		{	
 			start_time = clock();
 			// формируем нужный нам массив
-			CreateArr(matrix, col, arr, i, j);			
-			new_matrix[i * col + j] = func(arr, flag_arr, global_index_i + i, global_index_j + j);
+			for (int k = 0; k < SIZE_BLOCK; k++)
+			{
+				for (int l = 0; l < SIZE_BLOCK; l++)
+				{
+					values.SetValue(k, l, matrix[(i - 1 + k) * col + j - 1 + l]);
+				}
+			}
+			new_matrix[i * col + j] = func(values, global_index_i + i, global_index_j + j);
 			finish_time = clock();
 			time_matrix[i * col + j] = (int)(finish_time - start_time);
 		}
@@ -189,9 +180,9 @@ bool TestingSystem::Run(
 	int i = 0;
 	for (int j = 0; j < col; j++)
 	{
-		CreateArrSide(comm, col, row, num_processor_col, num_processor_row, matrix, arr, flag_arr, i, j, top_row,	bottom_row,	left_column, right_column, top_left_corner, top_right_corner, bottom_left_corner, bottom_right_corner);
+		CreateArrSide(comm, col, row, num_processor_col, num_processor_row, matrix, &values, i, j, top_row,	bottom_row,	left_column, right_column, top_left_corner, top_right_corner, bottom_left_corner, bottom_right_corner);
 		start_time = clock();
-		new_matrix[i * col + j] = func(arr, flag_arr, global_index_i + i, global_index_j + j);
+		new_matrix[i * col + j] = func(values, global_index_i + i, global_index_j + j);
 		finish_time = clock();
 		time_matrix[i * col + j] = (int)(finish_time - start_time);
 	}
@@ -200,9 +191,9 @@ bool TestingSystem::Run(
 	i = row - 1;
 	for (int j = 0; j < col; j++)
 	{
-		CreateArrSide(comm, col, row, num_processor_col, num_processor_row, matrix, arr, flag_arr, i, j, top_row,	bottom_row,	left_column, right_column, top_left_corner, top_right_corner, bottom_left_corner, bottom_right_corner);
+		CreateArrSide(comm, col, row, num_processor_col, num_processor_row, matrix, &values, i, j, top_row,	bottom_row,	left_column, right_column, top_left_corner, top_right_corner, bottom_left_corner, bottom_right_corner);
 		start_time = clock();
-		new_matrix[i * col + j] = func(arr, flag_arr, global_index_i + i, global_index_j + j);
+		new_matrix[i * col + j] = func(values, global_index_i + i, global_index_j + j);
 		finish_time = clock();
 		time_matrix[i * col + j] = (int)(finish_time - start_time);
 	}
@@ -211,9 +202,9 @@ bool TestingSystem::Run(
 	int j = 0;
 	for (int i = 1; i < row - 1; i++)
 	{
-		CreateArrSide(comm, col, row, num_processor_col, num_processor_row, matrix, arr, flag_arr, i, j, top_row,	bottom_row,	left_column, right_column, top_left_corner, top_right_corner, bottom_left_corner, bottom_right_corner);
+		CreateArrSide(comm, col, row, num_processor_col, num_processor_row, matrix, &values, i, j, top_row,	bottom_row,	left_column, right_column, top_left_corner, top_right_corner, bottom_left_corner, bottom_right_corner);
 		start_time = clock();
-		new_matrix[i * col + j] = func(arr, flag_arr, global_index_i + i, global_index_j + j);
+		new_matrix[i * col + j] = func(values, global_index_i + i, global_index_j + j);
 		finish_time = clock();
 		time_matrix[i * col + j] = (int)(finish_time - start_time);
 	}
@@ -222,9 +213,9 @@ bool TestingSystem::Run(
 	j = col - 1;
 	for (int i = 1; i < row - 1; i++)
 	{
-		CreateArrSide(comm, col, row, num_processor_col, num_processor_row, matrix, arr, flag_arr, i, j, top_row,	bottom_row,	left_column, right_column, top_left_corner, top_right_corner, bottom_left_corner, bottom_right_corner);
+		CreateArrSide(comm, col, row, num_processor_col, num_processor_row, matrix, &values, i, j, top_row,	bottom_row,	left_column, right_column, top_left_corner, top_right_corner, bottom_left_corner, bottom_right_corner);
 		start_time = clock();
-		new_matrix[i * col + j] = func(arr, flag_arr, global_index_i + i, global_index_j + j);
+		new_matrix[i * col + j] = func(values, global_index_i + i, global_index_j + j);
 		finish_time = clock();
 		time_matrix[i * col + j] = (int)(finish_time - start_time);
 	}
@@ -236,77 +227,18 @@ bool TestingSystem::Run(
 	delete [] bottom_row;						// нижнн€€ строка
 	delete [] left_column;						// левый столбец
 	delete [] right_column;						// правый столбец
-	for (int i = 0; i < SIZE_BLOCK; i++)
-	{
-		delete [] arr[i];
-		delete [] flag_arr[i];
-	}
-	delete [] arr;
-	delete [] flag_arr;
 
 	return ++step < steps;
 }
 
-// посчитать значение функции в точке (i, j)
-double TestingSystem::func(double **arr, bool **flag_arr, int global_i, int global_j)
-{
-	// вычисл€ем
-	double sum = 0.0;
-	double coef[SIZE_BLOCK][SIZE_BLOCK];
-
-	coef[0][0] = 1 / 4 * (global_i - 1) * (global_i - 2) * (global_j - 1) * (global_j - 2) * (global_j + 1);
-	coef[0][1] = -1 / 4 * global_i * (global_i + 1) * (global_i - 2) * (global_j - 1) * (global_j - 2) * (global_j + 1);
-	coef[0][2] = -1 / 4 * global_j * (global_i - 1) * (global_i - 2) * (global_i + 1) * (global_j + 1) * (global_j - 2);
-	coef[1][0] = -1 / 12 * global_i * (global_i - 1) * (global_i - 2) * (global_j - 1) * (global_j - 2) * (global_j + 1);
-	coef[1][1] = -1 / 12 * global_j * (global_i - 1) * (global_i - 2) * (global_i + 1) * (global_j - 1) * (global_j - 2);
-	coef[1][2] = 1 / 36 * global_i * global_j * (global_i - 1) * (global_i - 2) * (global_j - 1) * (global_j + 2);
-	coef[2][0] = -1 / 36 * global_i * global_j * (global_i - 1) * (global_i - 2) * (global_j - 1) * (global_j + 1);
-	coef[2][1] = 1 / 12 * global_i * global_j * (global_i - 1) * (global_i - 2) * (global_j + 1) * (global_j - 2);
-	coef[2][2] = -1 / 12 * global_i * global_j * (global_i + 1) * (global_i - 2) * (global_j - 1) * (global_j + 1);
-
-	
-	
-	int count_elem = 0;
-	for (int i = 0; i < SIZE_BLOCK; i++)
-		for (int j = 0; j < SIZE_BLOCK; j++)
-			if (flag_arr[i][j])
-			{
-				count_elem ++;						
-			}
-
-	int count = 1 + (LIMIT(arr[SIZE_BLOCK / 2][SIZE_BLOCK / 2] / 2.0, 1.0)) * 3;
-	
-	for (int k = 0; k < count; k++)
-		for (int i = 0; i < SIZE_BLOCK; i++)
-			for (int j = 0; j < SIZE_BLOCK; j++)
-				if (flag_arr[i][j])
-				{
-					sum += abs(cos(coef[i][j] * tanh(sin(PI * LIMIT(arr[i][j], 10.0))) + sinh(LIMIT(arr[i][j], 10.0)) + cosh(LIMIT(arr[i][j], 10.0)) + tanh(LIMIT(LIMIT(PI * arr[i][j], 10.0), 10))));
-				}
-
-	sum /= count_elem;	
-	return sum;
-}
-
-void TestingSystem::CreateArr(const double matrix[], int col, double **arr, int i, int j)
-{
-	
-	for (int k = 0; k < SIZE_BLOCK; k++)
-		for (int l = 0; l < SIZE_BLOCK; l++)
-		{
-			arr[k][l] = matrix[(i - 1 + k) * col + j - 1 + l];
-		}	
-}
-
-void TestingSystem::CreateArrSide(
+void DomainModel::CreateArrSide(
 	IMPICommunicator& comm,
 	int col,
 	int row,
 	int num_processor_col,
 	int num_processor_row,
 	const double matrix[],
-	double** arr, 
-	bool** flag_arr, 
+	Values* values,
 	int i, int j, 
 	double* top_row,						
 	double* bottom_row,						
@@ -324,187 +256,179 @@ void TestingSystem::CreateArrSide(
 	int mpi_size;
 	comm.Size(&mpi_size);
 
-	for (int i = 0; i < SIZE_BLOCK; i++)
-	{
-		for (int j = 0; j < SIZE_BLOCK; j++)
-		{
-			flag_arr[i][j] = true;
-		}
-	}
-
 	// устанавливаем флаги дл€ тех €чеек, которых нет в качестве соседей дл€ текущей €чейки
-	if ((i == 0) && (mpi_rank < num_processor_col))
-	{
-		for (int k = 0; k < SIZE_BLOCK; k++)
-			flag_arr[0][k] = false;
-	}
+	bool is_top = (i == 0) && (mpi_rank < num_processor_col);
+	bool is_left = (j == 0) && (mpi_rank % num_processor_col == 0);
 
-	if ((j == 0) && (mpi_rank % num_processor_col == 0))
-	{
-		for (int k = 0; k < SIZE_BLOCK; k++)
-			flag_arr[k][0] = false;
-	}
+	bool is_right = (j == col - 1) && ((mpi_rank + 1) % num_processor_col == 0);
+	bool is_bottom = (i == row - 1) && (mpi_rank >= mpi_size - num_processor_col);
 
-	if ((j == col - 1) && ((mpi_rank + 1) % num_processor_col == 0))
-	{
-		for (int k = 0; k < SIZE_BLOCK; k++)
-			flag_arr[k][SIZE_BLOCK - 1] = false;
-	}
-
-	if ((i == row - 1) && (mpi_rank >= mpi_size - num_processor_col))
-	{
-		for (int k = 0; k < SIZE_BLOCK; k++)
-			flag_arr[SIZE_BLOCK - 1][k] = false;
-	}
 	///////////////////////////////////////////////////////////////////////////////////////
-	arr[1][1] = matrix[i * col + j];
+	values->SetValue(1, 1, matrix[i * col + j]);
 	///////////////////////////////////////////////////////////////////////////////////////
-	if (flag_arr[0][0]) 
+
+	if (!(is_top || is_left)) 
 	{
 		if ((i == 0) && (j == 0))
 		{
-			arr[0][0] = top_left_corner;
+			values->SetValue(0, 0, top_left_corner);
 		}
 		else
 		{
 			if ((i == 0) && (j < col))
 			{
-				arr[0][0] = top_row[j - 1];
+				values->SetValue(0, 0, top_row[j - 1]);
 			}
 			else
 				if ((j == 0) && (i < row))
 				{
-					arr[0][0] = left_column[i - 1];
+					values->SetValue(0, 0, left_column[i - 1]);
 				}
 				else
 				{
-					arr[0][0] = matrix[(i - 1) * col + j- 1];
+					values->SetValue(0, 0, matrix[(i - 1) * col + j- 1]);
 				}
 		}
 	}
 	///////////////////////////////////////////////////////////////////////////////////////
-	if (flag_arr[0][2]) 
+	if (!(is_top || is_right)) 
 	{
+
 		if ((i == 0) && (j == col - 1))
 		{
-			arr[0][2] = top_right_corner;
+			values->SetValue(0, 2, top_right_corner);
 		}
 		else
 		{
 			if ((i == 0) && (j < col))
 			{
-				arr[0][2] = top_row[j + 1];
+				values->SetValue(0, 2, top_row[j + 1]);
 			}
 			else
 				if ((j == col - 1) && (i > 0))
 				{
-					arr[0][2] = right_column[i - 1];
+					values->SetValue(0, 2, right_column[i - 1]);
 				}
 				else
 				{
-					arr[0][2] = matrix[(i - 1) * col + j + 1];
+					values->SetValue(0, 2, matrix[(i - 1) * col + j + 1]);
 				}
 		}
 	}
 	///////////////////////////////////////////////////////////////////////////////////////
-	if (flag_arr[2][0]) 
+	if (!(is_bottom || is_left)) 
 	{
 		if ((i == row - 1) && (j == 0))
 		{
-			arr[2][0] = bottom_left_corner;
+			values->SetValue(2, 0, bottom_left_corner);
 		}
 		else
 		{
 			if ((i == row - 1) && (j > 0))
 			{
-				arr[2][0] = bottom_row[j - 1];
+				values->SetValue(2, 0, bottom_row[j - 1]);
 			}
 			else
 				if ((j == 0) && (i < row))
 				{
-					arr[2][0] = left_column[i + 1];
+					values->SetValue(2, 0, left_column[i + 1]);
 				}
 				else
 				{
-					arr[2][0] = matrix[(i + 1) * col + j - 1];
+					values->SetValue(2, 0, matrix[(i + 1) * col + j - 1]);
 				}
 		}
 	}
 	///////////////////////////////////////////////////////////////////////////////////////
-	if (flag_arr[2][2]) 
+	if (!(is_bottom || is_right)) 
 	{
 		if ((i == row - 1) && (j == col - 1))
 		{
-			arr[2][2] = bottom_right_corner;
+			values->SetValue(2, 2, bottom_right_corner);
 		}
 		else
 		{
 			if ((i == row - 1) && (j < col))
 			{
-				arr[2][2] = bottom_row[j + 1];
+				values->SetValue(2, 2, bottom_row[j + 1]);
 			}
 			else
 				if ((j == col - 1) && (i < row))
 				{
-					arr[2][2] = right_column[i + 1];
+					values->SetValue(2, 2, right_column[i + 1]);
 				}
 				else
 				{
-					arr[2][2] = matrix[(i + 1) * col + j + 1];
+					values->SetValue(2, 2, matrix[(i + 1) * col + j + 1]);
 				}
 		}
 	}
 	///////////////////////////////////////////////////////////////////////////////////////
-	if (flag_arr[1][0]) 
+	if (!is_left)
 	{
 		if (j == 0)
 		{
-			arr[1][0] = left_column[i];
+			values->SetValue(1, 0, left_column[i]);
 		}
 		else
 		{
-			arr[1][0] = matrix[i * col + j - 1];
+			values->SetValue(1, 0, matrix[i * col + j - 1]);
 		}
 	}
 	///////////////////////////////////////////////////////////////////////////////////////
-	if (flag_arr[0][1]) 
+	if (!is_top)
 	{
 		if (i == 0)
 		{
-			arr[0][1] = top_row[j];
+			values->SetValue(0, 1, top_row[j]);
 		}
 		else
 		{
-			arr[0][1] = matrix[(i - 1) * col + j];
+			values->SetValue(0, 1, matrix[(i - 1) * col + j]);
 		}
 	}
 	///////////////////////////////////////////////////////////////////////////////////////
-	if (flag_arr[2][1]) 
+	if (!is_bottom) 
 	{
 		if (i == row - 1)
 		{
-			arr[2][1] = bottom_row[j];
+			values->SetValue(2, 1, bottom_row[j]);
 		}
 		else
 		{
-			arr[2][1] = matrix[(i + 1) * col + j];
+			values->SetValue(2, 1, matrix[(i + 1) * col + j]);
 		}
 	}
 	///////////////////////////////////////////////////////////////////////////////////////
-	if (flag_arr[1][2]) 
+	if (!is_right) 
 	{
 		if (j == col - 1)
 		{
-			arr[1][2] = right_column[i];
+			values->SetValue(1, 2, right_column[i]);
 		}
 		else
 		{
-			arr[1][2] = matrix[i * col + j + 1];
+			values->SetValue(1, 2, matrix[i * col + j + 1]);
 		}
-	}		
+	}
+	///////////////////////////////////////////////////////////////////////////////////////
+	
+	if(is_left)
+		values->SetOffsetJ(SIZE_BLOCK / 2);
+	else if(is_right)
+		values->SetOffsetJ(-SIZE_BLOCK / 2);
+	else
+		values->SetOffsetJ(0);
+	
+	if(is_top)
+		values->SetOffsetI(SIZE_BLOCK / 2);
+	else if(is_bottom)
+		values->SetOffsetI(-SIZE_BLOCK / 2);
+	else
+		values->SetOffsetI(0);
 }
 
-void TestingSystem::Global_Sending(	
+void DomainModel::Global_Sending(	
 	IMPICommunicator& comm,
 	int col,
 	int row,

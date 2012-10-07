@@ -16,12 +16,13 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************
 
-#include "ITestingSystem.h"
+#include "IDomainModel.h"
 #include "ILoadBalancingAlgorithm.h"
 #include "IEnvironment.h"
 #include "IMPICommunicator.h"
 
-#include "TestingSystem.h"
+#include "SampleFunction.h"
+#include "DomainModel.h"
 #include "LoadBalancingAlgorithm.h"
 #include "Environment.h"
 #include "Rebalancer.h"
@@ -177,8 +178,8 @@ int main(int argc, char* argv[])
 	
 		TEST(RebalancerMoveFromLeftFromTopTest);
 		
-		TEST(TestingSystemStep);
-		TEST(TestingSystemLoadTest);
+		TEST(DomainModelStep);
+		TEST(DomainModelLoadTest);
 
 		TEST(LoadBalancingTest);
 		TEST(LoadBalancingCentralTest);
@@ -192,7 +193,8 @@ int main(int argc, char* argv[])
 		    auto lb = LoadBalancingAlgorithm(cfg.accuracy);
 		    auto rb = Rebalancer();
 		    auto f = BinaryFile(cfg.matrix_file.c_str());
-		    auto ts = TestingSystem(f, cfg.steps);
+			auto func = SampleFunction();
+		    auto ts = DomainModel(f, func, cfg.steps);
 		    auto env = Environment(cfg.useLoadBalancing, cfg.printResults);
 
 		    env.Run(comm, ts, lb, rb);
@@ -207,7 +209,7 @@ int main(int argc, char* argv[])
 	    auto lb = LoadBalancingAlgorithm(cfg.accuracy);
 	    auto rb = Rebalancer();
 	    auto f = BinaryFile(cfg.matrix_file.c_str());
-	    auto ts = TestingSystem(f, cfg.steps);
+	    auto ts = DomainModel(f, cfg.steps);
 	    auto comm = MPIWorldCommunicator();
 	    auto env = Environment(cfg.useLoadBalancing, cfg.printResults);
 

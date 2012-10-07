@@ -25,7 +25,7 @@
 #include <stdlib.h>
 #include <memory.h>
 
-void Environment::Run(IMPICommunicator& comm, ITestingSystem& ts, ILoadBalancingAlgorithm& lb, IRebalancer& rb)
+void Environment::Run(IMPICommunicator& comm, IDomainModel& ts, ILoadBalancingAlgorithm& lb, IRebalancer& rb)
 {
 	int mpi_size;
 	int mpi_rank;

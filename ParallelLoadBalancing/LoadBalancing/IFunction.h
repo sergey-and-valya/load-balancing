@@ -16,25 +16,15 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************
 
-#ifndef _ENVIRONMENT_H
-#define _ENVIRONMENT_H
+#ifndef _IFUNCTION_H
+#define _IFUNCTION_H
 
-#include "IEnvironment.h"
+#include "Values.h"
 
-class Environment : public IEnvironment
+class IFunction
 {
 public:
-	Environment(bool needLoadBalancing, bool printResults)
-		: needLoadBalancing(needLoadBalancing)
-		, printResults(printResults)
-	{
-	}
-
-	void Run(IMPICommunicator& comm, IDomainModel& ts, ILoadBalancingAlgorithm& lb, IRebalancer& rb);
-
-private:
-	bool needLoadBalancing;
-	bool printResults;
+	virtual double operator()(const Values& values, int i, int j) = 0;
 };
 
 #endif

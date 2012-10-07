@@ -18,7 +18,7 @@
 
 #include "EnvironmentTest.h"
 
-#include "../ITestingSystem.h"
+#include "../IDomainModel.h"
 #include "../ILoadBalancingAlgorithm.h"
 #include "../IEnvironment.h"
 #include "../IMPICommunicator.h"
@@ -26,7 +26,7 @@
 #include "../Environment.h"
 #include "utils/TestCommunicator.h"
 #include "utils/TestLoadBalancing.h"
-#include "utils/TestTestingSystem.h"
+#include "utils/TestDomainModel.h"
 #include "utils/TestRebalancer.h"
 #include "utils/Assert.h"
 
@@ -79,7 +79,7 @@ void EnvironmentTest()
 		}
 	);
 	
-	auto ts = TestTestingSystem(
+	auto ts = TestDomainModel(
 		[localWidth, localHeight, bpNumberI, bpNumberJ](IMPICommunicator& comm, IProblemBuilder& builder)
 		{
 			builder.SetBreakPointCount(bpNumberI, bpNumberJ);

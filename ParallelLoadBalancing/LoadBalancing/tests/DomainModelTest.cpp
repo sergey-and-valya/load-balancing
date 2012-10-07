@@ -16,13 +16,15 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************
 
-#include "TestingSystemTest.h"
+#include "DomainModelTest.h"
 
-#include "../ITestingSystem.h"
+#include "../IDomainModel.h"
 #include "../IMPICommunicator.h"
 
-#include "../TestingSystem.h"
+#include "../DomainModel.h"
 #include "../Utils.h"
+
+#include "../SampleFunction.h"
 
 #include "utils/TestMPIWorld.h"
 #include "utils/TestCommunicator.h"
@@ -30,7 +32,7 @@
 #include "utils/TestProblemBuilder.h"
 #include "utils/Assert.h"
 
-void TestingSystemLoadTest()
+void DomainModelLoadTest()
 {
 	const char* filename = "matrix"; 
 	FILE* file;
@@ -155,7 +157,8 @@ void TestingSystemLoadTest()
 		}
 	);
 
-	auto ts = TestingSystem(f, steps);
+	SampleFunction func;
+	auto ts = DomainModel(f, func, steps);
 	
 	ts.LoadProblem(comm, pb);
 	
@@ -180,7 +183,7 @@ void TestingSystemLoadTest()
 	fclose(file);
 }
 
-void TestingSystemStep()
+void DomainModelStep()
 {
 	int steps = 1;
 
@@ -263,7 +266,8 @@ void TestingSystemStep()
 
 		TestMPIWorld world(mpiCommSize, [mpiCommSize, solutionI, solutionJ, bpNumberI, bpNumberJ, &_f, matrix, _matrixWidth, _matrixHeight, _steps](IMPICommunicator& comm)
 		{
-			auto ts = TestingSystem(_f, _steps);
+			SampleFunction func;
+			auto ts = DomainModel(_f, func, _steps);
 			int mpiRank;
 			comm.Rank(&mpiRank);
 				

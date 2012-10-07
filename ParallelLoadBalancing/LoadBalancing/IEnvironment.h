@@ -20,7 +20,7 @@
 #define _IENVIRONMENT_H
 
 #include "IMPICommunicator.h"
-#include "ITestingSystem.h"
+#include "IDomainModel.h"
 #include "ILoadBalancingAlgorithm.h"
 #include "IRebalancer.h"
 
@@ -37,7 +37,7 @@ class IEnvironment
 public:
 
     /**
-     * \fn  virtual void IEnvironment::Run(IMPICommunicator& comm, ITestingSystem& ts,
+     * \fn  virtual void IEnvironment::Run(IMPICommunicator& comm, IDomainModel& ts,
      *      ILoadBalancingAlgorithm& lb, IRebalancer& rb) = 0;
      *
      * \brief   Runs testing system \a ts on the current processor specified by communicator \a comm.
@@ -49,7 +49,7 @@ public:
      * \param [in,out]  rb      The rebalancer.
      */
 
-	virtual void Run(IMPICommunicator& comm, ITestingSystem& ts, ILoadBalancingAlgorithm& lb, IRebalancer& rb) = 0;
+	virtual void Run(IMPICommunicator& comm, IDomainModel& ts, ILoadBalancingAlgorithm& lb, IRebalancer& rb) = 0;
 };
 
 #endif

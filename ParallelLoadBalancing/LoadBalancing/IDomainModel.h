@@ -16,8 +16,8 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************
 
-#ifndef _ITESTINGSYSTEM_H
-#define _ITESTINGSYSTEM_H
+#ifndef _IDOMAINMODEL_H
+#define _IDOMAINMODEL_H
 
 #include "IMPICommunicator.h"
 #include "IProblemBuilder.h"
@@ -25,18 +25,18 @@
 class IProblemBuilder;
 
 /**
- * \class   ITestingSystem
+ * \class   IDomainModel
  *
- * \brief   Testing system interface.
+ * \brief   Domain Model interface.
  *          Responsible for loading problem on current processor and performing next iteration of calculating function.
  */
 
-class ITestingSystem
+class IDomainModel
 {
 public:
 
     /**
-     * \fn  virtual void ITestingSystem::LoadProblem(IMPICommunicator& comm,
+     * \fn  virtual void IDomainModel::LoadProblem(IMPICommunicator& comm,
      *      IProblemBuilder& builder) = 0;
      *
      * \brief   Loads a problem.
@@ -48,7 +48,7 @@ public:
 	virtual void LoadProblem(IMPICommunicator& comm, IProblemBuilder& builder) = 0;
 
     /**
-     * \fn  virtual bool ITestingSystem::Run( IMPICommunicator& comm, int time_matrix[],
+     * \fn  virtual bool IDomainModel::Run( IMPICommunicator& comm, int time_matrix[],
      *      const double matrix[], double new_matrix[], const int solutionI[], const int solutionJ[],
      *      int bpNumberI, int bpNumberJ) = 0;
      *

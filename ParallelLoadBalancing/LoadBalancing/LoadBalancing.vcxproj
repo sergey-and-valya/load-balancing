@@ -168,6 +168,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Environment.h" />
+    <ClInclude Include="IFunction.h" />
     <ClInclude Include="IInputFile.h" />
     <ClInclude Include="IEnvironment.h" />
     <ClInclude Include="ILoadBalancingAlgorithm.h" />
@@ -175,13 +176,14 @@
     <ClInclude Include="IMPICommunicator.h" />
     <ClInclude Include="IProblemBuilder.h" />
     <ClInclude Include="IRebalancer.h" />
-    <ClInclude Include="ITestingSystem.h" />
+    <ClInclude Include="IDomainModel.h" />
     <ClInclude Include="LoadBalancingAlgorithm.h" />
     <ClInclude Include="MPIWorldCommunicator.h" />
     <ClInclude Include="ProblemBuilder.h" />
     <ClInclude Include="Rebalancer.h" />
+    <ClInclude Include="SampleFunction.h" />
     <ClInclude Include="tests\EnvironmentTest.h" />
-    <ClInclude Include="TestingSystem.h" />
+    <ClInclude Include="DomainModel.h" />
     <ClInclude Include="BinaryFile.h" />
     <ClInclude Include="tests\LoadBalancingTest.h" />
     <ClInclude Include="tests\RebalancerTest.h" />
@@ -190,13 +192,14 @@
     <ClInclude Include="tests\utils\TestProblemBuilder.h" />
     <ClInclude Include="tests\utils\TestRebalancer.h" />
     <ClInclude Include="tests\Tests.h" />
-    <ClInclude Include="tests\TestingSystemTest.h" />
+    <ClInclude Include="tests\DomainModelTest.h" />
     <ClInclude Include="tests\utils\TestCommunicator.h" />
     <ClInclude Include="tests\utils\Testkit.h" />
-    <ClInclude Include="tests\utils\TestTestingSystem.h" />
+    <ClInclude Include="tests\utils\TestDomainModel.h" />
     <ClInclude Include="tests\utils\TestLoadBalancing.h" />
     <ClInclude Include="tests\utils\Assert.h" />
     <ClInclude Include="Utils.h" />
+    <ClInclude Include="Values.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Environment.cpp" />
@@ -208,10 +211,11 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Emulate MPI Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Rebalancer.cpp" />
-    <ClCompile Include="TestingSystem.cpp" />
+    <ClCompile Include="DomainModel.cpp" />
+    <ClCompile Include="SampleFunction.cpp" />
     <ClCompile Include="tests\EnvironmentTest.cpp" />
     <ClCompile Include="tests\LoadBalancingTest.cpp" />
-    <ClCompile Include="tests\TestingSystemTest.cpp" />
+    <ClCompile Include="tests\DomainModelTest.cpp" />
     <ClCompile Include="tests\RebalancerTest.cpp" />
     <ClCompile Include="tests\utils\TestMPIWorld.cpp" />
     <ClCompile Include="tests\utils\Testkit.cpp" />

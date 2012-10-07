@@ -42,9 +42,6 @@
     <ClInclude Include="LoadBalancingAlgorithm.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
-    <ClInclude Include="ITestingSystem.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
     <ClInclude Include="ProblemBuilder.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
@@ -52,9 +49,6 @@
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
     <ClInclude Include="IEnvironment.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
-    <ClInclude Include="TestingSystem.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
     <ClInclude Include="IMPI.h">
@@ -102,12 +96,6 @@
     <ClInclude Include="tests\utils\TestRebalancer.h">
       <Filter>Заголовочные файлы\tests\utils</Filter>
     </ClInclude>
-    <ClInclude Include="tests\utils\TestTestingSystem.h">
-      <Filter>Заголовочные файлы\tests\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="tests\TestingSystemTest.h">
-      <Filter>Заголовочные файлы\tests</Filter>
-    </ClInclude>
     <ClInclude Include="tests\Tests.h">
       <Filter>Заголовочные файлы\tests</Filter>
     </ClInclude>
@@ -123,6 +111,27 @@
     <ClInclude Include="Utils.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
+    <ClInclude Include="IDomainModel.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="DomainModel.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="tests\DomainModelTest.h">
+      <Filter>Заголовочные файлы\tests</Filter>
+    </ClInclude>
+    <ClInclude Include="tests\utils\TestDomainModel.h">
+      <Filter>Заголовочные файлы\tests\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="IFunction.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="Values.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="SampleFunction.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -132,9 +141,6 @@
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
     <ClCompile Include="LoadBalancingAlgorithm.cpp">
-      <Filter>Файлы исходного кода</Filter>
-    </ClCompile>
-    <ClCompile Include="TestingSystem.cpp">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
     <ClCompile Include="MPIWorldCommunicator.cpp">
@@ -152,9 +158,6 @@
     <ClCompile Include="tests\utils\Testkit.cpp">
       <Filter>Файлы исходного кода\tests\utils</Filter>
     </ClCompile>
-    <ClCompile Include="tests\TestingSystemTest.cpp">
-      <Filter>Файлы исходного кода\tests</Filter>
-    </ClCompile>
     <ClCompile Include="tests\RebalancerTest.cpp">
       <Filter>Файлы исходного кода\tests</Filter>
     </ClCompile>
@@ -165,6 +168,15 @@
       <Filter>Файлы исходного кода\tests</Filter>
     </ClCompile>
     <ClCompile Include="Utils.cpp">
+      <Filter>Файлы исходного кода</Filter>
+    </ClCompile>
+    <ClCompile Include="tests\DomainModelTest.cpp">
+      <Filter>Файлы исходного кода\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="DomainModel.cpp">
+      <Filter>Файлы исходного кода</Filter>
+    </ClCompile>
+    <ClCompile Include="SampleFunction.cpp">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
   </ItemGroup>
