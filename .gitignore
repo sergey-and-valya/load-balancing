@@ -16,3 +16,11 @@ bin
 /ParallelLoadBalancing/LoadBalancing/LoadBalancing.vcxproj.user
 /LoadBalancing/LoadBalancing.suo
 /LoadBalancing/LoadBalancing.sln.docstates.suo
+/thirdparty/gtest-1.6.0/msvc/_ReSharper.gtest
+/thirdparty/gtest-1.6.0/msvc/_ReSharper.gtest-md
+/thirdparty/gtest-1.6.0/msvc/gtest
+/thirdparty/gtest-1.6.0/msvc/gtest-md
+/thirdparty/gtest-1.6.0/msvc/gtest-md.sdf
+/thirdparty/gtest-1.6.0/msvc/gtest.sdf
+/thirdparty/gtest-1.6.0/msvc/*.suo
+/thirdparty/gtest-1.6.0/msvc/*.user
