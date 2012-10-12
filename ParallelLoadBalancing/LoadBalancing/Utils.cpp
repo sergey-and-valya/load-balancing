@@ -19,7 +19,7 @@
 #include "Utils.h"
 
 #include <stdio.h>
-#include "IMPICommunicator.h"
+#include <LoadBalancing/IMPICommunicator.h>
 
 void PrintDistributedMatrix(IMPICommunicator& comm, int bpNumberI, int bpNumberJ, const double localMatrix[], int localWidth, int localHeight)
 {

@@ -19,7 +19,7 @@
 #ifndef _ENVIRONMENT_H
 #define _ENVIRONMENT_H
 
-#include "IEnvironment.h"
+#include <LoadBalancing/IEnvironment.h>
 
 class Environment : public IEnvironment
 {

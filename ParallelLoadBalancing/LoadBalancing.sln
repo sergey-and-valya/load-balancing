@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LoadBalancing", "LoadBalancing\LoadBalancing.vcxproj", "{F6D8C100-9EA9-45B4-A27F-E1F38D0AC83E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "InitialAlgorithm", "Plugins\Algorithms\InitialAlgorithm\InitialAlgorithm.vcxproj", "{E5DAE759-1E22-4055-9D39-B1150FBEDFE2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug Emulate MPI|Win32 = Debug Emulate MPI|Win32
@@ -19,6 +21,14 @@ Global
 		{F6D8C100-9EA9-45B4-A27F-E1F38D0AC83E}.Release Emulate MPI|Win32.Build.0 = Release Emulate MPI|Win32
 		{F6D8C100-9EA9-45B4-A27F-E1F38D0AC83E}.Release MPI|Win32.ActiveCfg = Release MPI|Win32
 		{F6D8C100-9EA9-45B4-A27F-E1F38D0AC83E}.Release MPI|Win32.Build.0 = Release MPI|Win32
+		{E5DAE759-1E22-4055-9D39-B1150FBEDFE2}.Debug Emulate MPI|Win32.ActiveCfg = Debug Emulate MPI|Win32
+		{E5DAE759-1E22-4055-9D39-B1150FBEDFE2}.Debug Emulate MPI|Win32.Build.0 = Debug Emulate MPI|Win32
+		{E5DAE759-1E22-4055-9D39-B1150FBEDFE2}.Debug MPI|Win32.ActiveCfg = Debug MPI|Win32
+		{E5DAE759-1E22-4055-9D39-B1150FBEDFE2}.Debug MPI|Win32.Build.0 = Debug MPI|Win32
+		{E5DAE759-1E22-4055-9D39-B1150FBEDFE2}.Release Emulate MPI|Win32.ActiveCfg = Release Emulate MPI|Win32
+		{E5DAE759-1E22-4055-9D39-B1150FBEDFE2}.Release Emulate MPI|Win32.Build.0 = Release Emulate MPI|Win32
+		{E5DAE759-1E22-4055-9D39-B1150FBEDFE2}.Release MPI|Win32.ActiveCfg = Release MPI|Win32
+		{E5DAE759-1E22-4055-9D39-B1150FBEDFE2}.Release MPI|Win32.Build.0 = Release MPI|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

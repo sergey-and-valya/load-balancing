@@ -16,10 +16,10 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************
 
-#include "IDomainModel.h"
-#include "ILoadBalancingAlgorithm.h"
-#include "IEnvironment.h"
-#include "IMPICommunicator.h"
+#include <LoadBalancing/IDomainModel.h>
+#include <LoadBalancing/ILoadBalancingAlgorithm.h>
+#include <LoadBalancing/IEnvironment.h>
+#include <LoadBalancing/IMPICommunicator.h>
 
 #include "SampleFunction.h"
 #include "DomainModel.h"

@@ -18,7 +18,7 @@
 
 #include "TestMPIWorld.h"
 
-#include "../../IMPICommunicator.h"
+#include <LoadBalancing/IMPICommunicator.h>
 #include "TestCommunicator.h"
 #include "Assert.h"
 

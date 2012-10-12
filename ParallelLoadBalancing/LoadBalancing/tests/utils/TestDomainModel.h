@@ -19,7 +19,7 @@
 #ifndef _TESTTESTINGSYSTEM_H
 #define _TESTTESTINGSYSTEM_H
 
-#include "../../IDomainModel.h"
+#include <LoadBalancing/IDomainModel.h>
 #include <functional>
 
 class TestDomainModel : public IDomainModel

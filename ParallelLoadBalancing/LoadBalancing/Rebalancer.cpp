@@ -17,7 +17,7 @@
 // ****************************************************************************
 
 #include "Rebalancer.h"
-#include "IMPICommunicator.h"
+#include <LoadBalancing/IMPICommunicator.h>
 #include <stdlib.h>
 #include <memory.h>
 

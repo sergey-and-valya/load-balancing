@@ -21,7 +21,7 @@
 
 #include <lua.hpp>
 
-#include "IFunction.h"
+#include <LoadBalancing/IFunction.h>
 
 class LuaFunction : public IFunction
 {

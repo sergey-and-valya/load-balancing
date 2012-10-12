@@ -19,7 +19,7 @@
 #ifndef _TESTLOADBALANCING_H
 #define _TESTLOADBALANCING_H
 
-#include "../../ILoadBalancingAlgorithm.h"
+#include <LoadBalancing/ILoadBalancingAlgorithm.h>
 #include <functional>
 
 class TestLoadBalancing : public ILoadBalancingAlgorithm

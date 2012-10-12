@@ -21,8 +21,8 @@
 #include "utils/Assert.h"
 #include "utils/TestCommunicator.h"
 
-#include "../IRebalancer.h"
-#include "../IMPICommunicator.h"
+#include <LoadBalancing/IRebalancer.h>
+#include <LoadBalancing/IMPICommunicator.h>
 
 #include "../Rebalancer.h"
 

@@ -19,7 +19,7 @@
 #ifndef _SAMPLEFUNCTION_H
 #define _SAMPLEFUNCTION_H
 
-#include "IFunction.h"
+#include <LoadBalancing/IFunction.h>
 
 class SampleFunction :
 	public IFunction
