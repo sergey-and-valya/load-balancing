@@ -17,20 +17,18 @@
 // ****************************************************************************
 
 #include <new>
-#include <LoadBalancing/ILoadBalancingAlgorithm.h>
-#include "../LoadBalancingAlgorithm.h"
-#include "LoadBalancingAlgorithmModule.h"
+#include <LoadBalancing/IRebalancer.h>
+#include "../Rebalancer.h"
+#include "RebalancerModule.h"
 
-#define METATABLE_NAME "Standart.LoadBalancingAlgorithm"
-#define luaModule_checkLBA(L) \
-	((LoadBalancingAlgorithm*)luaL_checkudata(L, 1, METATABLE_NAME))
+#define METATABLE_NAME "Standart.Rebalancer"
+#define luaModule_checkRebalancer(L) \
+	((Rebalancer*)luaL_checkudata(L, 1, METATABLE_NAME))
 
 static int luaModule_new(lua_State* L)
 {
-	int accuaracy = luaL_checkinteger(L, 1);
-
-	LoadBalancingAlgorithm* lba = (LoadBalancingAlgorithm*)lua_newuserdata(L, sizeof(LoadBalancingAlgorithm));
-	new(lba) LoadBalancingAlgorithm(accuaracy);
+	Rebalancer* rb = (Rebalancer*)lua_newuserdata(L, sizeof(Rebalancer));
+	new(rb) Rebalancer();
 
 	luaL_getmetatable(L, METATABLE_NAME);
 	lua_setmetatable(L, -2);
@@ -40,27 +38,27 @@ static int luaModule_new(lua_State* L)
 
 static int luaModule_instance_destructor(lua_State* L)
 {
-	LoadBalancingAlgorithm* lba = luaModule_checkLBA(L);
+	Rebalancer* rb = luaModule_checkRebalancer(L);
 	
-	lba->~LoadBalancingAlgorithm();
+	rb->~Rebalancer();
 
 	return 0;
 }
 
 static int luaModule_instance_tostring(lua_State* L)
 {
-	LoadBalancingAlgorithm* lba = luaModule_checkLBA(L);
+	Rebalancer* rb = luaModule_checkRebalancer(L);
 	
 	lua_pushstring(L, METATABLE_NAME);
 
 	return 1;
 }
 
-static int luaModule_instance_AsILoadBalancingAlgorithm(lua_State* L)
+static int luaModule_instance_AsIRebalancer(lua_State* L)
 {
-	LoadBalancingAlgorithm* lba = luaModule_checkLBA(L);
+	Rebalancer* rb = luaModule_checkRebalancer(L);
 	
-	lua_pushlightuserdata(L, static_cast<ILoadBalancingAlgorithm*>(lba));
+	lua_pushlightuserdata(L, static_cast<IRebalancer*>(rb));
 
 	return 1;
 }
@@ -76,12 +74,12 @@ static const luaL_Reg module_instance_functions[] = {
 	{"__gc",                      luaModule_instance_destructor},
 	{"__tostring",                luaModule_instance_tostring},
 
-	{"AsILoadBalancingAlgorithm", luaModule_instance_AsILoadBalancingAlgorithm},
+	{"AsIRebalancer",             luaModule_instance_AsIRebalancer},
 
 	{NULL, NULL}
 };
 
-int luaopen_Standart_LoadBalancingAlgorithm(lua_State* L)
+int luaopen_Standart_Rebalancer(lua_State* L)
 {
 	luaL_newmetatable(L, METATABLE_NAME);
 	lua_pushvalue(L, -1);

@@ -58,6 +58,7 @@ struct Config
 	int accuracy;
 	int world_size;
 	ILoadBalancingAlgorithm* lba;
+	IRebalancer* rb;
 
 	
 	
@@ -96,6 +97,14 @@ ILoadBalancingAlgorithm* lua_checkAlgorithm(lua_State* L)
 	lua_pushvalue(L, -2);
 	lua_pcall(L, 1, 1, 0);
 	return (ILoadBalancingAlgorithm*)lua_touserdata(L, -1);
+}
+
+IRebalancer* lua_checkRebalancer(lua_State* L)
+{
+	lua_getfield(L, -1, "AsIRebalancer");
+	lua_pushvalue(L, -2);
+	lua_pcall(L, 1, 1, 0);
+	return (IRebalancer*)lua_touserdata(L, -1);
 }
 
 void LoadConfig(lua_State* L, Config* cfg)
@@ -154,22 +163,27 @@ void LoadConfig(lua_State* L, Config* cfg)
 		cfg->runTests = lua_toboolean(L, -1);
 	}
 
-	lua_getglobal(L, "lba");
+	lua_getglobal(L, "load_balancing_algorithm");
 	if(!lua_isnil(L, -1))
 	{
 		cfg->lba = lua_checkAlgorithm(L);
+	}
+
+	lua_getglobal(L, "rebalancer");
+	if(!lua_isnil(L, -1))
+	{
+		cfg->rb = lua_checkRebalancer(L);
 	}
 }
 
 void Run(IMPICommunicator& comm, const Config& cfg)
 {
-	auto rb = Rebalancer();
 	auto f = BinaryFile(cfg.matrix_file.c_str());
 	auto func = SampleFunction();
 	auto ts = DomainModel(f, func, cfg.steps);
 	auto env = Environment(cfg.useLoadBalancing, cfg.printResults);
 
-	env.Run(comm, ts, *cfg.lba, rb);
+	env.Run(comm, ts, *cfg.lba, *cfg.rb);
 }
 
 int main(int argc, char* argv[])

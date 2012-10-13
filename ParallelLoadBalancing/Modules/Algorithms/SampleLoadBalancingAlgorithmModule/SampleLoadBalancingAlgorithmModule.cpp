@@ -88,6 +88,7 @@ extern "C" __declspec(dllexport) int luaopen_SampleLoadBalancingAlgorithmModule(
 	lua_pushvalue(L, -1);
 	lua_setfield(L, -2, "__index");
 	luaL_setfuncs(L, module_instance_functions, 0);
+	lua_pop(L, 1);
 	luaL_newlib(L, module_functions);
 	return 1;
 }
