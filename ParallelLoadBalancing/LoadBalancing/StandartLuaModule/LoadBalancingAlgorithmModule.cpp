@@ -51,9 +51,9 @@ static int luaModule_instance_tostring(lua_State* L)
 {
 	LoadBalancingAlgorithm* lba = luaModule_checkLBA(L);
 	
-	lua_pushfstring(L, METATABLE_NAME);
+	lua_pushstring(L, METATABLE_NAME);
 
-	return 0;
+	return 1;
 }
 
 static int luaModule_instance_AsILoadBalancingAlgorithm(lua_State* L)
