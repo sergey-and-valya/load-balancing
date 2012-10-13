@@ -34,6 +34,12 @@
     <Filter Include="lua\domain_functions">
       <UniqueIdentifier>{66aeb7c1-8e9a-4f9e-8c86-da1b430188e4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Файлы исходного кода\StandartLuaModule">
+      <UniqueIdentifier>{adf57207-a276-4c3e-ac42-a37920132d15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Заголовочные файлы\StandartLuaModule">
+      <UniqueIdentifier>{b51dba4f-6d40-440b-bda1-bb43579f7c76}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Environment.h">
@@ -138,6 +144,9 @@
     <ClInclude Include="include\LoadBalancing\IDomainModel.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
+    <ClInclude Include="StandartLuaModule\LoadBalancingAlgorithmModule.h">
+      <Filter>Заголовочные файлы\StandartLuaModule</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -187,6 +196,12 @@
     </ClCompile>
     <ClCompile Include="LuaFunction.cpp">
       <Filter>Файлы исходного кода</Filter>
+    </ClCompile>
+    <ClCompile Include="StandartLuaModule.cpp">
+      <Filter>Файлы исходного кода</Filter>
+    </ClCompile>
+    <ClCompile Include="StandartLuaModule\LoadBalancingAlgorithmModule.cpp">
+      <Filter>Файлы исходного кода\StandartLuaModule</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

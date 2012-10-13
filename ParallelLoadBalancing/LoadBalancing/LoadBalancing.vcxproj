@@ -69,6 +69,7 @@
     <ClInclude Include="ProblemBuilder.h" />
     <ClInclude Include="Rebalancer.h" />
     <ClInclude Include="SampleFunction.h" />
+    <ClInclude Include="StandartLuaModule\LoadBalancingAlgorithmModule.h" />
     <ClInclude Include="tests\EnvironmentTest.h" />
     <ClInclude Include="DomainModel.h" />
     <ClInclude Include="BinaryFile.h" />
@@ -100,6 +101,8 @@
     <ClCompile Include="Rebalancer.cpp" />
     <ClCompile Include="DomainModel.cpp" />
     <ClCompile Include="SampleFunction.cpp" />
+    <ClCompile Include="StandartLuaModule.cpp" />
+    <ClCompile Include="StandartLuaModule\LoadBalancingAlgorithmModule.cpp" />
     <ClCompile Include="tests\EnvironmentTest.cpp" />
     <ClCompile Include="tests\LoadBalancingTest.cpp" />
     <ClCompile Include="tests\DomainModelTest.cpp" />

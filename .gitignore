@@ -22,3 +22,5 @@ bin
 /ParallelLoadBalancing/LoadBalancing/Debug MPI
 /ParallelLoadBalancing/Plugins/Algorithms/InitialAlgorithm/Debug Emulate MPI
 /ParallelLoadBalancing/Plugins/Algorithms/InitialAlgorithm/*.user
+/ParallelLoadBalancing/Modules/Algorithms/SampleLoadBalancingAlgorithmModule/Debug Emulate MPI
+/ParallelLoadBalancing/Modules/Algorithms/SampleLoadBalancingAlgorithmModule/*.user

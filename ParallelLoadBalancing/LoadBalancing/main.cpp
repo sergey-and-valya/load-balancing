@@ -36,6 +36,8 @@
 #include <time.h>
 #include <lua.hpp>
 
+#include <string>
+
 void Usage()
 {
 	printf(
@@ -176,6 +178,14 @@ int main(int argc, char* argv[])
 	
 	lua_State* L = luaL_newstate();
 	luaL_openlibs(L);
+
+	lua_getglobal(L, "package");
+	lua_getfield(L, -1, "cpath");
+	std::string cpath = std::string(argv[0]).append(";").append(lua_tostring(L, -1));
+	lua_pop(L, 1);
+	lua_pushstring(L, cpath.c_str());
+	lua_setfield(L, -2, "cpath");
+	lua_pop(L, 1);
 	
 	ParseCommandLine(argc, argv, &cfg);
 
