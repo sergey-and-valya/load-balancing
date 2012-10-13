@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{E5DAE759-1E22-4055-9D39-B1150FBEDFE2}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>InitialAlgorithm</RootNamespace>
+    <RootNamespace>SampleLoadBalancingAlgorithmModule</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration">
@@ -32,12 +32,12 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\..\PluginProjectConfig.props" />
+    <Import Project="$(SolutionDir)\ModuleProjectConfig.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <ItemDefinitionGroup>
     <ClCompile>
-      <PreprocessorDefinitions>_WINDOWS;_USRDLL;INITIALALGORITHM_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINDOWS;_USRDLL;SAMPLELOADBALANCINGALGORITHMMODULE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -47,10 +47,10 @@
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <ItemGroup>
-    <ClCompile Include="LoadBalancingAlgorithm.cpp" />
+    <ClCompile Include="SampleLoadBalancingAlgorithm.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="LoadBalancingAlgorithm.h" />
+    <ClInclude Include="SampleLoadBalancingAlgorithm.h" />
   </ItemGroup>
 </Project>

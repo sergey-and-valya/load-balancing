@@ -90,7 +90,7 @@ void ParseCommandLine(int argc, char* argv[], Config* cfg)
 
 ILoadBalancingAlgorithm* lua_checkAlgorithm(lua_State* L)
 {
-	lua_getfield(L, -1, "ToLoadBalancingAlgorithm");
+	lua_getfield(L, -1, "AsILoadBalancingAlgorithm");
 	lua_pushvalue(L, -2);
 	lua_pcall(L, 1, 1, 0);
 	return (ILoadBalancingAlgorithm*)lua_touserdata(L, -1);

@@ -16,15 +16,15 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************
 
-#ifndef _LOADBALANCINGALGORITHM_H
-#define _LOADBALANCINGALGORITHM_H
+#ifndef _SAMPLELOADBALANCINGALGORITHM_H
+#define _SAMPLELOADBALANCINGALGORITHM_H
 
 #include <LoadBalancing/ILoadBalancingAlgorithm.h>
 
-class LoadBalancingAlgorithm : public ILoadBalancingAlgorithm
+class SampleLoadBalancingAlgorithm : public ILoadBalancingAlgorithm
 {
 public:
-	LoadBalancingAlgorithm(int accuracy);
+	SampleLoadBalancingAlgorithm(int parameter1, int parameter2);
 
 	void Run(
 		IMPICommunicator& comm,
@@ -36,7 +36,8 @@ public:
 		int newSolutionI[],
 		int newSolutionJ[]);
 
-	int accuracy;
+	int parameter1;
+	int parameter2;
 };
 
 #endif
