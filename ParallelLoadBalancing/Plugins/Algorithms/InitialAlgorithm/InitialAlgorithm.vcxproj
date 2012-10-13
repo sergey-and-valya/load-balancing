@@ -47,10 +47,10 @@
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\LoadBalancing\LoadBalancingAlgorithm.cpp" />
+    <ClCompile Include="LoadBalancingAlgorithm.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\LoadBalancing\LoadBalancingAlgorithm.h" />
+    <ClInclude Include="LoadBalancingAlgorithm.h" />
   </ItemGroup>
 </Project>

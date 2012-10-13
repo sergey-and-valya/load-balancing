@@ -18,12 +18,12 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\LoadBalancing\LoadBalancingAlgorithm.cpp">
+    <ClCompile Include="LoadBalancingAlgorithm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\LoadBalancing\LoadBalancingAlgorithm.h">
+    <ClInclude Include="LoadBalancingAlgorithm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -16,26 +16,83 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************
 
+#include <new>
 #include <lua.hpp>
 #include <LoadBalancing/ILoadBalancingAlgorithm.h>
+#include "LoadBalancingAlgorithm.h"
+
+#define METATABLE_NAME "InitialAlgorithm.LoadBalancingAlgorithm"
+#define luaL_checkLBA(L) \
+	((LoadBalancingAlgorithm*)luaL_checkudata(L, 1, METATABLE_NAME))
 
 static int luaIA_new(lua_State* L)
 {
+	int accuracy = luaL_checkinteger(L, -1);
+
+	LoadBalancingAlgorithm* lba = (LoadBalancingAlgorithm*)lua_newuserdata(L, sizeof(LoadBalancingAlgorithm));
+	new(lba) LoadBalancingAlgorithm(accuracy);
+
+	luaL_getmetatable(L, METATABLE_NAME);
+	lua_setmetatable(L, -2);
+
+	return 1;
+}
+
+static int luaIA_LBA_destructor(lua_State* L)
+{
+	LoadBalancingAlgorithm* lba = luaL_checkLBA(L);
+	
+	lba->~LoadBalancingAlgorithm();
+
 	return 0;
 }
 
+static int luaIA_LBA_tostring(lua_State* L)
+{
+	LoadBalancingAlgorithm* lba = luaL_checkLBA(L);
+	
+	lua_pushfstring(L, "InitialAlgorithm.LoadBalancingAlgorithm");
+
+	return 0;
+}
+
+static int luaIA_LBA_ToLoadBalancingAlgorithm(lua_State* L)
+{
+	LoadBalancingAlgorithm* lba = luaL_checkLBA(L);
+	
+	lua_pushlightuserdata(L, static_cast<ILoadBalancingAlgorithm*>(lba));
+
+	return 1;
+}
+
+//static module functions:
 static const luaL_Reg InitialAlgorithm[] = {
 	{"new", luaIA_new},
 	{NULL, NULL}
 };
 
+//LoadBalancing member functions:
+static const luaL_Reg InitialAlgorithm_LoadBalancingAlgorithm[] = {
+	{"__gc",       luaIA_LBA_destructor},
+	{"__tostring", luaIA_LBA_tostring},
+
+	{"ToLoadBalancingAlgorithm", luaIA_LBA_ToLoadBalancingAlgorithm},
+
+	{NULL, NULL}
+};
+
 extern "C" __declspec(dllexport) int luaopen_InitialAlgorithm(lua_State* L)
 {
+	luaL_newmetatable(L, METATABLE_NAME);
+	lua_pushvalue(L, -1);
+	lua_setfield(L, -2, "__index");
+	luaL_setfuncs(L, InitialAlgorithm_LoadBalancingAlgorithm, 0);
 	luaL_newlib(L, InitialAlgorithm);
 	return 1;
 }
 
 int main()
 {
+	//do nothing
 }
 

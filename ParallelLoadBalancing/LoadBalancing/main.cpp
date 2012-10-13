@@ -55,6 +55,7 @@ struct Config
 	int steps;
 	int accuracy;
 	int world_size;
+	ILoadBalancingAlgorithm* lba;
 
 	
 	
@@ -66,6 +67,7 @@ struct Config
 			 , accuracy(6)
 			 , world_size(4)
 			 , matrix_file("matrix_big")
+			 , lba(0)
 	{
 	}
 };
@@ -86,20 +88,25 @@ void ParseCommandLine(int argc, char* argv[], Config* cfg)
 	}
 }
 
-void LoadConfig(Config* cfg)
-{	
-	lua_State* L = luaL_newstate();
-	luaL_openlibs(L);
-	
+ILoadBalancingAlgorithm* lua_checkAlgorithm(lua_State* L)
+{
+	lua_getfield(L, -1, "ToLoadBalancingAlgorithm");
+	lua_pushvalue(L, -2);
+	lua_pcall(L, 1, 1, 0);
+	return (ILoadBalancingAlgorithm*)lua_touserdata(L, -1);
+}
+
+void LoadConfig(lua_State* L, Config* cfg)
+{
 	if(luaL_loadfile(L, cfg->config_file.c_str()))
 	{
-		printf("config file '%s' is not found\n", cfg->config_file);
+		printf("problem during loading config file '%s':\n%s\n", cfg->config_file.c_str(), lua_tostring(L, -1));
 		exit(1);
 	}
 	
 	if(lua_pcall(L, 0, 0, 0))
 	{
-		printf("problem executing config file '%s':\n%s\n", cfg->config_file.c_str(), lua_tostring(L, -1));
+		printf("problem during executing config file '%s':\n%s\n", cfg->config_file.c_str(), lua_tostring(L, -1));
 		exit(1);
 	}
 
@@ -145,18 +152,36 @@ void LoadConfig(Config* cfg)
 		cfg->runTests = lua_toboolean(L, -1);
 	}
 
-	lua_close(L);	
+	lua_getglobal(L, "lba");
+	if(!lua_isnil(L, -1))
+	{
+		cfg->lba = lua_checkAlgorithm(L);
+	}
+}
+
+void Run(IMPICommunicator& comm, const Config& cfg)
+{
+	auto rb = Rebalancer();
+	auto f = BinaryFile(cfg.matrix_file.c_str());
+	auto func = SampleFunction();
+	auto ts = DomainModel(f, func, cfg.steps);
+	auto env = Environment(cfg.useLoadBalancing, cfg.printResults);
+
+	env.Run(comm, ts, *cfg.lba, rb);
 }
 
 int main(int argc, char* argv[])
 {
 	Config cfg;
-
+	
+	lua_State* L = luaL_newstate();
+	luaL_openlibs(L);
+	
 	ParseCommandLine(argc, argv, &cfg);
 
 	if(!cfg.config_file.empty())
 	{
-		LoadConfig(&cfg);
+		LoadConfig(L, &cfg);
 	}
 
 	if(cfg.runTests)
@@ -190,14 +215,7 @@ int main(int argc, char* argv[])
 	    clock_t start_time = clock();
 	    TestMPIWorld world(cfg.world_size, [&cfg](IMPICommunicator& comm)
 	    {
-		    auto lb = LoadBalancingAlgorithm(cfg.accuracy);
-		    auto rb = Rebalancer();
-		    auto f = BinaryFile(cfg.matrix_file.c_str());
-			auto func = SampleFunction();
-		    auto ts = DomainModel(f, func, cfg.steps);
-		    auto env = Environment(cfg.useLoadBalancing, cfg.printResults);
-
-		    env.Run(comm, ts, lb, rb);
+			Run(comm, cfg);
 	    });
 
 	    world.RunAndWait();
@@ -206,17 +224,15 @@ int main(int argc, char* argv[])
 #else
 	    MPI_Init(NULL, NULL);
 	
-	    auto lb = LoadBalancingAlgorithm(cfg.accuracy);
-	    auto rb = Rebalancer();
-	    auto f = BinaryFile(cfg.matrix_file.c_str());
-	    auto ts = DomainModel(f, cfg.steps);
 	    auto comm = MPIWorldCommunicator();
-	    auto env = Environment(cfg.useLoadBalancing, cfg.printResults);
-
-	    env.Run(comm, ts, lb, rb);
+		
+		Run(comm, cfg);
 
 	    MPI_Finalize();
 #endif
     }
+	
+	lua_close(L);
+
 	return 0;
 }
