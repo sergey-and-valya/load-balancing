@@ -48,7 +48,7 @@
   </ImportGroup>
   <ItemGroup>
     <ClCompile Include="SampleLoadBalancingAlgorithm.cpp" />
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="SampleLoadBalancingAlgorithmModule.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SampleLoadBalancingAlgorithm.h" />

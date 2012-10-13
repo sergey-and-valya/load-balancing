@@ -15,10 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="SampleLoadBalancingAlgorithm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SampleLoadBalancingAlgorithm.cpp">
+    <ClCompile Include="SampleLoadBalancingAlgorithmModule.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
