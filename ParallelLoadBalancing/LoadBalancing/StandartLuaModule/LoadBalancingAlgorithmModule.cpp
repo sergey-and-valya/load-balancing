@@ -17,7 +17,6 @@
 // ****************************************************************************
 
 #include <new>
-#include <LoadBalancing/ILoadBalancingAlgorithm.h>
 #include "../LoadBalancingAlgorithm.h"
 #include "LoadBalancingAlgorithmModule.h"
 

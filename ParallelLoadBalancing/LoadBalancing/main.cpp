@@ -52,25 +52,22 @@ struct Config
 	
 	std::string matrix_file;
 	bool runTests;
-	bool useLoadBalancing;
-	bool printResults;
 	int steps;
-	int accuracy;
 	int world_size;
 	ILoadBalancingAlgorithm* lba;
 	IRebalancer* rb;
+	IEnvironment* env;
 
 	
 	
 	Config() : config_file()
 		     , runTests(false)
-			 , useLoadBalancing(false)
-			 , printResults(false)
 			 , steps(10)
-			 , accuracy(6)
 			 , world_size(4)
 			 , matrix_file("matrix_big")
 			 , lba(0)
+			 , rb(0)
+			 , env(0)
 	{
 	}
 };
@@ -107,6 +104,14 @@ IRebalancer* lua_checkRebalancer(lua_State* L)
 	return (IRebalancer*)lua_touserdata(L, -1);
 }
 
+IEnvironment* lua_checkEnvironment(lua_State* L)
+{
+	lua_getfield(L, -1, "AsIEnvironment");
+	lua_pushvalue(L, -2);
+	lua_pcall(L, 1, 1, 0);
+	return (IEnvironment*)lua_touserdata(L, -1);
+}
+
 void LoadConfig(lua_State* L, Config* cfg)
 {
 	if(luaL_loadfile(L, cfg->config_file.c_str()))
@@ -121,12 +126,6 @@ void LoadConfig(lua_State* L, Config* cfg)
 		exit(1);
 	}
 
-	lua_getglobal(L, "load_balancing");
-	if(!lua_isnil(L, -1))
-	{
-		cfg->useLoadBalancing = lua_toboolean(L, -1);
-	}
-
 	lua_getglobal(L,  "steps");
 	if(!lua_isnil(L, -1))
 	{
@@ -139,22 +138,10 @@ void LoadConfig(lua_State* L, Config* cfg)
 		cfg->world_size = lua_tointeger(L, -1);
 	}
 
-	lua_getglobal(L, "accuracy");
-	if(!lua_isnil(L, -1))
-	{
-		cfg->accuracy = lua_tointeger(L, -1);
-	}
-
 	lua_getglobal(L, "matrix_file");
 	if(!lua_isnil(L, -1))
 	{
 		cfg->matrix_file = lua_tostring(L, -1);
-	}
-
-	lua_getglobal(L, "print_results");
-	if(!lua_isnil(L, -1))
-	{
-		cfg->printResults = lua_toboolean(L, -1);
 	}
 
 	lua_getglobal(L, "unit_tests");
@@ -174,6 +161,12 @@ void LoadConfig(lua_State* L, Config* cfg)
 	{
 		cfg->rb = lua_checkRebalancer(L);
 	}
+
+	lua_getglobal(L, "environment");
+	if(!lua_isnil(L, -1))
+	{
+		cfg->env = lua_checkEnvironment(L);
+	}
 }
 
 void Run(IMPICommunicator& comm, const Config& cfg)
@@ -181,9 +174,8 @@ void Run(IMPICommunicator& comm, const Config& cfg)
 	auto f = BinaryFile(cfg.matrix_file.c_str());
 	auto func = SampleFunction();
 	auto ts = DomainModel(f, func, cfg.steps);
-	auto env = Environment(cfg.useLoadBalancing, cfg.printResults);
-
-	env.Run(comm, ts, *cfg.lba, *cfg.rb);
+	
+	cfg.env->Run(comm, ts, *cfg.lba, *cfg.rb);
 }
 
 int main(int argc, char* argv[])
@@ -244,7 +236,7 @@ int main(int argc, char* argv[])
 
 	    world.RunAndWait();
 	
-	    printf("with%s load balancing %f\n", cfg.useLoadBalancing ? "" : "out", (float)(clock() - start_time) / CLOCKS_PER_SEC);
+	    //printf("with%s load balancing %f\n", cfg.useLoadBalancing ? "" : "out", (float)(clock() - start_time) / CLOCKS_PER_SEC);
 #else
 	    MPI_Init(NULL, NULL);
 	

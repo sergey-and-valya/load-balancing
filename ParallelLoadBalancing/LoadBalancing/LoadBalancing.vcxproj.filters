@@ -150,6 +150,9 @@
     <ClInclude Include="StandartLuaModule\RebalancerModule.h">
       <Filter>Заголовочные файлы\StandartLuaModule</Filter>
     </ClInclude>
+    <ClInclude Include="StandartLuaModule\EnvironmentModule.h">
+      <Filter>Заголовочные файлы\StandartLuaModule</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -207,6 +210,9 @@
       <Filter>Файлы исходного кода\StandartLuaModule</Filter>
     </ClCompile>
     <ClCompile Include="StandartLuaModule\RebalancerModule.cpp">
+      <Filter>Файлы исходного кода\StandartLuaModule</Filter>
+    </ClCompile>
+    <ClCompile Include="StandartLuaModule\EnvironmentModule.cpp">
       <Filter>Файлы исходного кода\StandartLuaModule</Filter>
     </ClCompile>
   </ItemGroup>

@@ -17,17 +17,20 @@
 // ****************************************************************************
 
 #include <new>
-#include "../Rebalancer.h"
-#include "RebalancerModule.h"
+#include "../Environment.h"
+#include "EnvironmentModule.h"
 
-#define METATABLE_NAME "Standart.Rebalancer"
-#define luaModule_checkRebalancer(L) \
-	((Rebalancer*)luaL_checkudata(L, 1, METATABLE_NAME))
+#define METATABLE_NAME "Standart.Environment"
+#define luaModule_checkEnvironment(L) \
+	((Environment*)luaL_checkudata(L, 1, METATABLE_NAME))
 
 static int luaModule_new(lua_State* L)
 {
-	Rebalancer* rb = (Rebalancer*)lua_newuserdata(L, sizeof(Rebalancer));
-	new(rb) Rebalancer();
+	bool needLoadBalancing = lua_toboolean(L, 1);
+	bool printResults = lua_toboolean(L, 2);
+
+	Environment* env = (Environment*)lua_newuserdata(L, sizeof(Environment));
+	new(env) Environment(needLoadBalancing, printResults);
 
 	luaL_getmetatable(L, METATABLE_NAME);
 	lua_setmetatable(L, -2);
@@ -37,27 +40,27 @@ static int luaModule_new(lua_State* L)
 
 static int luaModule_instance_destructor(lua_State* L)
 {
-	Rebalancer* rb = luaModule_checkRebalancer(L);
+	Environment* env = luaModule_checkEnvironment(L);
 	
-	rb->~Rebalancer();
+	env->~Environment();
 
 	return 0;
 }
 
 static int luaModule_instance_tostring(lua_State* L)
 {
-	Rebalancer* rb = luaModule_checkRebalancer(L);
+	Environment* env = luaModule_checkEnvironment(L);
 	
 	lua_pushstring(L, METATABLE_NAME);
 
 	return 1;
 }
 
-static int luaModule_instance_AsIRebalancer(lua_State* L)
+static int luaModule_instance_AsIEnvironment(lua_State* L)
 {
-	Rebalancer* rb = luaModule_checkRebalancer(L);
+	Environment* env = luaModule_checkEnvironment(L);
 	
-	lua_pushlightuserdata(L, static_cast<IRebalancer*>(rb));
+	lua_pushlightuserdata(L, static_cast<IEnvironment*>(env));
 
 	return 1;
 }
@@ -73,12 +76,12 @@ static const luaL_Reg module_instance_functions[] = {
 	{"__gc",                      luaModule_instance_destructor},
 	{"__tostring",                luaModule_instance_tostring},
 
-	{"AsIRebalancer",             luaModule_instance_AsIRebalancer},
+	{"AsIEnvironment",            luaModule_instance_AsIEnvironment},
 
 	{NULL, NULL}
 };
 
-int luaopen_Standart_Rebalancer(lua_State* L)
+int luaopen_Standart_Environment(lua_State* L)
 {
 	luaL_newmetatable(L, METATABLE_NAME);
 	lua_pushvalue(L, -1);
