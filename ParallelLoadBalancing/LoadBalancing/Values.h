@@ -20,6 +20,7 @@
 #define _VALUES_H
 
 #include <vector>
+#include <stddef.h>
 
 class Values
 {

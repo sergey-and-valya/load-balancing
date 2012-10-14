@@ -21,6 +21,8 @@
 
 #include "IProblemBuilder.h"
 
+#include <stddef.h>
+
 typedef void* (*arrayAllocator)(size_t bytes);
 
 class ProblemBuilder : public IProblemBuilder

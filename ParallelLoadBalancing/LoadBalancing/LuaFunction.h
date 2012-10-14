@@ -20,6 +20,7 @@
 #define _LUAFUNCTION_H
 
 #include <lua.hpp>
+#include <string>
 
 #include "IFunction.h"
 

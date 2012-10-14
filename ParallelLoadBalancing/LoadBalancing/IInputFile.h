@@ -19,6 +19,8 @@
 #ifndef _IINPUTFILE_H
 #define _IINPUTFILE_H
 
+#include <stddef.h>
+
 /**
  * \class   IInputFile
  *

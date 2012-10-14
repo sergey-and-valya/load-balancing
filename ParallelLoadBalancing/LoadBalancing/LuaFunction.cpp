@@ -17,6 +17,8 @@
 // ****************************************************************************
 
 #include "LuaFunction.h"
+#include <stdlib.h>
+#include <stdio.h>
 
 // [-3, +1, -] number value(Values* values, int i, int j)
 static int luaLB_Value(lua_State* lua)

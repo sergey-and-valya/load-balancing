@@ -57,7 +57,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>$(SolutionDir)\..\thirdparty\lua5.2;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\..\thirdparty\lua5.2\lib\windows\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>liblua52.a;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <CustomBuild>
@@ -65,7 +65,7 @@
       <Outputs>$(OutputPath)%(Filename)</Outputs>
     </CustomBuild>
     <PostBuildEvent>
-      <Command>copy /Y  "$(SolutionDir)..\thirdparty\lua5.2\lua52.dll" "$(OutDir)"</Command>
+      <Command>copy /Y  "$(SolutionDir)..\thirdparty\lua5.2\lib\windows\x86\lua52.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug MPI' or '$(Configuration)'=='Debug Emulate MPI'">

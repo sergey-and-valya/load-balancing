@@ -20,7 +20,7 @@
 
 BinaryFile::BinaryFile(const char* filename)
 {
-	fopen_s(&file, filename, "rb");
+	file = fopen(filename, "rb");
 }
 
 BinaryFile::~BinaryFile()

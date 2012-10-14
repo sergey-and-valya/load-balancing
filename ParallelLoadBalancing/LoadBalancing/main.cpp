@@ -29,12 +29,17 @@
 #include "BinaryFile.h"
 #include "MPIWorldCommunicator.h"
 
-#include "tests\Tests.h"
-#include "tests\utils\Testkit.h"
-#include "tests\utils\TestMPIWorld.h"
+#ifdef WIN32
+#include "tests/Tests.h"
+#include "tests/utils/Testkit.h"
+#include "tests/utils/TestMPIWorld.h"
+#endif
 
 #include <time.h>
 #include <lua.hpp>
+#include <string>
+#include <string.h>
+#include <stdlib.h>
 
 void Usage()
 {
@@ -93,7 +98,7 @@ void LoadConfig(Config* cfg)
 	
 	if(luaL_loadfile(L, cfg->config_file.c_str()))
 	{
-		printf("config file '%s' is not found\n", cfg->config_file);
+		printf("config file '%s' is not found\n", cfg->config_file.c_str());
 		exit(1);
 	}
 	
@@ -159,6 +164,7 @@ int main(int argc, char* argv[])
 		LoadConfig(&cfg);
 	}
 
+#ifdef WIN32
 	if(cfg.runTests)
 	{
 		// TODO: Add enviroment test system
@@ -185,6 +191,7 @@ int main(int argc, char* argv[])
 		TEST(LoadBalancingCentralTest);
 	}
 	else
+#endif
     {
 #ifdef EMULATE_MPI
 	    clock_t start_time = clock();
@@ -206,12 +213,13 @@ int main(int argc, char* argv[])
 #else
 	    MPI_Init(NULL, NULL);
 	
-	    auto lb = LoadBalancingAlgorithm(cfg.accuracy);
-	    auto rb = Rebalancer();
-	    auto f = BinaryFile(cfg.matrix_file.c_str());
-	    auto ts = DomainModel(f, cfg.steps);
-	    auto comm = MPIWorldCommunicator();
-	    auto env = Environment(cfg.useLoadBalancing, cfg.printResults);
+	    LoadBalancingAlgorithm lb(cfg.accuracy);
+	    Rebalancer rb;
+	    SampleFunction func;
+	    BinaryFile f(cfg.matrix_file.c_str());
+	    DomainModel ts(f, func, cfg.steps);
+	    MPIWorldCommunicator comm;
+	    Environment env(cfg.useLoadBalancing, cfg.printResults);
 
 	    env.Run(comm, ts, lb, rb);
 
