@@ -16,31 +16,11 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************
 
-#include <lua.hpp>
-#include "StandartLuaModule/LoadBalancingAlgorithmModule.h"
-#include "StandartLuaModule/RebalancerModule.h"
-#include "StandartLuaModule/EnvironmentModule.h"
-#include "StandartLuaModule/DomainModelModule.h"
-#include "StandartLuaModule/LuaFunctionModule.h"
+#ifndef _STANDARTLUAMODULE_DOMAINMODELMODULE_H
+#define _STANDARTLUAMODULE_DOMAINMODELMODULE_H
 
-extern "C" __declspec(dllexport) int luaopen_Standart(lua_State* L)
-{
-	lua_newtable(L);
-	
-	luaopen_Standart_LoadBalancingAlgorithm(L);
-	lua_setfield(L, -2, "LoadBalancingAlgorithm");
-	
-	luaopen_Standart_Rebalancer(L);
-	lua_setfield(L, -2, "Rebalancer");
-	
-	luaopen_Standart_Environment(L);
-	lua_setfield(L, -2, "Environment");
-	
-	luaopen_Standart_DomainModel(L);
-	lua_setfield(L, -2, "DomainModel");
-	
-	luaopen_Standart_LuaFunction(L);
-	lua_setfield(L, -2, "LuaFunction");
-	
-	return 1;
-}
+#include <lua.hpp>
+
+extern "C" int luaopen_Standart_DomainModel(lua_State* L);
+
+#endif

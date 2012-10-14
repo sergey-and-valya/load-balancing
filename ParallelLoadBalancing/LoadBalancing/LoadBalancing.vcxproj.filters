@@ -153,6 +153,12 @@
     <ClInclude Include="StandartLuaModule\EnvironmentModule.h">
       <Filter>Заголовочные файлы\StandartLuaModule</Filter>
     </ClInclude>
+    <ClInclude Include="StandartLuaModule\DomainModelModule.h">
+      <Filter>Заголовочные файлы\StandartLuaModule</Filter>
+    </ClInclude>
+    <ClInclude Include="StandartLuaModule\LuaFunctionModule.h">
+      <Filter>Заголовочные файлы\StandartLuaModule</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -213,6 +219,12 @@
       <Filter>Файлы исходного кода\StandartLuaModule</Filter>
     </ClCompile>
     <ClCompile Include="StandartLuaModule\EnvironmentModule.cpp">
+      <Filter>Файлы исходного кода\StandartLuaModule</Filter>
+    </ClCompile>
+    <ClCompile Include="StandartLuaModule\DomainModelModule.cpp">
+      <Filter>Файлы исходного кода\StandartLuaModule</Filter>
+    </ClCompile>
+    <ClCompile Include="StandartLuaModule\LuaFunctionModule.cpp">
       <Filter>Файлы исходного кода\StandartLuaModule</Filter>
     </ClCompile>
   </ItemGroup>

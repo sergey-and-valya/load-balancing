@@ -38,11 +38,44 @@
 
 #include <string>
 
-void Usage()
+void Usage(const char* path)
 {
+	const char sep =
+#ifdef WIN32
+		'\\';
+#else
+		'/';
+#endif
+
+	const char* filename = path;
+	const char* p = path;
+	while(*p)
+	{
+		if((*p) == sep)
+		{
+			filename = p + 1;
+		}
+		p++;
+	};
+
 	printf(
-		"loadbalancing [-c <config-file>]\n"
-		"   -c               - use specific lua config file\n"
+		"%s "
+#ifdef EMULATE_MPI
+		"Emulate MPI version\n"
+#else
+		"MPI version\n"
+#endif
+		"%s [-c <config-file>] "
+#ifdef EMULATE_MPI
+		"[-w <number>] "
+#endif
+		"[-t]\n"
+		"   -c <config-file>  - use specific lua config file\n"
+#ifdef EMULATE_MPI
+		"   -w <number>       - world size, count of emulated mpi-processors\n"
+#endif
+		"   -t                - run unit tests instead of load balancing\n",
+		filename, filename
 	);
 }
 
@@ -50,43 +83,129 @@ struct Config
 {
 	std::string config_file;
 	
-	std::string matrix_file;
-	bool runTests;
-	int steps;
-	int world_size;
+	bool unit_tests;
 	ILoadBalancingAlgorithm* lba;
 	IRebalancer* rb;
 	IEnvironment* env;
+	IDomainModel* dm;
 
 	
 	
 	Config() : config_file()
-		     , runTests(false)
-			 , steps(10)
-			 , world_size(4)
-			 , matrix_file("matrix_big")
+		     , unit_tests(false)
 			 , lba(0)
 			 , rb(0)
 			 , env(0)
+			 , dm(0)
 	{
 	}
 };
 
-void ParseCommandLine(int argc, char* argv[], Config* cfg)
+void ParseCommandLine(int argc, char* argv[], Config* cfg, bool silent)
 {
+	bool config_file_isset = false;
+	bool unit_tests_isset = false;
+
 	for(int i = 1; i < argc; i++)
 	{
 		if(strcmp(argv[i], "-c") == 0)
 		{
 			cfg->config_file = argv[++i];
+
+			if(config_file_isset)
+			{
+				if(!silent)
+				{
+					printf("Config file option is already set");
+				}
+				exit(1);
+			}
+			config_file_isset = true;
 		}
+		else if(strcmp(argv[i], "-t") == 0)
+		{
+			cfg->unit_tests = true;
+
+			if(unit_tests_isset)
+			{
+				if(!silent)
+				{
+					printf("Unit tests option is already set");
+				}
+				exit(1);
+			}
+			unit_tests_isset = true;
+		}
+#ifdef EMULATE_MPI
+		else if(strcmp(argv[i], "-w") == 0)
+		{
+			i++;
+		}
+#endif
 		else
 		{
-			Usage();
+			if(!silent)
+			{
+				printf("Wrong parameter: %s\n", argv[i]);
+				Usage(argv[0]);
+			}
 			exit(1);
 		}
 	}
+
+	if(!(unit_tests_isset || config_file_isset))
+	{
+		printf("You must specify either config file or turn on unit tests option!");
+		exit(1);
+	}
 }
+
+
+#ifdef EMULATE_MPI
+struct EmulateMPIConfig
+{
+	int world_size;
+};
+
+void ParseEmulateMPICommandLine(int argc, char* argv[], EmulateMPIConfig* cfg)
+{
+	bool world_size_isset = false;
+
+	for(int i = 1; i < argc; i++)
+	{
+		if(strcmp(argv[i], "-c") == 0)
+		{
+			i++;
+		}
+		else if(strcmp(argv[i], "-t") == 0)
+		{
+		}
+		else if(strcmp(argv[i], "-w") == 0)
+		{
+			cfg->world_size = atoi(argv[++i]);
+
+			if(world_size_isset)
+			{
+				printf("World size option is already set");
+				exit(1);
+			}
+			world_size_isset = true;
+		}
+		else
+		{
+			printf("Wrong parameter: %s\n", argv[i]);
+			Usage(argv[0]);
+			exit(1);
+		}
+	}
+
+	if(!world_size_isset)
+	{
+		printf("You must specify a world size!");
+		exit(1);
+	}
+}
+#endif
 
 ILoadBalancingAlgorithm* lua_checkAlgorithm(lua_State* L)
 {
@@ -112,6 +231,14 @@ IEnvironment* lua_checkEnvironment(lua_State* L)
 	return (IEnvironment*)lua_touserdata(L, -1);
 }
 
+IDomainModel* lua_checkDomainModel(lua_State* L)
+{
+	lua_getfield(L, -1, "AsIDomainModel");
+	lua_pushvalue(L, -2);
+	lua_pcall(L, 1, 1, 0);
+	return (IDomainModel*)lua_touserdata(L, -1);
+}
+
 void LoadConfig(lua_State* L, Config* cfg)
 {
 	if(luaL_loadfile(L, cfg->config_file.c_str()))
@@ -124,30 +251,6 @@ void LoadConfig(lua_State* L, Config* cfg)
 	{
 		printf("problem during executing config file '%s':\n%s\n", cfg->config_file.c_str(), lua_tostring(L, -1));
 		exit(1);
-	}
-
-	lua_getglobal(L,  "steps");
-	if(!lua_isnil(L, -1))
-	{
-		cfg->steps = lua_tointeger(L, -1);
-	}
-	
-	lua_getglobal(L, "world_size");
-	if(!lua_isnil(L, -1))
-	{
-		cfg->world_size = lua_tointeger(L, -1);
-	}
-
-	lua_getglobal(L, "matrix_file");
-	if(!lua_isnil(L, -1))
-	{
-		cfg->matrix_file = lua_tostring(L, -1);
-	}
-
-	lua_getglobal(L, "unit_tests");
-	if(!lua_isnil(L, -1))
-	{
-		cfg->runTests = lua_toboolean(L, -1);
 	}
 
 	lua_getglobal(L, "load_balancing_algorithm");
@@ -167,88 +270,95 @@ void LoadConfig(lua_State* L, Config* cfg)
 	{
 		cfg->env = lua_checkEnvironment(L);
 	}
+
+	lua_getglobal(L, "domain_model");
+	if(!lua_isnil(L, -1))
+	{
+		cfg->dm = lua_checkDomainModel(L);
+	}
 }
 
-void Run(IMPICommunicator& comm, const Config& cfg)
+void Run(IMPICommunicator& comm, int argc, char* argv[])
 {
-	auto f = BinaryFile(cfg.matrix_file.c_str());
-	auto func = SampleFunction();
-	auto ts = DomainModel(f, func, cfg.steps);
+	Config cfg;
 	
-	cfg.env->Run(comm, ts, *cfg.lba, *cfg.rb);
+	int rank;
+	comm.Rank(&rank);
+	
+	ParseCommandLine(argc, argv, &cfg, rank == 0);
+
+	if(cfg.unit_tests)
+	{
+		if(rank == 0)
+		{
+			// TODO: Add enviroment test system
+			//TEST(EnvironmentTest);
+
+			TEST(RebalancerMoveFromLeftTest);
+			TEST(RebalancerMoveFromRightTest);
+			TEST(RebalancerMoveFromTopTest);
+			TEST(RebalancerMoveFromBottomTest);
+	
+			TEST(RebalancerMoveToLeftTest);
+			TEST(RebalancerMoveToRightTest);
+			TEST(RebalancerMoveToTopTest);
+			TEST(RebalancerMoveToBottomTest);
+
+			TEST(RebalancerNoMoveTest);
+	
+			TEST(RebalancerMoveFromLeftFromTopTest);
+		
+			TEST(DomainModelStep);
+			TEST(DomainModelLoadTest);
+
+			TEST(LoadBalancingTest);
+			TEST(LoadBalancingCentralTest);
+		}
+	}
+	else
+    {
+		lua_State* L = luaL_newstate();
+		luaL_openlibs(L);
+
+		lua_getglobal(L, "package");
+		lua_getfield(L, -1, "cpath");
+		std::string cpath = std::string(argv[0]).append(";").append(lua_tostring(L, -1));
+		lua_pop(L, 1);
+		lua_pushstring(L, cpath.c_str());
+		lua_setfield(L, -2, "cpath");
+		lua_pop(L, 1);
+	
+		LoadConfig(L, &cfg);
+
+		cfg.env->Run(comm, *cfg.dm, *cfg.lba, *cfg.rb);
+
+		lua_close(L);
+	}
 }
 
 int main(int argc, char* argv[])
 {
-	Config cfg;
-	
-	lua_State* L = luaL_newstate();
-	luaL_openlibs(L);
 
-	lua_getglobal(L, "package");
-	lua_getfield(L, -1, "cpath");
-	std::string cpath = std::string(argv[0]).append(";").append(lua_tostring(L, -1));
-	lua_pop(L, 1);
-	lua_pushstring(L, cpath.c_str());
-	lua_setfield(L, -2, "cpath");
-	lua_pop(L, 1);
-	
-	ParseCommandLine(argc, argv, &cfg);
-
-	if(!cfg.config_file.empty())
-	{
-		LoadConfig(L, &cfg);
-	}
-
-	if(cfg.runTests)
-	{
-		// TODO: Add enviroment test system
-		//TEST(EnvironmentTest);
-
-		TEST(RebalancerMoveFromLeftTest);
-		TEST(RebalancerMoveFromRightTest);
-		TEST(RebalancerMoveFromTopTest);
-		TEST(RebalancerMoveFromBottomTest);
-	
-		TEST(RebalancerMoveToLeftTest);
-		TEST(RebalancerMoveToRightTest);
-		TEST(RebalancerMoveToTopTest);
-		TEST(RebalancerMoveToBottomTest);
-
-		TEST(RebalancerNoMoveTest);
-	
-		TEST(RebalancerMoveFromLeftFromTopTest);
-		
-		TEST(DomainModelStep);
-		TEST(DomainModelLoadTest);
-
-		TEST(LoadBalancingTest);
-		TEST(LoadBalancingCentralTest);
-	}
-	else
-    {
 #ifdef EMULATE_MPI
-	    clock_t start_time = clock();
-	    TestMPIWorld world(cfg.world_size, [&cfg](IMPICommunicator& comm)
-	    {
-			Run(comm, cfg);
-	    });
 
-	    world.RunAndWait();
-	
-	    //printf("with%s load balancing %f\n", cfg.useLoadBalancing ? "" : "out", (float)(clock() - start_time) / CLOCKS_PER_SEC);
+	EmulateMPIConfig cfg;
+	ParseEmulateMPICommandLine(argc, argv, &cfg);
+
+	TestMPIWorld world(cfg.world_size, [argc, argv](IMPICommunicator& comm)
+	{
+		Run(comm, argc, argv);
+	});
+
+	world.RunAndWait();
 #else
-	    MPI_Init(NULL, NULL);
+	MPI_Init(NULL, NULL);
 	
-	    auto comm = MPIWorldCommunicator();
+	auto comm = MPIWorldCommunicator();
 		
-		Run(comm, cfg);
+	Run(comm, cfg);
 
-	    MPI_Finalize();
+	MPI_Finalize();
 #endif
-    }
-	
-	lua_close(L);
 
 	return 0;
 }
