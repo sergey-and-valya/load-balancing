@@ -47,11 +47,16 @@ static int luaModule_new(lua_State* L)
 	//check if argument #2 is IFunction
 	lua_pushvalue(L, 2);
 	IFunction* func = lua_checkFunction(L);
-	lua_pop(L, 1);
-
+	lua_pop(L, 2);
+	
 	DomainModelWithFile* dmwf = (DomainModelWithFile*)lua_newuserdata(L, sizeof(DomainModelWithFile));
 	new(&(dmwf->bf)) BinaryFile(filename);
 	new(&(dmwf->dm)) DomainModel(dmwf->bf, *func, steps);
+	
+	lua_newtable(L);
+	lua_pushvalue(L, 2);
+	lua_setfield(L, -2, "function");
+	lua_setuservalue(L, -2);
 
 	luaL_getmetatable(L, METATABLE_NAME);
 	lua_setmetatable(L, -2);
