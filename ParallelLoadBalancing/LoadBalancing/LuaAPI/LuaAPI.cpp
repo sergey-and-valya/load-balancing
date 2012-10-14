@@ -17,25 +17,10 @@
 // ****************************************************************************
 
 #include <LoadBalancing/LuaAPI/ILoadBalancingAlgorithm.h>
-#include "../LoadBalancingAlgorithm.h"
-#include "LoadBalancingAlgorithmModule.h"
 
-static int luaModule_new(lua_State* L)
+LUALB_API int luaLB_openlibs(lua_State* L)
 {
-	int accuaracy = luaL_checkinteger(L, 1);
+	luaLB_openILoadBalancingAlgoritm(L);
 
-	luaLB_pushILoadBalancingAlgorithm(L, new LoadBalancingAlgorithm(accuaracy));
-
-	return 1;
-}
-
-static const luaL_Reg module_functions[] = {
-	{"new", luaModule_new},
-	{NULL,  NULL}
-};
-
-int luaopen_Standart_LoadBalancingAlgorithm(lua_State* L)
-{
-	luaL_newlib(L, module_functions);
-	return 1;
+	return 0;
 }

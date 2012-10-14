@@ -49,7 +49,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CONSOLE;LUALB_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -63,6 +63,8 @@
     <ClInclude Include="include\LoadBalancing\IProblemBuilder.h" />
     <ClInclude Include="include\LoadBalancing\IRebalancer.h" />
     <ClInclude Include="include\LoadBalancing\IDomainModel.h" />
+    <ClInclude Include="include\LoadBalancing\LuaAPI\ILoadBalancingAlgorithm.h" />
+    <ClInclude Include="include\LoadBalancing\LuaAPI\LuaAPI.h" />
     <ClInclude Include="LoadBalancingAlgorithm.h" />
     <ClInclude Include="LuaFunction.h" />
     <ClInclude Include="MPIWorldCommunicator.h" />
@@ -97,6 +99,8 @@
     <ClCompile Include="Environment.cpp" />
     <ClCompile Include="BinaryFile.cpp" />
     <ClCompile Include="LoadBalancingAlgorithm.cpp" />
+    <ClCompile Include="LuaAPI\ILoadBalancingAlgorithm.cpp" />
+    <ClCompile Include="LuaAPI\LuaAPI.cpp" />
     <ClCompile Include="LuaFunction.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MPIWorldCommunicator.cpp">

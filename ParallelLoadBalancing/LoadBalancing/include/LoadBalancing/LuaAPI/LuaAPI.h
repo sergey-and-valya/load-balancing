@@ -16,26 +16,17 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************
 
-#include <LoadBalancing/LuaAPI/ILoadBalancingAlgorithm.h>
-#include "../LoadBalancingAlgorithm.h"
-#include "LoadBalancingAlgorithmModule.h"
+#ifndef _LUAAPI_LUAAPI_H
+#define _LUAAPI_LUAAPI_H
 
-static int luaModule_new(lua_State* L)
-{
-	int accuaracy = luaL_checkinteger(L, 1);
+#include <lua.hpp>
 
-	luaLB_pushILoadBalancingAlgorithm(L, new LoadBalancingAlgorithm(accuaracy));
+#ifdef LUALB_EXPORTS
+#define LUALB_API __declspec(dllexport) 
+#else
+#define LUALB_API __declspec(dllimport)
+#endif
 
-	return 1;
-}
+LUALB_API int luaLB_openlibs(lua_State* L);
 
-static const luaL_Reg module_functions[] = {
-	{"new", luaModule_new},
-	{NULL,  NULL}
-};
-
-int luaopen_Standart_LoadBalancingAlgorithm(lua_State* L)
-{
-	luaL_newlib(L, module_functions);
-	return 1;
-}
+#endif

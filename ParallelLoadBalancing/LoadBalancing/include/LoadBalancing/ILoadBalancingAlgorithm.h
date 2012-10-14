@@ -59,6 +59,8 @@ public:
 		int bpNumberJ,
 		int newSolutionI[],
 		int newSolutionJ[]) = 0;
+
+	virtual ~ILoadBalancingAlgorithm() {};
 };
 
 #endif
