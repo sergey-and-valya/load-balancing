@@ -23,6 +23,7 @@
 #include <LoadBalancing/LuaAPI/LuaAPI.h>
 #include <LoadBalancing/LuaAPI/ILoadBalancingAlgorithm.h>
 #include <LoadBalancing/LuaAPI/IRebalancer.h>
+#include <LoadBalancing/LuaAPI/IEnvironment.h>
 
 #include "SampleFunction.h"
 #include "DomainModel.h"
@@ -210,14 +211,6 @@ void ParseEmulateMPICommandLine(int argc, char* argv[], EmulateMPIConfig* cfg)
 }
 #endif
 
-IEnvironment* lua_checkEnvironment(lua_State* L)
-{
-	lua_getfield(L, -1, "AsIEnvironment");
-	lua_pushvalue(L, -2);
-	lua_pcall(L, 1, 1, 0);
-	return (IEnvironment*)lua_touserdata(L, -1);
-}
-
 IDomainModel* lua_checkDomainModel(lua_State* L)
 {
 	lua_getfield(L, -1, "AsIDomainModel");
@@ -255,7 +248,7 @@ void LoadConfig(lua_State* L, Config* cfg)
 	lua_getglobal(L, "environment");
 	if(!lua_isnil(L, -1))
 	{
-		cfg->env = lua_checkEnvironment(L);
+		cfg->env = *luaLB_checkIEnvironment(L, -1);
 	}
 
 	lua_getglobal(L, "domain_model");

@@ -180,6 +180,9 @@
     <ClInclude Include="include\LoadBalancing\LuaAPI\IRebalancer.h">
       <Filter>Заголовочные файлы\include\LoadBalancing\LuaAPI</Filter>
     </ClInclude>
+    <ClInclude Include="include\LoadBalancing\LuaAPI\IEnvironment.h">
+      <Filter>Заголовочные файлы\include\LoadBalancing\LuaAPI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -255,6 +258,9 @@
       <Filter>Файлы исходного кода\LuaAPI</Filter>
     </ClCompile>
     <ClCompile Include="LuaAPI\IRebalancer.cpp">
+      <Filter>Файлы исходного кода\LuaAPI</Filter>
+    </ClCompile>
+    <ClCompile Include="LuaAPI\IEnvironment.cpp">
       <Filter>Файлы исходного кода\LuaAPI</Filter>
     </ClCompile>
   </ItemGroup>

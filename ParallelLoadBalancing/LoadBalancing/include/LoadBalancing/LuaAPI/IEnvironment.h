@@ -16,28 +16,20 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************
 
-#include <LoadBalancing/LuaAPI/IEnvironment.h>
-#include "../Environment.h"
-#include "EnvironmentModule.h"
+#ifndef _LUAAPI_IENVIRONMENT_H
+#define _LUAAPI_IENVIRONMENT_H
+
+#include "LuaAPI.h"
+#include "../IEnvironment.h"
+
+LUALB_API extern const char* IEnvironmentMetatableName;
+
+#define luaLB_checkIEnvironment(L, idx) \
+	((IEnvironment**)luaL_checkudata(L, idx, IEnvironmentMetatableName))
+
+LUALB_API int luaLB_pushIEnvironment(lua_State* L, IEnvironment* instance);
+
+LUALB_API int luaLB_openIEnvironment(lua_State* L);
 
 
-static int luaModule_new(lua_State* L)
-{
-	bool needLoadBalancing = lua_toboolean(L, 1);
-	bool printResults = lua_toboolean(L, 2);
-
-	luaLB_pushIEnvironment(L, new Environment(needLoadBalancing, printResults));
-	
-	return 1;
-}
-
-static const luaL_Reg module_functions[] = {
-	{"new", luaModule_new},
-	{NULL,  NULL}
-};
-
-int luaopen_Standart_Environment(lua_State* L)
-{
-	luaL_newlib(L, module_functions);
-	return 1;
-}
+#endif

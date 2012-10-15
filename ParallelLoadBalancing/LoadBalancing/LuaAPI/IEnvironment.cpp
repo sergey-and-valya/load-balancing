@@ -16,16 +16,16 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************
 
-#include <LoadBalancing/LuaAPI/IRebalancer.h>
+#include <LoadBalancing/LuaAPI/IEnvironment.h>
 
-const char* IRebalancerMetatableName = "IRebalancer";
+const char* IEnvironmentMetatableName = "IEnvironment";
 
-LUALB_API int luaLB_pushIRebalancer(lua_State* L, IRebalancer* instance)
+LUALB_API int luaLB_pushIEnvironment(lua_State* L, IEnvironment* instance)
 {
-	IRebalancer** pinstance = (IRebalancer**)lua_newuserdata(L, sizeof(IRebalancer*));
+	IEnvironment** pinstance = (IEnvironment**)lua_newuserdata(L, sizeof(IEnvironment*));
 	*pinstance = instance;
 
-	luaL_getmetatable(L, IRebalancerMetatableName);
+	luaL_getmetatable(L, IEnvironmentMetatableName);
 	lua_setmetatable(L, -2);
 
 	return 1;
@@ -33,7 +33,7 @@ LUALB_API int luaLB_pushIRebalancer(lua_State* L, IRebalancer* instance)
 
 static int instance_destructor(lua_State* L)
 {
-	IRebalancer** pinstance = luaLB_checkIRebalancer(L, 1);
+	IEnvironment** pinstance = luaLB_checkIEnvironment(L, 1);
 	
 	delete *pinstance;
 
@@ -42,9 +42,9 @@ static int instance_destructor(lua_State* L)
 
 static int instance_tostring(lua_State* L)
 {
-	IRebalancer** pinstance = luaLB_checkIRebalancer(L, 1);
+	IEnvironment** pinstance = luaLB_checkIEnvironment(L, 1);
 	
-	lua_pushstring(L, IRebalancerMetatableName);
+	lua_pushstring(L, IEnvironmentMetatableName);
 
 	return 1;
 }
@@ -56,9 +56,9 @@ static const luaL_Reg instance_functions[] = {
 	{NULL, NULL}
 };
 
-LUALB_API int luaLB_openIRebalancer(lua_State* L)
+LUALB_API int luaLB_openIEnvironment(lua_State* L)
 {
-	luaL_newmetatable(L, IRebalancerMetatableName);
+	luaL_newmetatable(L, IEnvironmentMetatableName);
 	lua_pushvalue(L, -1);
 	lua_setfield(L, -2, "__index");
 	luaL_setfuncs(L, instance_functions, 0);
