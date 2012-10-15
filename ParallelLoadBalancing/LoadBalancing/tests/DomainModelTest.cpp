@@ -18,8 +18,8 @@
 
 #include "DomainModelTest.h"
 
-#include "../IDomainModel.h"
-#include "../IMPICommunicator.h"
+#include <LoadBalancing/IDomainModel.h>
+#include <LoadBalancing/IMPICommunicator.h>
 
 #include "../DomainModel.h"
 #include "../Utils.h"

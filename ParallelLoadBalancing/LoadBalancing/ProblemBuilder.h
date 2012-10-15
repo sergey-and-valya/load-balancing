@@ -19,7 +19,7 @@
 #ifndef _PROBLEMBUILDER_H
 #define _PROBLEMBUILDER_H
 
-#include "IProblemBuilder.h"
+#include <LoadBalancing/IProblemBuilder.h>
 
 #include <stddef.h>
 

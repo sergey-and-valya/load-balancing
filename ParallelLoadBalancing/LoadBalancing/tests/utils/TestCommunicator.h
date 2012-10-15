@@ -19,7 +19,7 @@
 #ifndef _TESTCOMMUNICATOR_H
 #define _TESTCOMMUNICATOR_H
 
-#include "../../IMPICommunicator.h"
+#include <LoadBalancing/IMPICommunicator.h>
 #include <functional>
 
 class TestCommunicator : public IMPICommunicator

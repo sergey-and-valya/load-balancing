@@ -19,7 +19,7 @@
 #ifndef _BINARYFILE_H
 #define _BINARYFILE_H
 
-#include "IInputFile.h"
+#include <LoadBalancing/IInputFile.h>
 #include <stdio.h>
 
 class BinaryFile : public IInputFile

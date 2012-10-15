@@ -26,87 +26,59 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)'=='Debug MPI' or '$(Configuration)'=='Debug Emulate MPI'" Label="Configuration">
-    <UseDebugLibraries>true</UseDebugLibraries>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)'=='Release MPI' or '$(Configuration)'=='Release Emulate MPI'" Label="Configuration">
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" >
+  <ImportGroup Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\ProjectConfig.props" />
+    <Import Project="$(SolutionDir)\ProjectConfig.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)'=='Debug MPI' or '$(Configuration)'=='Debug Emulate MPI'">
-    <LinkIncremental>true</LinkIncremental>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)'=='Release MPI' or '$(Configuration)'=='Release Emulate MPI'">
-    <LinkIncremental>false</LinkIncremental>
-  </PropertyGroup>
   <ItemDefinitionGroup>
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader />
-      <AdditionalIncludeDirectories>$(SolutionDir)\..\thirdparty\lua5.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>$(SolutionDir)\..\thirdparty\lua5.2\lib\windows\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>liblua52.a;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <CustomBuild>
       <Command>copy /Y "%(FullPath)" "$(OutputPath)%(Filename)"</Command>
       <Outputs>$(OutputPath)%(Filename)</Outputs>
     </CustomBuild>
     <PostBuildEvent>
-      <Command>copy /Y  "$(SolutionDir)..\thirdparty\lua5.2\lib\windows\x86\lua52.dll" "$(OutDir)"</Command>
+      <Command>copy /Y "$(SolutionDir)..\thirdparty\lua5.2\lib\windows\x86\lua52.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug MPI' or '$(Configuration)'=='Debug Emulate MPI'">
+  <ItemDefinitionGroup>
     <ClCompile>
-      <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CONSOLE;LUALB_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
-    <Link>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)'=='Release MPI' or '$(Configuration)'=='Release Emulate MPI'">
-    <ClCompile>
-      <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-    <Link>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-    </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Environment.h" />
-    <ClInclude Include="IFunction.h" />
-    <ClInclude Include="IInputFile.h" />
-    <ClInclude Include="IEnvironment.h" />
-    <ClInclude Include="ILoadBalancingAlgorithm.h" />
-    <ClInclude Include="IMPI.h" />
-    <ClInclude Include="IMPICommunicator.h" />
-    <ClInclude Include="IProblemBuilder.h" />
-    <ClInclude Include="IRebalancer.h" />
-    <ClInclude Include="IDomainModel.h" />
+    <ClInclude Include="include\LoadBalancing\IFunction.h" />
+    <ClInclude Include="include\LoadBalancing\IInputFile.h" />
+    <ClInclude Include="include\LoadBalancing\IEnvironment.h" />
+    <ClInclude Include="include\LoadBalancing\ILoadBalancingAlgorithm.h" />
+    <ClInclude Include="include\LoadBalancing\IMPI.h" />
+    <ClInclude Include="include\LoadBalancing\IMPICommunicator.h" />
+    <ClInclude Include="include\LoadBalancing\IProblemBuilder.h" />
+    <ClInclude Include="include\LoadBalancing\IRebalancer.h" />
+    <ClInclude Include="include\LoadBalancing\IDomainModel.h" />
+    <ClInclude Include="include\LoadBalancing\LuaAPI\IDomainModel.h" />
+    <ClInclude Include="include\LoadBalancing\LuaAPI\IEnvironment.h" />
+    <ClInclude Include="include\LoadBalancing\LuaAPI\ILoadBalancingAlgorithm.h" />
+    <ClInclude Include="include\LoadBalancing\LuaAPI\IRebalancer.h" />
+    <ClInclude Include="include\LoadBalancing\LuaAPI\LuaAPI.h" />
     <ClInclude Include="LoadBalancingAlgorithm.h" />
     <ClInclude Include="LuaFunction.h" />
     <ClInclude Include="MPIWorldCommunicator.h" />
     <ClInclude Include="ProblemBuilder.h" />
     <ClInclude Include="Rebalancer.h" />
     <ClInclude Include="SampleFunction.h" />
+    <ClInclude Include="StandartLuaModule\DomainModelModule.h" />
+    <ClInclude Include="StandartLuaModule\EnvironmentModule.h" />
+    <ClInclude Include="StandartLuaModule\LoadBalancingAlgorithmModule.h" />
+    <ClInclude Include="StandartLuaModule\LuaFunctionModule.h" />
+    <ClInclude Include="StandartLuaModule\RebalancerModule.h" />
     <ClInclude Include="tests\EnvironmentTest.h" />
     <ClInclude Include="DomainModel.h" />
     <ClInclude Include="BinaryFile.h" />
@@ -130,6 +102,11 @@
     <ClCompile Include="Environment.cpp" />
     <ClCompile Include="BinaryFile.cpp" />
     <ClCompile Include="LoadBalancingAlgorithm.cpp" />
+    <ClCompile Include="LuaAPI\IDomainModel.cpp" />
+    <ClCompile Include="LuaAPI\IEnvironment.cpp" />
+    <ClCompile Include="LuaAPI\ILoadBalancingAlgorithm.cpp" />
+    <ClCompile Include="LuaAPI\IRebalancer.cpp" />
+    <ClCompile Include="LuaAPI\LuaAPI.cpp" />
     <ClCompile Include="LuaFunction.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MPIWorldCommunicator.cpp">
@@ -138,6 +115,12 @@
     <ClCompile Include="Rebalancer.cpp" />
     <ClCompile Include="DomainModel.cpp" />
     <ClCompile Include="SampleFunction.cpp" />
+    <ClCompile Include="StandartLuaModule.cpp" />
+    <ClCompile Include="StandartLuaModule\DomainModelModule.cpp" />
+    <ClCompile Include="StandartLuaModule\EnvironmentModule.cpp" />
+    <ClCompile Include="StandartLuaModule\LoadBalancingAlgorithmModule.cpp" />
+    <ClCompile Include="StandartLuaModule\LuaFunctionModule.cpp" />
+    <ClCompile Include="StandartLuaModule\RebalancerModule.cpp" />
     <ClCompile Include="tests\EnvironmentTest.cpp" />
     <ClCompile Include="tests\LoadBalancingTest.cpp" />
     <ClCompile Include="tests\DomainModelTest.cpp" />

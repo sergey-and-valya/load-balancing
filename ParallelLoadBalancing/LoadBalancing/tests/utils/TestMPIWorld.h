@@ -19,7 +19,7 @@
 #ifndef _TESTMPIWORLD_H
 #define _TESTMPIWORLD_H
 
-#include "../../IMPICommunicator.h"
+#include <LoadBalancing/IMPICommunicator.h>
 #include <functional>
 
 class TestMPIWorld

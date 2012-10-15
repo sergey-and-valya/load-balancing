@@ -1,13 +1,14 @@
 -- config file template
 
-matrix_file    = "matrix_big" -- used matrix file (default matrix_big)
+local Standart = require"Standart"
 
-steps          = 10           -- number of system model launches
+load_balancing_algorithm = Standart.LoadBalancingAlgorithm.new(6)
+rebalancer               = Standart.Rebalancer.new()
+environment              = Standart.Environment.new(true, false)
+domain_model             = Standart.DomainModel.new("matrix_big", Standart.LuaFunction.new("lua/domain_functions/sample1.lua"), 10)
+
 world_size     = 4            -- number of emulated processors
-accuracy       = 6            -- accuracy for load balancing
 
-load_balancing = false        -- use load balancing or not
-print_results  = false        -- print results
 unit_tests     = false        -- turn on/off unit test
 
 --TODO: use logging

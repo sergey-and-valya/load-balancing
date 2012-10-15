@@ -19,7 +19,7 @@
 #ifndef _TESTREBALANCER_H
 #define _TESTREBALANCER_H
 
-#include "../../IRebalancer.h"
+#include <LoadBalancing/IRebalancer.h>
 #include <functional>
 
 class TestRebalancer : public IRebalancer

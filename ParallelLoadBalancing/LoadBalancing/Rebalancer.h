@@ -19,7 +19,7 @@
 #ifndef _REBALANCER_H
 #define _REBALANCER_H
 
-#include "IRebalancer.h"
+#include <LoadBalancing/IRebalancer.h>
 
 class Rebalancer : public IRebalancer
 {

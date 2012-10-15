@@ -19,7 +19,7 @@
 #ifndef _TESTINPUTFILE_H
 #define _TESTINPUTFILE_H
 
-#include "../../IInputFile.h"
+#include <LoadBalancing/IInputFile.h>
 #include <functional>
 
 class TestInputFile : public IInputFile

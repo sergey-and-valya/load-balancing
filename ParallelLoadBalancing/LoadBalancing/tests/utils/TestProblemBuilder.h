@@ -19,7 +19,7 @@
 #ifndef _TESTPROBLEMBUILDER_H
 #define _TESTPROBLEMBUILDER_H
 
-#include "../../IProblemBuilder.h"
+#include <LoadBalancing/IProblemBuilder.h>
 #include <functional>
 
 class TestProblemBuilder : public IProblemBuilder

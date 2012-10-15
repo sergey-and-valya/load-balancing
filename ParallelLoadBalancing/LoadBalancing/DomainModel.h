@@ -19,9 +19,9 @@
 #ifndef _TESTINGSYSTEM_H
 #define _TESTINGSYSTEM_H
 
-#include "IDomainModel.h"
-#include "IInputFile.h"
-#include "IFunction.h"
+#include <LoadBalancing/IDomainModel.h>
+#include <LoadBalancing/IInputFile.h>
+#include <LoadBalancing/IFunction.h>
 
 class DomainModel : public IDomainModel
 {

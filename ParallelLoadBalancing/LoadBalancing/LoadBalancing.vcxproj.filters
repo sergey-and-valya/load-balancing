@@ -34,11 +34,26 @@
     <Filter Include="lua\domain_functions">
       <UniqueIdentifier>{66aeb7c1-8e9a-4f9e-8c86-da1b430188e4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Файлы исходного кода\StandartLuaModule">
+      <UniqueIdentifier>{adf57207-a276-4c3e-ac42-a37920132d15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Заголовочные файлы\StandartLuaModule">
+      <UniqueIdentifier>{b51dba4f-6d40-440b-bda1-bb43579f7c76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Заголовочные файлы\include">
+      <UniqueIdentifier>{6d1f490a-e0cd-4fd5-904d-558e50ccbd8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Заголовочные файлы\include\LoadBalancing">
+      <UniqueIdentifier>{413b7848-0341-4714-8a40-424acc6a0899}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Заголовочные файлы\include\LoadBalancing\LuaAPI">
+      <UniqueIdentifier>{674d3cfc-3095-4843-be14-3ef833f38c96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы исходного кода\LuaAPI">
+      <UniqueIdentifier>{821bdb40-e068-4288-8445-bac623d35312}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ILoadBalancingAlgorithm.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
     <ClInclude Include="Environment.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
@@ -48,31 +63,13 @@
     <ClInclude Include="ProblemBuilder.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
-    <ClInclude Include="IProblemBuilder.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
-    <ClInclude Include="IEnvironment.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
-    <ClInclude Include="IMPI.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
-    <ClInclude Include="IMPICommunicator.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
     <ClInclude Include="MPIWorldCommunicator.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
-    <ClInclude Include="IRebalancer.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
     <ClInclude Include="Rebalancer.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
     <ClInclude Include="BinaryFile.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
-    <ClInclude Include="IInputFile.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
     <ClInclude Include="tests\utils\Assert.h">
@@ -114,9 +111,6 @@
     <ClInclude Include="Utils.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
-    <ClInclude Include="IDomainModel.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
     <ClInclude Include="DomainModel.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
@@ -126,9 +120,6 @@
     <ClInclude Include="tests\utils\TestDomainModel.h">
       <Filter>Заголовочные файлы\tests\utils</Filter>
     </ClInclude>
-    <ClInclude Include="IFunction.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
     <ClInclude Include="Values.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
@@ -137,6 +128,63 @@
     </ClInclude>
     <ClInclude Include="LuaFunction.h">
       <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="StandartLuaModule\LoadBalancingAlgorithmModule.h">
+      <Filter>Заголовочные файлы\StandartLuaModule</Filter>
+    </ClInclude>
+    <ClInclude Include="StandartLuaModule\RebalancerModule.h">
+      <Filter>Заголовочные файлы\StandartLuaModule</Filter>
+    </ClInclude>
+    <ClInclude Include="StandartLuaModule\EnvironmentModule.h">
+      <Filter>Заголовочные файлы\StandartLuaModule</Filter>
+    </ClInclude>
+    <ClInclude Include="StandartLuaModule\DomainModelModule.h">
+      <Filter>Заголовочные файлы\StandartLuaModule</Filter>
+    </ClInclude>
+    <ClInclude Include="StandartLuaModule\LuaFunctionModule.h">
+      <Filter>Заголовочные файлы\StandartLuaModule</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LoadBalancing\IEnvironment.h">
+      <Filter>Заголовочные файлы\include\LoadBalancing</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LoadBalancing\IRebalancer.h">
+      <Filter>Заголовочные файлы\include\LoadBalancing</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LoadBalancing\IFunction.h">
+      <Filter>Заголовочные файлы\include\LoadBalancing</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LoadBalancing\IInputFile.h">
+      <Filter>Заголовочные файлы\include\LoadBalancing</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LoadBalancing\ILoadBalancingAlgorithm.h">
+      <Filter>Заголовочные файлы\include\LoadBalancing</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LoadBalancing\IMPI.h">
+      <Filter>Заголовочные файлы\include\LoadBalancing</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LoadBalancing\IMPICommunicator.h">
+      <Filter>Заголовочные файлы\include\LoadBalancing</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LoadBalancing\IProblemBuilder.h">
+      <Filter>Заголовочные файлы\include\LoadBalancing</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LoadBalancing\LuaAPI\LuaAPI.h">
+      <Filter>Заголовочные файлы\include\LoadBalancing\LuaAPI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LoadBalancing\LuaAPI\ILoadBalancingAlgorithm.h">
+      <Filter>Заголовочные файлы\include\LoadBalancing\LuaAPI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LoadBalancing\LuaAPI\IRebalancer.h">
+      <Filter>Заголовочные файлы\include\LoadBalancing\LuaAPI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LoadBalancing\LuaAPI\IEnvironment.h">
+      <Filter>Заголовочные файлы\include\LoadBalancing\LuaAPI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LoadBalancing\LuaAPI\IDomainModel.h">
+      <Filter>Заголовочные файлы\include\LoadBalancing\LuaAPI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LoadBalancing\IDomainModel.h">
+      <Filter>Заголовочные файлы\include\LoadBalancing</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -187,6 +235,39 @@
     </ClCompile>
     <ClCompile Include="LuaFunction.cpp">
       <Filter>Файлы исходного кода</Filter>
+    </ClCompile>
+    <ClCompile Include="StandartLuaModule.cpp">
+      <Filter>Файлы исходного кода</Filter>
+    </ClCompile>
+    <ClCompile Include="StandartLuaModule\LoadBalancingAlgorithmModule.cpp">
+      <Filter>Файлы исходного кода\StandartLuaModule</Filter>
+    </ClCompile>
+    <ClCompile Include="StandartLuaModule\RebalancerModule.cpp">
+      <Filter>Файлы исходного кода\StandartLuaModule</Filter>
+    </ClCompile>
+    <ClCompile Include="StandartLuaModule\EnvironmentModule.cpp">
+      <Filter>Файлы исходного кода\StandartLuaModule</Filter>
+    </ClCompile>
+    <ClCompile Include="StandartLuaModule\DomainModelModule.cpp">
+      <Filter>Файлы исходного кода\StandartLuaModule</Filter>
+    </ClCompile>
+    <ClCompile Include="StandartLuaModule\LuaFunctionModule.cpp">
+      <Filter>Файлы исходного кода\StandartLuaModule</Filter>
+    </ClCompile>
+    <ClCompile Include="LuaAPI\ILoadBalancingAlgorithm.cpp">
+      <Filter>Файлы исходного кода\LuaAPI</Filter>
+    </ClCompile>
+    <ClCompile Include="LuaAPI\LuaAPI.cpp">
+      <Filter>Файлы исходного кода\LuaAPI</Filter>
+    </ClCompile>
+    <ClCompile Include="LuaAPI\IRebalancer.cpp">
+      <Filter>Файлы исходного кода\LuaAPI</Filter>
+    </ClCompile>
+    <ClCompile Include="LuaAPI\IEnvironment.cpp">
+      <Filter>Файлы исходного кода\LuaAPI</Filter>
+    </ClCompile>
+    <ClCompile Include="LuaAPI\IDomainModel.cpp">
+      <Filter>Файлы исходного кода\LuaAPI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

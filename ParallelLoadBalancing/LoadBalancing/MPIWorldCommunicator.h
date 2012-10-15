@@ -19,7 +19,7 @@
 #ifndef _MPIWORLDCOMMUNICATOR_H
 #define _MPIWORLDCOMMUNICATOR_H
 
-#include "IMPICommunicator.h"
+#include <LoadBalancing/IMPICommunicator.h>
 
 class MPIWorldCommunicator : public IMPICommunicator
 {

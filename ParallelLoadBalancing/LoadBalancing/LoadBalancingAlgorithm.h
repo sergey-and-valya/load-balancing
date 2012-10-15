@@ -19,7 +19,7 @@
 #ifndef _LOADBALANCINGALGORITHM_H
 #define _LOADBALANCINGALGORITHM_H
 
-#include "ILoadBalancingAlgorithm.h"
+#include <LoadBalancing/ILoadBalancingAlgorithm.h>
 
 class LoadBalancingAlgorithm : public ILoadBalancingAlgorithm
 {

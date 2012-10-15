@@ -22,7 +22,7 @@
 #include <lua.hpp>
 #include <string>
 
-#include "IFunction.h"
+#include <LoadBalancing/IFunction.h>
 
 class LuaFunction : public IFunction
 {
