@@ -24,6 +24,9 @@ LUALB_API int luaLB_pushILoadBalancingAlgorithm(lua_State* L, ILoadBalancingAlgo
 {
 	ILoadBalancingAlgorithm** pinstance = (ILoadBalancingAlgorithm**)lua_newuserdata(L, sizeof(ILoadBalancingAlgorithm*));
 	*pinstance = instance;
+	
+	lua_newtable(L);
+	lua_setuservalue(L, -2);
 
 	luaL_getmetatable(L, ILoadBalancingAlgorithmMetatableName);
 	lua_setmetatable(L, -2);

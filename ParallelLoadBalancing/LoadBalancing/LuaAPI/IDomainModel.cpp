@@ -16,19 +16,19 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************
 
-#include <LoadBalancing/LuaAPI/IRebalancer.h>
+#include <LoadBalancing/LuaAPI/IDomainModel.h>
 
-const char* IRebalancerMetatableName = "IRebalancer";
+const char* IDomainModelMetatableName = "IDomainModel";
 
-LUALB_API int luaLB_pushIRebalancer(lua_State* L, IRebalancer* instance)
+LUALB_API int luaLB_pushIDomainModel(lua_State* L, IDomainModel* instance)
 {
-	IRebalancer** pinstance = (IRebalancer**)lua_newuserdata(L, sizeof(IRebalancer*));
+	IDomainModel** pinstance = (IDomainModel**)lua_newuserdata(L, sizeof(IDomainModel*));
 	*pinstance = instance;
 
 	lua_newtable(L);
 	lua_setuservalue(L, -2);
 
-	luaL_getmetatable(L, IRebalancerMetatableName);
+	luaL_getmetatable(L, IDomainModelMetatableName);
 	lua_setmetatable(L, -2);
 
 	return 1;
@@ -36,7 +36,7 @@ LUALB_API int luaLB_pushIRebalancer(lua_State* L, IRebalancer* instance)
 
 static int instance_destructor(lua_State* L)
 {
-	IRebalancer** pinstance = luaLB_checkIRebalancer(L, 1);
+	IDomainModel** pinstance = luaLB_checkIDomainModel(L, 1);
 	
 	delete *pinstance;
 
@@ -45,9 +45,9 @@ static int instance_destructor(lua_State* L)
 
 static int instance_tostring(lua_State* L)
 {
-	IRebalancer** pinstance = luaLB_checkIRebalancer(L, 1);
+	IDomainModel** pinstance = luaLB_checkIDomainModel(L, 1);
 	
-	lua_pushstring(L, IRebalancerMetatableName);
+	lua_pushstring(L, IDomainModelMetatableName);
 
 	return 1;
 }
@@ -59,9 +59,9 @@ static const luaL_Reg instance_functions[] = {
 	{NULL, NULL}
 };
 
-LUALB_API int luaLB_openIRebalancer(lua_State* L)
+LUALB_API int luaLB_openIDomainModel(lua_State* L)
 {
-	luaL_newmetatable(L, IRebalancerMetatableName);
+	luaL_newmetatable(L, IDomainModelMetatableName);
 	lua_pushvalue(L, -1);
 	lua_setfield(L, -2, "__index");
 	luaL_setfuncs(L, instance_functions, 0);

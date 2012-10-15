@@ -25,6 +25,9 @@ LUALB_API int luaLB_pushIEnvironment(lua_State* L, IEnvironment* instance)
 	IEnvironment** pinstance = (IEnvironment**)lua_newuserdata(L, sizeof(IEnvironment*));
 	*pinstance = instance;
 
+	lua_newtable(L);
+	lua_setuservalue(L, -2);
+
 	luaL_getmetatable(L, IEnvironmentMetatableName);
 	lua_setmetatable(L, -2);
 

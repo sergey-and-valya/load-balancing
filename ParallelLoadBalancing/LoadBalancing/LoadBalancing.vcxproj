@@ -34,7 +34,7 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="$(SolutionDir)\ProjectConfig.props" />
   </ImportGroup>
-  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Label="UserMacros" />>
   <ItemDefinitionGroup>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -63,6 +63,7 @@
     <ClInclude Include="include\LoadBalancing\IProblemBuilder.h" />
     <ClInclude Include="include\LoadBalancing\IRebalancer.h" />
     <ClInclude Include="include\LoadBalancing\IDomainModel.h" />
+    <ClInclude Include="include\LoadBalancing\LuaAPI\IDomainModel.h" />
     <ClInclude Include="include\LoadBalancing\LuaAPI\IEnvironment.h" />
     <ClInclude Include="include\LoadBalancing\LuaAPI\ILoadBalancingAlgorithm.h" />
     <ClInclude Include="include\LoadBalancing\LuaAPI\IRebalancer.h" />
@@ -101,6 +102,7 @@
     <ClCompile Include="Environment.cpp" />
     <ClCompile Include="BinaryFile.cpp" />
     <ClCompile Include="LoadBalancingAlgorithm.cpp" />
+    <ClCompile Include="LuaAPI\IDomainModel.cpp" />
     <ClCompile Include="LuaAPI\IEnvironment.cpp" />
     <ClCompile Include="LuaAPI\ILoadBalancingAlgorithm.cpp" />
     <ClCompile Include="LuaAPI\IRebalancer.cpp" />
