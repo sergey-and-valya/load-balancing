@@ -21,10 +21,14 @@
 
 #include <lua.hpp>
 
+#ifdef WIN32
 #ifdef LUALB_EXPORTS
 #define LUALB_API __declspec(dllexport) 
 #else
 #define LUALB_API __declspec(dllimport)
+#endif
+#else
+#define LUALB_API 
 #endif
 
 LUALB_API int luaLB_openlibs(lua_State* L);

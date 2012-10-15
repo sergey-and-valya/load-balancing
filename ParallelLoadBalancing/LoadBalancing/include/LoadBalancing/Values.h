@@ -16,33 +16,55 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************
 
-#include <lua.hpp>
+#ifndef _VALUES_H
+#define _VALUES_H
 
-#include "StandartLuaModule.h"
-#include "StandartLuaModule/LoadBalancingAlgorithmModule.h"
-#include "StandartLuaModule/RebalancerModule.h"
-#include "StandartLuaModule/EnvironmentModule.h"
-#include "StandartLuaModule/DomainModelModule.h"
-#include "StandartLuaModule/LuaFunctionModule.h"
+#include <vector>
+#include <stddef.h>
 
-STANDART_LUA_API int luaopen_Standart(lua_State* L)
+class Values
 {
-	lua_newtable(L);
+public:
+	Values(size_t blockSize) : values(blockSize * blockSize)
+							 , blockSize(blockSize)
+							 , offsetI(0)
+							 , offsetJ(0)
+	{
+	}
+
+	void SetValue(int i, int j, double value)
+	{
+		values[i + j * blockSize] = value;
+	}
 	
-	luaopen_Standart_LoadBalancingAlgorithm(L);
-	lua_setfield(L, -2, "LoadBalancingAlgorithm");
-	
-	luaopen_Standart_Rebalancer(L);
-	lua_setfield(L, -2, "Rebalancer");
-	
-	luaopen_Standart_Environment(L);
-	lua_setfield(L, -2, "Environment");
-	
-	luaopen_Standart_DomainModel(L);
-	lua_setfield(L, -2, "DomainModel");
-	
-	luaopen_Standart_LuaFunction(L);
-	lua_setfield(L, -2, "LuaFunction");
-	
-	return 1;
-}
+	double Value(int i, int j) const
+	{
+		return values[i + j * blockSize];
+	}
+
+	void SetOffsetI(int offsetI)
+	{
+		this->offsetI = offsetI;
+	}
+
+	void SetOffsetJ(int offsetJ)
+	{
+		this->offsetJ = offsetJ;
+	}
+
+	bool HasValue(int i, int j) const
+	{
+		return (0 <= i - offsetI) && (i - offsetI < (int)blockSize) &&
+			   (0 <= j - offsetJ) && (j - offsetJ < (int)blockSize);
+	}
+
+    
+
+protected:
+	std::vector<double> values;
+	size_t blockSize;
+	int offsetI;
+	int offsetJ;
+};
+
+#endif

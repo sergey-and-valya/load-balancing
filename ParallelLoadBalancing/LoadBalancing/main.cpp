@@ -327,8 +327,8 @@ void Run(IMPICommunicator& comm, int argc, char* argv[])
 			TEST(LoadBalancingCentralTest);
 		}
 	}
-#endif
 	else
+#endif
     {
 		lua_State* L = luaL_newstate();
 		luaL_openlibs(L);
@@ -365,9 +365,9 @@ int main(int argc, char* argv[])
 #else
 	MPI_Init(NULL, NULL);
 	
-	auto comm = MPIWorldCommunicator();
+	MPIWorldCommunicator comm;
 		
-	Run(comm, cfg);
+	Run(comm, argc, argv);
 
 	MPI_Finalize();
 #endif
