@@ -69,21 +69,30 @@ void Usage(const char* path)
 	printf(
 		"%s "
 #ifdef EMULATE_MPI
-		"Emulate MPI version\n"
-#else
-		"MPI version\n"
+		"Emulate "
 #endif
+		"MPI "
+#ifdef WIN32
+		"Windows"
+#else
+		"Linux"
+#endif
+		" version\n"
 		"%s [-c <config-file>] "
 #ifdef EMULATE_MPI
 		"[-w <number>] "
 #endif
+#ifdef WIN32
 		"[-t]\n"
+#endif
 		"   -c <config-file>  - use specific lua config file\n"
 #ifdef EMULATE_MPI
 		"   -w <number>       - world size, count of emulated mpi-processors\n"
 #endif
-		"   -t                - run unit tests instead of load balancing\n",
-		filename, filename
+#ifdef WIN32
+		"   -t                - run unit tests instead of load balancing\n"
+#endif
+		, filename, filename
 	);
 }
 
@@ -91,7 +100,9 @@ struct Config
 {
 	std::string config_file;
 	
+#ifdef WIN32
 	bool unit_tests;
+#endif
 	ILoadBalancingAlgorithm* lba;
 	IRebalancer* rb;
 	IEnvironment* env;
@@ -100,7 +111,9 @@ struct Config
 	
 	
 	Config() : config_file()
+#ifdef WIN32
 		     , unit_tests(false)
+#endif
 			 , lba(0)
 			 , rb(0)
 			 , env(0)
@@ -112,7 +125,9 @@ struct Config
 void ParseCommandLine(int argc, char* argv[], Config* cfg, bool silent)
 {
 	bool config_file_isset = false;
+#ifdef WIN32
 	bool unit_tests_isset = false;
+#endif
 
 	for(int i = 1; i < argc; i++)
 	{
@@ -130,6 +145,7 @@ void ParseCommandLine(int argc, char* argv[], Config* cfg, bool silent)
 			}
 			config_file_isset = true;
 		}
+#ifdef WIN32
 		else if(strcmp(argv[i], "-t") == 0)
 		{
 			cfg->unit_tests = true;
@@ -144,6 +160,7 @@ void ParseCommandLine(int argc, char* argv[], Config* cfg, bool silent)
 			}
 			unit_tests_isset = true;
 		}
+#endif
 #ifdef EMULATE_MPI
 		else if(strcmp(argv[i], "-w") == 0)
 		{
@@ -161,11 +178,19 @@ void ParseCommandLine(int argc, char* argv[], Config* cfg, bool silent)
 		}
 	}
 
+#ifdef WIN32
 	if(!(unit_tests_isset || config_file_isset))
 	{
 		printf("You must specify either config file or turn on unit tests option!");
 		exit(1);
 	}
+#else
+	if(!config_file_isset)
+	{
+		printf("You must specify config file option!");
+		exit(1);
+	}
+#endif
 }
 
 
@@ -185,9 +210,11 @@ void ParseEmulateMPICommandLine(int argc, char* argv[], EmulateMPIConfig* cfg)
 		{
 			i++;
 		}
+#ifdef WIN32
 		else if(strcmp(argv[i], "-t") == 0)
 		{
 		}
+#endif
 		else if(strcmp(argv[i], "-w") == 0)
 		{
 			cfg->world_size = atoi(argv[++i]);
@@ -271,6 +298,7 @@ void Run(IMPICommunicator& comm, int argc, char* argv[])
 	
 	ParseCommandLine(argc, argv, &cfg, rank == 0);
 
+#if WIN32
 	if(cfg.unit_tests)
 	{
 		if(rank == 0)
@@ -299,6 +327,7 @@ void Run(IMPICommunicator& comm, int argc, char* argv[])
 			TEST(LoadBalancingCentralTest);
 		}
 	}
+#endif
 	else
     {
 		lua_State* L = luaL_newstate();
@@ -323,9 +352,7 @@ void Run(IMPICommunicator& comm, int argc, char* argv[])
 
 int main(int argc, char* argv[])
 {
-
 #ifdef EMULATE_MPI
-
 	EmulateMPIConfig cfg;
 	ParseEmulateMPICommandLine(argc, argv, &cfg);
 
