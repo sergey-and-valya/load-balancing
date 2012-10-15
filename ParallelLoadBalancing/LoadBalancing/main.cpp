@@ -22,6 +22,7 @@
 #include <LoadBalancing/IMPICommunicator.h>
 #include <LoadBalancing/LuaAPI/LuaAPI.h>
 #include <LoadBalancing/LuaAPI/ILoadBalancingAlgorithm.h>
+#include <LoadBalancing/LuaAPI/IRebalancer.h>
 
 #include "SampleFunction.h"
 #include "DomainModel.h"
@@ -209,14 +210,6 @@ void ParseEmulateMPICommandLine(int argc, char* argv[], EmulateMPIConfig* cfg)
 }
 #endif
 
-IRebalancer* lua_checkRebalancer(lua_State* L)
-{
-	lua_getfield(L, -1, "AsIRebalancer");
-	lua_pushvalue(L, -2);
-	lua_pcall(L, 1, 1, 0);
-	return (IRebalancer*)lua_touserdata(L, -1);
-}
-
 IEnvironment* lua_checkEnvironment(lua_State* L)
 {
 	lua_getfield(L, -1, "AsIEnvironment");
@@ -250,13 +243,13 @@ void LoadConfig(lua_State* L, Config* cfg)
 	lua_getglobal(L, "load_balancing_algorithm");
 	if(!lua_isnil(L, -1))
 	{
-		cfg->lba = *luaLB_checkILoadBalancingAlgorithm(L);
+		cfg->lba = *luaLB_checkILoadBalancingAlgorithm(L, -1);
 	}
 
 	lua_getglobal(L, "rebalancer");
 	if(!lua_isnil(L, -1))
 	{
-		cfg->rb = lua_checkRebalancer(L);
+		cfg->rb = *luaLB_checkIRebalancer(L, -1);
 	}
 
 	lua_getglobal(L, "environment");

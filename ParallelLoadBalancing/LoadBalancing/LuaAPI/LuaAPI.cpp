@@ -17,10 +17,12 @@
 // ****************************************************************************
 
 #include <LoadBalancing/LuaAPI/ILoadBalancingAlgorithm.h>
+#include <LoadBalancing/LuaAPI/IRebalancer.h>
 
 LUALB_API int luaLB_openlibs(lua_State* L)
 {
 	luaLB_openILoadBalancingAlgoritm(L);
+	luaLB_openIRebalancer(L);
 
 	return 0;
 }

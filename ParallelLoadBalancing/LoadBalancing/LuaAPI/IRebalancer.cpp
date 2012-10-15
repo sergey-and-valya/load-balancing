@@ -16,16 +16,16 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************
 
-#include <LoadBalancing/LuaAPI/ILoadBalancingAlgorithm.h>
+#include <LoadBalancing/LuaAPI/IRebalancer.h>
 
-const char* ILoadBalancingAlgorithmMetatableName = "ILoadBalancingAlgorithm";
+const char* IRebalancerMetatableName = "IRebalancerx";
 
-LUALB_API int luaLB_pushILoadBalancingAlgorithm(lua_State* L, ILoadBalancingAlgorithm* instance)
+LUALB_API int luaLB_pushIRebalancer(lua_State* L, IRebalancer* instance)
 {
-	ILoadBalancingAlgorithm** pinstance = (ILoadBalancingAlgorithm**)lua_newuserdata(L, sizeof(ILoadBalancingAlgorithm*));
+	IRebalancer** pinstance = (IRebalancer**)lua_newuserdata(L, sizeof(IRebalancer*));
 	*pinstance = instance;
 
-	luaL_getmetatable(L, ILoadBalancingAlgorithmMetatableName);
+	luaL_getmetatable(L, IRebalancerMetatableName);
 	lua_setmetatable(L, -2);
 
 	return 1;
@@ -33,7 +33,7 @@ LUALB_API int luaLB_pushILoadBalancingAlgorithm(lua_State* L, ILoadBalancingAlgo
 
 static int instance_destructor(lua_State* L)
 {
-	ILoadBalancingAlgorithm** pinstance = luaLB_checkILoadBalancingAlgorithm(L, 1);
+	IRebalancer** pinstance = luaLB_checkIRebalancer(L, 1);
 	
 	delete *pinstance;
 
@@ -42,9 +42,9 @@ static int instance_destructor(lua_State* L)
 
 static int instance_tostring(lua_State* L)
 {
-	ILoadBalancingAlgorithm** pinstance = luaLB_checkILoadBalancingAlgorithm(L, 1);
+	IRebalancer** pinstance = luaLB_checkIRebalancer(L, 1);
 	
-	lua_pushstring(L, ILoadBalancingAlgorithmMetatableName);
+	lua_pushstring(L, IRebalancerMetatableName);
 
 	return 1;
 }
@@ -56,9 +56,9 @@ static const luaL_Reg instance_functions[] = {
 	{NULL, NULL}
 };
 
-LUALB_API int luaLB_openILoadBalancingAlgoritm(lua_State* L)
+LUALB_API int luaLB_openIRebalancer(lua_State* L)
 {
-	luaL_newmetatable(L, ILoadBalancingAlgorithmMetatableName);
+	luaL_newmetatable(L, IRebalancerMetatableName);
 	lua_pushvalue(L, -1);
 	lua_setfield(L, -2, "__index");
 	luaL_setfuncs(L, instance_functions, 0);

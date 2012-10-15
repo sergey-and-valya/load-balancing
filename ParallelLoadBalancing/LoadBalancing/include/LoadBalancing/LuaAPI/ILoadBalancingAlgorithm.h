@@ -22,10 +22,10 @@
 #include "LuaAPI.h"
 #include "../ILoadBalancingAlgorithm.h"
 
-extern const char* ILoadBalancingAlgorithmMetatableName;;
+LUALB_API extern const char* ILoadBalancingAlgorithmMetatableName;
 
-#define luaLB_checkILoadBalancingAlgorithm(L) \
-	((ILoadBalancingAlgorithm**)luaL_checkudata(L, 1, ILoadBalancingAlgorithmMetatableName))
+#define luaLB_checkILoadBalancingAlgorithm(L, idx) \
+	((ILoadBalancingAlgorithm**)luaL_checkudata(L, idx, ILoadBalancingAlgorithmMetatableName))
 
 LUALB_API int luaLB_pushILoadBalancingAlgorithm(lua_State* L, ILoadBalancingAlgorithm* instance);
 

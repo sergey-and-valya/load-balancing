@@ -16,24 +16,20 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************
 
-#include <LoadBalancing/LuaAPI/IRebalancer.h>
-#include "../Rebalancer.h"
-#include "RebalancerModule.h"
+#ifndef _LUAAPI_IREBALANCER_H
+#define _LUAAPI_IREBALANCER_H
 
-static int luaModule_new(lua_State* L)
-{
-	luaLB_pushIRebalancer(L, new Rebalancer());
+#include "LuaAPI.h"
+#include "../IRebalancer.h"
 
-	return 1;
-}
+LUALB_API extern const char* IRebalancerMetatableName;
 
-static const luaL_Reg module_functions[] = {
-	{"new", luaModule_new},
-	{NULL,  NULL}
-};
+#define luaLB_checkIRebalancer(L, idx) \
+	((IRebalancer**)luaL_checkudata(L, idx, IRebalancerMetatableName))
 
-int luaopen_Standart_Rebalancer(lua_State* L)
-{
-	luaL_newlib(L, module_functions);
-	return 1;
-}
+LUALB_API int luaLB_pushIRebalancer(lua_State* L, IRebalancer* instance);
+
+LUALB_API int luaLB_openIRebalancer(lua_State* L);
+
+
+#endif

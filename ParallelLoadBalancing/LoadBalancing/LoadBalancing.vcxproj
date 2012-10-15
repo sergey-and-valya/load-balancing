@@ -64,6 +64,7 @@
     <ClInclude Include="include\LoadBalancing\IRebalancer.h" />
     <ClInclude Include="include\LoadBalancing\IDomainModel.h" />
     <ClInclude Include="include\LoadBalancing\LuaAPI\ILoadBalancingAlgorithm.h" />
+    <ClInclude Include="include\LoadBalancing\LuaAPI\IRebalancer.h" />
     <ClInclude Include="include\LoadBalancing\LuaAPI\LuaAPI.h" />
     <ClInclude Include="LoadBalancingAlgorithm.h" />
     <ClInclude Include="LuaFunction.h" />
@@ -100,6 +101,7 @@
     <ClCompile Include="BinaryFile.cpp" />
     <ClCompile Include="LoadBalancingAlgorithm.cpp" />
     <ClCompile Include="LuaAPI\ILoadBalancingAlgorithm.cpp" />
+    <ClCompile Include="LuaAPI\IRebalancer.cpp" />
     <ClCompile Include="LuaAPI\LuaAPI.cpp" />
     <ClCompile Include="LuaFunction.cpp" />
     <ClCompile Include="main.cpp" />
