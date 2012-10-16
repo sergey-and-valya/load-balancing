@@ -349,27 +349,47 @@ void Run(IMPICommunicator& comm, int argc, char* argv[])
 
 		LoadConfig(L, &cfg);
 
-		lua_getglobal(L, "on_start");
-		if(!lua_isnil(L, -1))
+		if(rank == 0)
 		{
-			if(lua_pcall(L, 0, 0, 0))
+			lua_getglobal(L, "on_start");
+			if(!lua_isnil(L, -1))
 			{
-				printf("problem during executing on_start function:\n%s\n", lua_tostring(L, -1));
-				exit(1);
+				if(lua_pcall(L, 0, 0, 0))
+				{
+					printf("problem during executing on_start function:\n%s\n", lua_tostring(L, -1));
+					exit(1);
+				}
 			}
 		}
-
+		
 		cfg.env->Run(comm, *cfg.dm, *cfg.lba, *cfg.rb);
 
-		lua_getglobal(L, "on_stop");
-		if(!lua_isnil(L, -1))
+		int fake_buff;
+		MPI_Status status;
+		if(rank == 0)
 		{
-			if(lua_pcall(L, 0, 0, 0))
+			int size;
+			comm.Size(&size);
+			for(int i = 1; i < size; i++)
 			{
-				printf("problem during executing on_stop function:\n%s\n", lua_tostring(L, -1));
-				exit(1);
+				comm.Recv(&fake_buff, 1, MPI_INT, i, 0, &status);
+			}
+			
+			lua_getglobal(L, "on_stop");
+			if(!lua_isnil(L, -1))
+			{
+				if(lua_pcall(L, 0, 0, 0))
+				{
+					printf("problem during executing on_stop function:\n%s\n", lua_tostring(L, -1));
+					exit(1);
+				}
 			}
 		}
+		else
+		{
+			comm.Send(&fake_buff, 1, MPI_INT, 0, 0);
+		}
+		
 		lua_close(L);
 	}
 }
