@@ -25,6 +25,8 @@
 #include <LoadBalancing/LuaAPI/IRebalancer.h>
 #include <LoadBalancing/LuaAPI/IEnvironment.h>
 
+#include "StandartLuaModule.h"
+
 #include "SampleFunction.h"
 #include "DomainModel.h"
 #include "LoadBalancingAlgorithm.h"
@@ -333,15 +335,8 @@ void Run(IMPICommunicator& comm, int argc, char* argv[])
 		lua_State* L = luaL_newstate();
 		luaL_openlibs(L);
 		luaLB_openlibs(L);
+		lua_registerStandartModuleLoader(L);
 
-		lua_getglobal(L, "package");
-		lua_getfield(L, -1, "cpath");
-		std::string cpath = std::string(argv[0]).append(";").append(lua_tostring(L, -1));
-		lua_pop(L, 1);
-		lua_pushstring(L, cpath.c_str());
-		lua_setfield(L, -2, "cpath");
-		lua_pop(L, 1);
-	
 		LoadConfig(L, &cfg);
 
 		cfg.env->Run(comm, *cfg.dm, *cfg.lba, *cfg.rb);

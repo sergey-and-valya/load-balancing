@@ -74,6 +74,7 @@
     <ClInclude Include="ProblemBuilder.h" />
     <ClInclude Include="Rebalancer.h" />
     <ClInclude Include="SampleFunction.h" />
+    <ClInclude Include="StandartLuaModule.h" />
     <ClInclude Include="StandartLuaModule\DomainModelModule.h" />
     <ClInclude Include="StandartLuaModule\EnvironmentModule.h" />
     <ClInclude Include="StandartLuaModule\LoadBalancingAlgorithmModule.h" />

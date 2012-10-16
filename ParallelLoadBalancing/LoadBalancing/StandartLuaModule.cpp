@@ -18,14 +18,13 @@
 
 #include <lua.hpp>
 
-#include "StandartLuaModule.h"
 #include "StandartLuaModule/LoadBalancingAlgorithmModule.h"
 #include "StandartLuaModule/RebalancerModule.h"
 #include "StandartLuaModule/EnvironmentModule.h"
 #include "StandartLuaModule/DomainModelModule.h"
 #include "StandartLuaModule/LuaFunctionModule.h"
 
-STANDART_LUA_API int luaopen_Standart(lua_State* L)
+static int luaopen_Standart(lua_State* L)
 {
 	lua_newtable(L);
 	
@@ -45,4 +44,14 @@ STANDART_LUA_API int luaopen_Standart(lua_State* L)
 	lua_setfield(L, -2, "LuaFunction");
 	
 	return 1;
+}
+
+int lua_registerStandartModuleLoader(lua_State* L)
+{
+	lua_getglobal(L, "package");
+	lua_getfield(L, -1, "preload");
+	lua_pushcfunction(L, luaopen_Standart);
+	lua_setfield(L, -2, "Standart");
+	lua_pop(L, 2);
+	return 0;
 }

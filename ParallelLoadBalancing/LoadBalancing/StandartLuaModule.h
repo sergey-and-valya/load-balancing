@@ -19,10 +19,6 @@
 #ifndef _STANDARTLUAMODULE_H
 #define _STANDARTLUAMODULE_H
 
-#ifdef WIN32
-#define STANDART_LUA_API  extern "C" __declspec(dllexport)
-#else
-#define STANDART_LUA_API  extern "C" 
-#endif
+int lua_registerStandartModuleLoader(lua_State* L);
 
 #endif
