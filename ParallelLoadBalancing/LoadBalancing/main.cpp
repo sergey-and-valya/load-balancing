@@ -291,6 +291,13 @@ void LoadConfig(lua_State* L, Config* cfg)
 	}
 }
 
+int luaLB_clock(lua_State* L)
+{
+	lua_pushnumber(L, clock());
+
+	return 1;
+}
+
 void Run(IMPICommunicator& comm, int argc, char* argv[])
 {
 	Config cfg;
@@ -337,10 +344,32 @@ void Run(IMPICommunicator& comm, int argc, char* argv[])
 		luaLB_openlibs(L);
 		lua_registerStandartModuleLoader(L);
 
+		lua_pushcfunction(L, luaLB_clock);
+		lua_setglobal(L, "time");
+
 		LoadConfig(L, &cfg);
+
+		lua_getglobal(L, "on_start");
+		if(!lua_isnil(L, -1))
+		{
+			if(lua_pcall(L, 0, 0, 0))
+			{
+				printf("problem during executing on_start function:\n%s\n", lua_tostring(L, -1));
+				exit(1);
+			}
+		}
 
 		cfg.env->Run(comm, *cfg.dm, *cfg.lba, *cfg.rb);
 
+		lua_getglobal(L, "on_stop");
+		if(!lua_isnil(L, -1))
+		{
+			if(lua_pcall(L, 0, 0, 0))
+			{
+				printf("problem during executing on_stop function:\n%s\n", lua_tostring(L, -1));
+				exit(1);
+			}
+		}
 		lua_close(L);
 	}
 }
