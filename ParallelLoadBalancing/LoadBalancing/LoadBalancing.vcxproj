@@ -35,6 +35,9 @@
     <Import Project="$(SolutionDir)\ProjectConfig.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
   <ItemDefinitionGroup>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -136,16 +139,12 @@
       <Command>copy /Y "%(FullPath)" "$(OutputPath)%(Filename)%(Extension)"</Command>
       <Outputs>$(OutputPath)%(Filename)%(Extension)</Outputs>
     </CustomBuild>
-    <None Include="config.template.lua">
-      <Command>copy /Y "%(FullPath)" "$(OutputPath)%(Filename)%(Extension)"</Command>
-      <Outputs>$(OutputPath)%(Filename)%(Extension)</Outputs>
-      <FileType>Document</FileType>
-    </None>
     <CustomBuild Include="lua\domain_functions\sample1.lua">
       <FileType>Document</FileType>
       <Command>copy /Y "%(FullPath)" "$(OutputPath)%(RelativeDir)%(Filename)%(Extension)"</Command>
       <Outputs>$(OutputPath)%(RelativeDir)%(Filename)%(Extension)</Outputs>
     </CustomBuild>
+    <None Include="lua\config.template.lua" />
     <None Include="res\matrix.txt" />
     <CustomBuild Include="res\matrix2">
       <FileType>Document</FileType>

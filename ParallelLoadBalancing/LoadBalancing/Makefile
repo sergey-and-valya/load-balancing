@@ -73,7 +73,7 @@ CC = mpic++
 CFLAGS = -O3 -I$(LUA_INC_PATH) -Iinclude
 
 LDFLAGS = -L $(LUA_LIB_PATH)
-LDLIBS = -llua52 -lm
+LDLIBS = -llua -lm
 
 ifeq ($(configuration),EMULATE_MPI)
 	CFLAGS += -D$(configuration)

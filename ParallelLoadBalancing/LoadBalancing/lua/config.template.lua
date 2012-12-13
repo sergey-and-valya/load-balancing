@@ -1,6 +1,5 @@
 -- config file template
 
-print "hello"
 matrix_file        = "../res/matrix_big"                    -- matrix file
 lua_function_file  = "../lua/domain_functions/sample1.lua"  -- lua function file
 

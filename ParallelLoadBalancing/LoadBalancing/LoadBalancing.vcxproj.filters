@@ -289,7 +289,7 @@
     <None Include="res\readme.txt">
       <Filter>matrices</Filter>
     </None>
-    <None Include="config.template.lua">
+    <None Include="lua\config.template.lua">
       <Filter>lua</Filter>
     </None>
   </ItemGroup>
