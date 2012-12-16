@@ -85,5 +85,7 @@ double LuaFunction::operator()(const Values& values, int i, int j)
 		exit(1);
 	}
 
-	return lua_tonumber(lua, -1);
+	double result = lua_tonumber(lua, -1);
+	lua_pop(lua, -1);
+	return result;
 }
