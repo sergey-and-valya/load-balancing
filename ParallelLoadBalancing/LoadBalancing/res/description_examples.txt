@@ -1,0 +1,9 @@
+24 processors all examples
+
+name_matrix				size			name_function		step
+color_rect_test_1		1000x1500		ColorFunc_1			50	
+color_circle_test_1		400x375			ColorFunc_2			20	
+color_star_test_1		200x200			ColorFunc_2			100	
+color_star_test_2		500x500			ColorFunc_1			100	
+gen_test_1				1000x500		GeneralFunc_2		25	
+gen_test_2				1000x1500		GeneralFunc_1		150	
