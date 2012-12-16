@@ -16,3 +16,15 @@ load_balancing_algorithm = Standart.LoadBalancingAlgorithm.new(accuracy)
 rebalancer               = Standart.Rebalancer.new()
 environment              = Standart.Environment.new(load_balancing, print_results)
 domain_model             = Standart.DomainModel.new(matrix_file, Standart.LuaFunction.new(lua_function_file), steps)
+
+if is_root then
+	t = time()
+end
+
+environment:run(comm, domain_model, load_balancing_algorithm, rebalancer)
+
+-- TODO:
+--comm:barrier()
+if is_root then
+	print(time() - t)
+end

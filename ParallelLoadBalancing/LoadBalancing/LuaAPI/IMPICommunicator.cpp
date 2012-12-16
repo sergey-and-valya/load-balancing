@@ -16,34 +16,34 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************
 
-#include <LoadBalancing/LuaAPI/IRebalancer.h>
+#include <LoadBalancing/LuaAPI/IMPICommunicator.h>
 
-const char* IRebalancerMetatableName = "IRebalancer";
+const char* IMPICommunicatorMetatableName = "IMPICommunicator";
 
-struct RebalancerEntry
+struct MPICommunicatorEntry
 {
-	RebalancerDestructor destructor;
-	IRebalancer*         instance;
+	MPICommunicatorDestructor destructor;
+	IMPICommunicator*         instance;
 };
 
-#define luaLB_checkRebalancerEntry(L, idx) \
-	((RebalancerEntry*)luaL_checkudata(L, idx, IRebalancerMetatableName))
+#define luaLB_checkMPICommunicatorEntry(L, idx) \
+	((MPICommunicatorEntry*)luaL_checkudata(L, idx, IMPICommunicatorMetatableName))
 
-LUALB_API IRebalancer* luaLB_checkIRebalancer(lua_State* L, int idx)
+LUALB_API IMPICommunicator* luaLB_checkIMPICommunicator(lua_State* L, int idx)
 {
-	return luaLB_checkRebalancerEntry(L, idx)->instance;
+	return luaLB_checkMPICommunicatorEntry(L, idx)->instance;
 }
 
-LUALB_API int luaLB_pushIRebalancer(lua_State* L, IRebalancer* instance, RebalancerDestructor destructor)
+LUALB_API int luaLB_pushIMPICommunicator(lua_State* L, IMPICommunicator* instance, MPICommunicatorDestructor destructor)
 {
-	RebalancerEntry* entry = (RebalancerEntry*)lua_newuserdata(L, sizeof(RebalancerEntry));
+	MPICommunicatorEntry* entry = (MPICommunicatorEntry*)lua_newuserdata(L, sizeof(MPICommunicatorEntry));
 	entry->instance = instance;
 	entry->destructor = destructor;
 
 	lua_newtable(L);
 	lua_setuservalue(L, -2);
 
-	luaL_getmetatable(L, IRebalancerMetatableName);
+	luaL_getmetatable(L, IMPICommunicatorMetatableName);
 	lua_setmetatable(L, -2);
 
 	return 1;
@@ -51,7 +51,7 @@ LUALB_API int luaLB_pushIRebalancer(lua_State* L, IRebalancer* instance, Rebalan
 
 static int instance_destructor(lua_State* L)
 {
-	RebalancerEntry* entry = luaLB_checkRebalancerEntry(L, 1);
+	MPICommunicatorEntry* entry = luaLB_checkMPICommunicatorEntry(L, 1);
 	
 	entry->destructor(entry->instance);
 
@@ -60,9 +60,9 @@ static int instance_destructor(lua_State* L)
 
 static int instance_tostring(lua_State* L)
 {
-	IRebalancer* instance = luaLB_checkIRebalancer(L, 1);
+	IMPICommunicator* instance = luaLB_checkIMPICommunicator(L, 1);
 	
-	lua_pushstring(L, IRebalancerMetatableName);
+	lua_pushstring(L, IMPICommunicatorMetatableName);
 
 	return 1;
 }
@@ -74,9 +74,9 @@ static const luaL_Reg instance_functions[] = {
 	{NULL, NULL}
 };
 
-LUALB_API int luaLB_openIRebalancer(lua_State* L)
+LUALB_API int luaLB_openIMPICommunicator(lua_State* L)
 {
-	luaL_newmetatable(L, IRebalancerMetatableName);
+	luaL_newmetatable(L, IMPICommunicatorMetatableName);
 	lua_pushvalue(L, -1);
 	lua_setfield(L, -2, "__index");
 	luaL_setfuncs(L, instance_functions, 0);
@@ -84,3 +84,20 @@ LUALB_API int luaLB_openIRebalancer(lua_State* L)
 
 	return 0;
 }
+
+
+		//int fake_buff;
+		//MPI_Status status;
+		//if(rank == 0)
+		//{
+		//	int size;
+		//	comm.Size(&size);
+		//	for(int i = 1; i < size; i++)
+		//	{
+		//		comm.Recv(&fake_buff, 1, MPI_INT, i, 0, &status);
+		//	}
+		//}
+		//else
+		//{
+		//	comm.Send(&fake_buff, 1, MPI_INT, 0, 0);
+		//}

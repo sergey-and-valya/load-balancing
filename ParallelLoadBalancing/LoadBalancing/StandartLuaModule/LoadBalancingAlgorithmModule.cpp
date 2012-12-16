@@ -20,11 +20,16 @@
 #include "../LoadBalancingAlgorithm.h"
 #include "LoadBalancingAlgorithmModule.h"
 
+static void LoadBalancingAlgorithm_destructor(ILoadBalancingAlgorithm* instance)
+{
+	delete static_cast<LoadBalancingAlgorithm*>(instance);
+}
+
 static int luaModule_new(lua_State* L)
 {
 	int accuaracy = luaL_checkinteger(L, 1);
 
-	luaLB_pushILoadBalancingAlgorithm(L, new LoadBalancingAlgorithm(accuaracy));
+	luaLB_pushILoadBalancingAlgorithm(L, new LoadBalancingAlgorithm(accuaracy), LoadBalancingAlgorithm_destructor);
 
 	return 1;
 }

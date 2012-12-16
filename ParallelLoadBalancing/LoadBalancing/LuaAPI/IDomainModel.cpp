@@ -20,10 +20,25 @@
 
 const char* IDomainModelMetatableName = "IDomainModel";
 
-LUALB_API int luaLB_pushIDomainModel(lua_State* L, IDomainModel* instance)
+struct DomainModelEntry
 {
-	IDomainModel** pinstance = (IDomainModel**)lua_newuserdata(L, sizeof(IDomainModel*));
-	*pinstance = instance;
+	DomainModelDestructor destructor;
+	IDomainModel*         instance;
+};
+
+#define luaLB_checkDomainModelEntry(L, idx) \
+	((DomainModelEntry*)luaL_checkudata(L, idx, IDomainModelMetatableName))
+
+LUALB_API IDomainModel* luaLB_checkIDomainModel(lua_State* L, int idx)
+{
+	return luaLB_checkDomainModelEntry(L, idx)->instance;
+}
+
+LUALB_API int luaLB_pushIDomainModel(lua_State* L, IDomainModel* instance, DomainModelDestructor destructor)
+{
+	DomainModelEntry* entry = (DomainModelEntry*)lua_newuserdata(L, sizeof(DomainModelEntry));
+	entry->instance = instance;
+	entry->destructor = destructor;
 
 	lua_newtable(L);
 	lua_setuservalue(L, -2);
@@ -36,16 +51,16 @@ LUALB_API int luaLB_pushIDomainModel(lua_State* L, IDomainModel* instance)
 
 static int instance_destructor(lua_State* L)
 {
-	IDomainModel** pinstance = luaLB_checkIDomainModel(L, 1);
+	DomainModelEntry* entry = luaLB_checkDomainModelEntry(L, 1);
 	
-	delete *pinstance;
+	entry->destructor(entry->instance);
 
 	return 0;
 }
 
 static int instance_tostring(lua_State* L)
 {
-	IDomainModel** pinstance = luaLB_checkIDomainModel(L, 1);
+	IDomainModel* instance = luaLB_checkIDomainModel(L, 1);
 	
 	lua_pushstring(L, IDomainModelMetatableName);
 

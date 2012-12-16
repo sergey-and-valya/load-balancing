@@ -20,11 +20,26 @@
 
 const char* ILoadBalancingAlgorithmMetatableName = "ILoadBalancingAlgorithm";
 
-LUALB_API int luaLB_pushILoadBalancingAlgorithm(lua_State* L, ILoadBalancingAlgorithm* instance)
+struct LoadBalancingAlgorithmEntry
 {
-	ILoadBalancingAlgorithm** pinstance = (ILoadBalancingAlgorithm**)lua_newuserdata(L, sizeof(ILoadBalancingAlgorithm*));
-	*pinstance = instance;
-	
+	LoadBalancingAlgorithmDestructor destructor;
+	ILoadBalancingAlgorithm*         instance;
+};
+
+#define luaLB_checkLoadBalancingAlgorithmEntry(L, idx) \
+	((LoadBalancingAlgorithmEntry*)luaL_checkudata(L, idx, ILoadBalancingAlgorithmMetatableName))
+
+LUALB_API ILoadBalancingAlgorithm* luaLB_checkILoadBalancingAlgorithm(lua_State* L, int idx)
+{
+	return luaLB_checkLoadBalancingAlgorithmEntry(L, idx)->instance;
+}
+
+LUALB_API int luaLB_pushILoadBalancingAlgorithm(lua_State* L, ILoadBalancingAlgorithm* instance, LoadBalancingAlgorithmDestructor destructor)
+{
+	LoadBalancingAlgorithmEntry* entry = (LoadBalancingAlgorithmEntry*)lua_newuserdata(L, sizeof(LoadBalancingAlgorithmEntry));
+	entry->instance = instance;
+	entry->destructor = destructor;
+
 	lua_newtable(L);
 	lua_setuservalue(L, -2);
 
@@ -36,16 +51,16 @@ LUALB_API int luaLB_pushILoadBalancingAlgorithm(lua_State* L, ILoadBalancingAlgo
 
 static int instance_destructor(lua_State* L)
 {
-	ILoadBalancingAlgorithm** pinstance = luaLB_checkILoadBalancingAlgorithm(L, 1);
+	LoadBalancingAlgorithmEntry* entry = luaLB_checkLoadBalancingAlgorithmEntry(L, 1);
 	
-	delete *pinstance;
+	entry->destructor(entry->instance);
 
 	return 0;
 }
 
 static int instance_tostring(lua_State* L)
 {
-	ILoadBalancingAlgorithm** pinstance = luaLB_checkILoadBalancingAlgorithm(L, 1);
+	ILoadBalancingAlgorithm* instance = luaLB_checkILoadBalancingAlgorithm(L, 1);
 	
 	lua_pushstring(L, ILoadBalancingAlgorithmMetatableName);
 
@@ -59,7 +74,7 @@ static const luaL_Reg instance_functions[] = {
 	{NULL, NULL}
 };
 
-LUALB_API int luaLB_openILoadBalancingAlgoritm(lua_State* L)
+LUALB_API int luaLB_openILoadBalancingAlgorithm(lua_State* L)
 {
 	luaL_newmetatable(L, ILoadBalancingAlgorithmMetatableName);
 	lua_pushvalue(L, -1);

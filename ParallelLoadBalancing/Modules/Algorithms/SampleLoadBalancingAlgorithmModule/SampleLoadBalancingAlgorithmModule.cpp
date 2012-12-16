@@ -19,12 +19,17 @@
 #include <LoadBalancing/LuaAPI/ILoadBalancingAlgorithm.h>
 #include "SampleLoadBalancingAlgorithm.h"
 
+static void Destructor(ILoadBalancingAlgorithm* instance)
+{
+	delete static_cast<SampleLoadBalancingAlgorithm*>(instance);
+}
+
 static int luaModule_new(lua_State* L)
 {
 	int parameter1 = luaL_checkinteger(L, 1);
 	int parameter2 = luaL_checkinteger(L, 2);
 
-	luaLB_pushILoadBalancingAlgorithm(L, new SampleLoadBalancingAlgorithm(parameter1, parameter2));
+	luaLB_pushILoadBalancingAlgorithm(L, new SampleLoadBalancingAlgorithm(parameter1, parameter2), Destructor);
 
 	return 1;
 }

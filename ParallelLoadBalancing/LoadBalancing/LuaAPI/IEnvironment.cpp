@@ -17,13 +17,32 @@
 // ****************************************************************************
 
 #include <LoadBalancing/LuaAPI/IEnvironment.h>
+#include <LoadBalancing/LuaAPI/ILoadBalancingAlgorithm.h>
+#include <LoadBalancing/LuaAPI/IDomainModel.h>
+#include <LoadBalancing/LuaAPI/IRebalancer.h>
+#include <LoadBalancing/LuaAPI/IMPICommunicator.h>
 
 const char* IEnvironmentMetatableName = "IEnvironment";
 
-LUALB_API int luaLB_pushIEnvironment(lua_State* L, IEnvironment* instance)
+struct EnvironmentEntry
 {
-	IEnvironment** pinstance = (IEnvironment**)lua_newuserdata(L, sizeof(IEnvironment*));
-	*pinstance = instance;
+	EnvironmentDestructor destructor;
+	IEnvironment*         instance;
+};
+
+#define luaLB_checkEnvironmentEntry(L, idx) \
+	((EnvironmentEntry*)luaL_checkudata(L, idx, IEnvironmentMetatableName))
+
+LUALB_API IEnvironment* luaLB_checkIEnvironment(lua_State* L, int idx)
+{
+	return luaLB_checkEnvironmentEntry(L, idx)->instance;
+}
+
+LUALB_API int luaLB_pushIEnvironment(lua_State* L, IEnvironment* instance, EnvironmentDestructor destructor)
+{
+	EnvironmentEntry* entry = (EnvironmentEntry*)lua_newuserdata(L, sizeof(EnvironmentEntry));
+	entry->instance = instance;
+	entry->destructor = destructor;
 
 	lua_newtable(L);
 	lua_setuservalue(L, -2);
@@ -36,25 +55,59 @@ LUALB_API int luaLB_pushIEnvironment(lua_State* L, IEnvironment* instance)
 
 static int instance_destructor(lua_State* L)
 {
-	IEnvironment** pinstance = luaLB_checkIEnvironment(L, 1);
+	EnvironmentEntry* entry = luaLB_checkEnvironmentEntry(L, 1);
 	
-	delete *pinstance;
+	entry->destructor(entry->instance);
 
 	return 0;
 }
 
 static int instance_tostring(lua_State* L)
 {
-	IEnvironment** pinstance = luaLB_checkIEnvironment(L, 1);
+	IEnvironment* instance = luaLB_checkIEnvironment(L, 1);
 	
 	lua_pushstring(L, IEnvironmentMetatableName);
 
 	return 1;
 }
 
+IDomainModel* lua_checkDomainModel(lua_State* L, int idx)
+{
+    lua_pushvalue(L, idx);
+    lua_getfield(L, -1, "AsIDomainModel");
+    lua_pushvalue(L, -2);
+    lua_pcall(L, 1, 1, 0);
+    IDomainModel* result = (IDomainModel*)lua_touserdata(L, -1);
+    lua_pop(L, 1);
+
+    return result;
+}
+
+
+static int instance_run(lua_State* L) //env:run(IMPICommunicator& comm, IDomainModel& ts, ILoadBalancingAlgorithm& lb, IRebalancer& rb)
+{
+	IEnvironment* pEnv = luaLB_checkIEnvironment(L, 1);
+	
+	if(lua_gettop(L) != 5)
+	{
+		luaL_error(L, "Function env:run takes 4 arguments!");
+	}	
+	
+
+	IMPICommunicator* comm      = luaLB_checkIMPICommunicator(L, 2);
+	IDomainModel* ts            = lua_checkDomainModel(L, 3); 
+	ILoadBalancingAlgorithm* lb = luaLB_checkILoadBalancingAlgorithm(L, 4);
+	IRebalancer* rb             = luaLB_checkIRebalancer(L, 5);
+
+	pEnv->Run(*comm, *ts, *lb, *rb);
+
+	return 0;
+}
+
 static const luaL_Reg instance_functions[] = {
 	{"__gc",                      instance_destructor},
 	{"__tostring",                instance_tostring},
+	{"run",                       instance_run},
 
 	{NULL, NULL}
 };

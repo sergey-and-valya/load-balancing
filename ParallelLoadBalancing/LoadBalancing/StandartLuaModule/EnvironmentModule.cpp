@@ -20,13 +20,17 @@
 #include "../Environment.h"
 #include "EnvironmentModule.h"
 
+static void Destructor(IEnvironment* instance)
+{
+	delete static_cast<Environment*>(instance);
+}
 
 static int luaModule_new(lua_State* L)
 {
 	bool needLoadBalancing = lua_toboolean(L, 1);
 	bool printResults = lua_toboolean(L, 2);
 
-	luaLB_pushIEnvironment(L, new Environment(needLoadBalancing, printResults));
+	luaLB_pushIEnvironment(L, new Environment(needLoadBalancing, printResults), Destructor);
 	
 	return 1;
 }

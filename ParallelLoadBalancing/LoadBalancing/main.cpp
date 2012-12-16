@@ -24,6 +24,7 @@
 #include <LoadBalancing/LuaAPI/ILoadBalancingAlgorithm.h>
 #include <LoadBalancing/LuaAPI/IRebalancer.h>
 #include <LoadBalancing/LuaAPI/IEnvironment.h>
+#include <LoadBalancing/LuaAPI/IMPICommunicator.h>
 
 #include "StandartLuaModule.h"
 
@@ -244,58 +245,16 @@ void ParseEmulateMPICommandLine(int argc, char* argv[], EmulateMPIConfig* cfg)
 }
 #endif
 
-IDomainModel* lua_checkDomainModel(lua_State* L)
-{
-	lua_getfield(L, -1, "AsIDomainModel");
-	lua_pushvalue(L, -2);
-	lua_pcall(L, 1, 1, 0);
-	return (IDomainModel*)lua_touserdata(L, -1);
-}
-
-void LoadConfig(lua_State* L, Config* cfg)
-{
-	if(luaL_loadfile(L, cfg->config_file.c_str()))
-	{
-		printf("problem during loading config file '%s':\n%s\n", cfg->config_file.c_str(), lua_tostring(L, -1));
-		exit(1);
-	}
-	
-	if(lua_pcall(L, 0, 0, 0))
-	{
-		printf("problem during executing config file '%s':\n%s\n", cfg->config_file.c_str(), lua_tostring(L, -1));
-		exit(1);
-	}
-
-	lua_getglobal(L, "load_balancing_algorithm");
-	if(!lua_isnil(L, -1))
-	{
-		cfg->lba = *luaLB_checkILoadBalancingAlgorithm(L, -1);
-	}
-
-	lua_getglobal(L, "rebalancer");
-	if(!lua_isnil(L, -1))
-	{
-		cfg->rb = *luaLB_checkIRebalancer(L, -1);
-	}
-
-	lua_getglobal(L, "environment");
-	if(!lua_isnil(L, -1))
-	{
-		cfg->env = *luaLB_checkIEnvironment(L, -1);
-	}
-
-	lua_getglobal(L, "domain_model");
-	if(!lua_isnil(L, -1))
-	{
-		cfg->dm = lua_checkDomainModel(L);
-	}
-}
-
 int luaLB_clock(lua_State* L)
 {
 	lua_pushnumber(L, clock());
 
 	return 1;
+}
+
+//do nothing
+void emptyMPICommunicatorDestructor(IMPICommunicator* instance)
+{
 }
 
 void Run(IMPICommunicator& comm, int argc, char* argv[])
@@ -347,49 +306,24 @@ void Run(IMPICommunicator& comm, int argc, char* argv[])
 		lua_pushcfunction(L, luaLB_clock);
 		lua_setglobal(L, "time");
 
-		LoadConfig(L, &cfg);
-
-		if(rank == 0)
-		{
-			lua_getglobal(L, "on_start");
-			if(!lua_isnil(L, -1))
-			{
-				if(lua_pcall(L, 0, 0, 0))
-				{
-					printf("problem during executing on_start function:\n%s\n", lua_tostring(L, -1));
-					exit(1);
-				}
-			}
-		}
+		lua_pushboolean(L, rank == 0);
+		lua_setglobal(L, "is_root");
 		
-		cfg.env->Run(comm, *cfg.dm, *cfg.lba, *cfg.rb);
+		luaLB_pushIMPICommunicator(L, &comm, emptyMPICommunicatorDestructor);
+		lua_setglobal(L, "comm");
 
-		int fake_buff;
-		MPI_Status status;
-		if(rank == 0)
+		if(luaL_loadfile(L, cfg.config_file.c_str()))
 		{
-			int size;
-			comm.Size(&size);
-			for(int i = 1; i < size; i++)
-			{
-				comm.Recv(&fake_buff, 1, MPI_INT, i, 0, &status);
-			}
-			
-			lua_getglobal(L, "on_stop");
-			if(!lua_isnil(L, -1))
-			{
-				if(lua_pcall(L, 0, 0, 0))
-				{
-					printf("problem during executing on_stop function:\n%s\n", lua_tostring(L, -1));
-					exit(1);
-				}
-			}
+			printf("problem during loading config file '%s':\n%s\n", cfg.config_file.c_str(), lua_tostring(L, -1));
+			exit(1);
 		}
-		else
+	
+		if(lua_pcall(L, 0, 0, 0))
 		{
-			comm.Send(&fake_buff, 1, MPI_INT, 0, 0);
+			printf("problem during executing config file '%s':\n%s\n", cfg.config_file.c_str(), lua_tostring(L, -1));
+			exit(1);
 		}
-		
+
 		lua_close(L);
 	}
 }

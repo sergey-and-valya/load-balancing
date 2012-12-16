@@ -22,12 +22,11 @@
 #include "LuaAPI.h"
 #include "../IEnvironment.h"
 
-LUALB_API extern const char* IEnvironmentMetatableName;
+typedef void (*EnvironmentDestructor) (IEnvironment* instance);
 
-#define luaLB_checkIEnvironment(L, idx) \
-	((IEnvironment**)luaL_checkudata(L, idx, IEnvironmentMetatableName))
+LUALB_API int luaLB_pushIEnvironment(lua_State* L, IEnvironment* instance, EnvironmentDestructor destructor);
 
-LUALB_API int luaLB_pushIEnvironment(lua_State* L, IEnvironment* instance);
+LUALB_API IEnvironment* luaLB_checkIEnvironment(lua_State* L, int idx);
 
 LUALB_API int luaLB_openIEnvironment(lua_State* L);
 

@@ -22,12 +22,11 @@
 #include "LuaAPI.h"
 #include "../IRebalancer.h"
 
-LUALB_API extern const char* IRebalancerMetatableName;
+typedef void (*RebalancerDestructor) (IRebalancer* instance);
 
-#define luaLB_checkIRebalancer(L, idx) \
-	((IRebalancer**)luaL_checkudata(L, idx, IRebalancerMetatableName))
+LUALB_API int luaLB_pushIRebalancer(lua_State* L, IRebalancer* instance, RebalancerDestructor destructor);
 
-LUALB_API int luaLB_pushIRebalancer(lua_State* L, IRebalancer* instance);
+LUALB_API IRebalancer* luaLB_checkIRebalancer(lua_State* L, int idx);
 
 LUALB_API int luaLB_openIRebalancer(lua_State* L);
 

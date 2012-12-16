@@ -24,7 +24,8 @@ LuaAPI/LuaAPI.cpp \
 LuaAPI/IEnvironment.cpp \
 LuaAPI/IRebalancer.cpp \
 LuaAPI/IDomainModel.cpp \
-LuaAPI/ILoadBalancingAlgorithm.cpp
+LuaAPI/ILoadBalancingAlgorithm.cpp \
+LuaAPI/IMPICommunicator.cpp
 
 
 HEADERS = \
@@ -54,6 +55,7 @@ include/LoadBalancing/LuaAPI/IRebalancer.h \
 include/LoadBalancing/LuaAPI/LuaAPI.h \
 include/LoadBalancing/LuaAPI/IDomainModel.h \
 include/LoadBalancing/LuaAPI/ILoadBalancingAlgorithm.h \
+include/LoadBalancing/LuaAPI/IMPICommunicator.h \
 include/LoadBalancing/IDomainModel.h \
 include/LoadBalancing/ILoadBalancingAlgorithm.h \
 include/LoadBalancing/IMPICommunicator.h \

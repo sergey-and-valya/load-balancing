@@ -69,6 +69,7 @@
     <ClInclude Include="include\LoadBalancing\LuaAPI\IDomainModel.h" />
     <ClInclude Include="include\LoadBalancing\LuaAPI\IEnvironment.h" />
     <ClInclude Include="include\LoadBalancing\LuaAPI\ILoadBalancingAlgorithm.h" />
+    <ClInclude Include="include\LoadBalancing\LuaAPI\IMPICommunicator.h" />
     <ClInclude Include="include\LoadBalancing\LuaAPI\IRebalancer.h" />
     <ClInclude Include="include\LoadBalancing\LuaAPI\LuaAPI.h" />
     <ClInclude Include="LoadBalancingAlgorithm.h" />
@@ -109,6 +110,7 @@
     <ClCompile Include="LuaAPI\IDomainModel.cpp" />
     <ClCompile Include="LuaAPI\IEnvironment.cpp" />
     <ClCompile Include="LuaAPI\ILoadBalancingAlgorithm.cpp" />
+    <ClCompile Include="LuaAPI\IMPICommunicator.cpp" />
     <ClCompile Include="LuaAPI\IRebalancer.cpp" />
     <ClCompile Include="LuaAPI\LuaAPI.cpp" />
     <ClCompile Include="LuaFunction.cpp" />

@@ -16,29 +16,18 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************
 
-#include <LoadBalancing/LuaAPI/IRebalancer.h>
-#include "../Rebalancer.h"
-#include "RebalancerModule.h"
+#ifndef _LUAAPI_IMPICOMMUNICATOR_H
+#define _LUAAPI_IMPICOMMUNICATOR_H
 
-static void Rebalancer_destructor(IRebalancer* instance)
-{
-	delete static_cast<IRebalancer*>(instance);
-}
+#include "LuaAPI.h"
+#include "../IMPICommunicator.h"
 
-static int luaModule_new(lua_State* L)
-{
-	luaLB_pushIRebalancer(L, new Rebalancer(), Rebalancer_destructor);
+typedef void (*MPICommunicatorDestructor) (IMPICommunicator* instance);
 
-	return 1;
-}
+LUALB_API int luaLB_pushIMPICommunicator(lua_State* L, IMPICommunicator* instance, MPICommunicatorDestructor destructor);
 
-static const luaL_Reg module_functions[] = {
-	{"new", luaModule_new},
-	{NULL,  NULL}
-};
+LUALB_API IMPICommunicator* luaLB_checkIMPICommunicator(lua_State* L, int idx);
 
-int luaopen_Standart_Rebalancer(lua_State* L)
-{
-	luaL_newlib(L, module_functions);
-	return 1;
-}
+LUALB_API int luaLB_openIMPICommunicator(lua_State* L);
+
+#endif

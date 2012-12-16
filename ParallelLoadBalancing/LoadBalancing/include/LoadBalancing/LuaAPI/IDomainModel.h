@@ -22,12 +22,11 @@
 #include "LuaAPI.h"
 #include "../IDomainModel.h"
 
-LUALB_API extern const char* IDomainModelMetatableName;
+typedef void (*DomainModelDestructor) (IDomainModel* instance);
 
-#define luaLB_checkIDomainModel(L, idx) \
-	((IDomainModel**)luaL_checkudata(L, idx, IDomainModelMetatableName))
+LUALB_API int luaLB_pushIDomainModel(lua_State* L, IDomainModel* instance, DomainModelDestructor destructor);
 
-LUALB_API int luaLB_pushIDomainModel(lua_State* L, IDomainModel* instance);
+LUALB_API IDomainModel* luaLB_checkIDomainModel(lua_State* L, int idx);
 
 LUALB_API int luaLB_openIDomainModel(lua_State* L);
 

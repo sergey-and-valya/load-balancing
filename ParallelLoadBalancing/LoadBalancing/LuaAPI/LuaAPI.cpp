@@ -19,12 +19,16 @@
 #include <LoadBalancing/LuaAPI/ILoadBalancingAlgorithm.h>
 #include <LoadBalancing/LuaAPI/IRebalancer.h>
 #include <LoadBalancing/LuaAPI/IEnvironment.h>
+#include <LoadBalancing/LuaAPI/IDomainModel.h>
+#include <LoadBalancing/LuaAPI/IMPICommunicator.h>
 
 LUALB_API int luaLB_openlibs(lua_State* L)
 {
-	luaLB_openILoadBalancingAlgoritm(L);
+	luaLB_openILoadBalancingAlgorithm(L);
 	luaLB_openIRebalancer(L);
 	luaLB_openIEnvironment(L);
+	luaLB_openIDomainModel(L);
+	luaLB_openIMPICommunicator(L);
 
 	return 0;
 }
