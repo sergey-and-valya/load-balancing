@@ -142,22 +142,29 @@ bool StochasticLoadBalancingAlgorithm::Run(
 				{
 					int theirMinMax[2];
 
-					if(procI % (step + 1) == 0)
+					if(procI % (step * 2) == 0)
 					{
 						if(procI + step >= bpNumberI + 1)
-							break;
-
-						comm.Recv(theirMinMax, 2, MPI_INT, mpiRank + step * (bpNumberJ + 1), 0, 0);
+						{
+							if(procI == 0)
+								break;
+						}
+						else
+						{
+							comm.Recv(theirMinMax, 2, MPI_INT, mpiRank + step * (bpNumberJ + 1), 0, 0);
 				
-						if(myMinMax[0] > theirMinMax[0])
-							myMinMax[0] = theirMinMax[0];
+							if(myMinMax[0] > theirMinMax[0])
+								myMinMax[0] = theirMinMax[0];
 				
-						if(myMinMax[1] < theirMinMax[1])
-							myMinMax[1] = theirMinMax[1];
+							if(myMinMax[1] < theirMinMax[1])
+								myMinMax[1] = theirMinMax[1];
+						}
 					}
 					else
 					{
-						comm.Send(myMinMax, 2, MPI_INT, mpiRank - step * (bpNumberJ + 1), 0);
+						if(procI - step >= 0)
+							comm.Send(myMinMax, 2, MPI_INT, mpiRank - step * (bpNumberJ + 1), 0);
+						
 						break;
 					}
 
@@ -180,7 +187,7 @@ bool StochasticLoadBalancingAlgorithm::Run(
 
 				while(step > 0)
 				{
-					if(procI % (step + 1) == 0)
+					if(procI % (step * 2) == 0)
 					{
 						if(procI + step < bpNumberI + 1)
 							comm.Send(newSolutionJ + procJ + 1, 1, MPI_INT, mpiRank + step * (bpNumberJ + 1), 0);
@@ -286,22 +293,29 @@ bool StochasticLoadBalancingAlgorithm::Run(
 				{
 					int theirMinMax[2];
 
-					if(procJ % (step + 1) == 0)
+					if(procJ % (step * 2) == 0)
 					{
 						if(procJ + step >= bpNumberJ + 1)
-							break;
-
-						comm.Recv(theirMinMax, 2, MPI_INT, mpiRank + step, 0, 0);
+						{
+							if(procJ == 0)
+								break;
+						}
+						else
+						{
+							comm.Recv(theirMinMax, 2, MPI_INT, mpiRank + step, 0, 0);
 				
-						if(myMinMax[0] > theirMinMax[0])
-							myMinMax[0] = theirMinMax[0];
+							if(myMinMax[0] > theirMinMax[0])
+								myMinMax[0] = theirMinMax[0];
 				
-						if(myMinMax[1] < theirMinMax[1])
-							myMinMax[1] = theirMinMax[1];
+							if(myMinMax[1] < theirMinMax[1])
+								myMinMax[1] = theirMinMax[1];
+						}
 					}
 					else
 					{
-						comm.Send(myMinMax, 2, MPI_INT, mpiRank - step, 0);
+						if(procJ - step >= 0)
+							comm.Send(myMinMax, 2, MPI_INT, mpiRank - step, 0);
+						
 						break;
 					}
 
@@ -324,7 +338,7 @@ bool StochasticLoadBalancingAlgorithm::Run(
 
 				while(step > 0)
 				{
-					if(procJ % (step + 1) == 0)
+					if(procJ % (step * 2) == 0)
 					{
 						if(procJ + step < bpNumberJ + 1)
 							comm.Send(newSolutionI + procI + 1, 1, MPI_INT, mpiRank + step, 0);
