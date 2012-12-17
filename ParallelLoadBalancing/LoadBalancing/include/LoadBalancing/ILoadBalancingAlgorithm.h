@@ -48,9 +48,11 @@ public:
      * \param        bpNumberJ     Break point number by columns.
      * \param [out]  newSolutionI  The new solution by rows. Should have \a bpNumberI + 2 elements. \a solutionI[0] = -1, \a solutionI[\a bpNumberI + 1] = \a rows - 1
      * \param [out]  newSolutionJ  The new solution by columns. Should have \a bpNumberJ + 2 elements. \a solutionJ[0] = -1, \a solutionJ[\a bpNumberJ + 1] = \a columns - 1
+     *
+     * \return  False if it is useless run load balancing procedure again after rebalancing.
      */
 
-	virtual void Run(
+	virtual bool Run(
 		IMPICommunicator& comm,
 		const int time_matrix[],
 		const int oldSolutionI[], // bpNumberI + 2, oldSolutionI[0] = -1, oldSolutionI[bpNumberI + 1] = m - 1

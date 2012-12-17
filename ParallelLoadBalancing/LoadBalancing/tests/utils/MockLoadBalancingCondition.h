@@ -16,29 +16,43 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************
 
-#ifndef _STOCHASTICLOADBALANCINGALGORITHM_H
-#define _STOCHASTICLOADBALANCINGALGORITHM_H
+#ifndef _MOCKLOADBALANCINGCONDITION_H
+#define _MOCKLOADBALANCINGCONDITION_H
 
-#include <LoadBalancing/ILoadBalancingAlgorithm.h>
+#include <LoadBalancing/ILoadBalancingCondition.h>
+#include <functional>
 
-class StochasticLoadBalancingAlgorithm : public ILoadBalancingAlgorithm
+class MockLoadBalancingCondition : public ILoadBalancingCondition
 {
 public:
-	StochasticLoadBalancingAlgorithm();
+	typedef std::function<bool(IMPICommunicator&, const int[], const int[], const int[], int, int)> ShouldRebalanceFunction;
+	typedef std::function<void()> ResetFunction;
 
-	bool Run(
+	MockLoadBalancingCondition(ShouldRebalanceFunction shouldRebalanceImpl, ResetFunction resetImpl)
+		: m_shouldRebalanceImpl(shouldRebalanceImpl)
+		, m_resetImpl(resetImpl)
+	{
+	}
+	
+	bool ShouldRebalance(
 		IMPICommunicator& comm,
 		const int time_matrix[],
-		const int oldSolutionI[], // bpNumberI + 2, oldSolutionI[0] = -1, oldSolutionI[bpNumberI + 1] = m - 1
-		const int oldSolutionJ[], // bpNumberJ + 2, oldSolutionJ[0] = -1, oldSolutionJ[bpNumberJ + 1] = n - 1
+		const int solutionI[], // bpNumberI + 2, solutionI[0] = -1, solutionI[bpNumberI + 1] = m - 1
+		const int solutionJ[], // bpNumberJ + 2, solutionJ[0] = -1, solutionJ[bpNumberJ + 1] = n - 1
 		int bpNumberI,
-		int bpNumberJ,
-		int newSolutionI[],
-		int newSolutionJ[]);
+		int bpNumberJ)
+	{
+		return m_shouldRebalanceImpl(comm, time_matrix, solutionI, solutionJ, bpNumberI, bpNumberJ);
+	}
+	
+	void Reset()
+	{
+		m_resetImpl();
+	}
 
 private:
-	bool vertical;
-	int offset;
+	ShouldRebalanceFunction m_shouldRebalanceImpl;
+	ResetFunction m_resetImpl;
 };
 
 #endif

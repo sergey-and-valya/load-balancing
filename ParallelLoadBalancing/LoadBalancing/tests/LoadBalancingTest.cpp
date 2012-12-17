@@ -19,7 +19,7 @@
 #include "LoadBalancingTest.h"
 
 #include "utils/Assert.h"
-#include "utils/TestCommunicator.h"
+#include "utils/MockCommunicator.h"
 
 #include <LoadBalancing/ILoadBalancingAlgorithm.h>
 #include <LoadBalancing/IMPICommunicator.h>
@@ -43,7 +43,7 @@ void LoadBalancingTest()
 
 	int sendCalls = 0;
 
-	auto comm = TestCommunicator( 
+	auto comm = MockCommunicator( 
 		[bpNumberI, bpNumberJ](int* size) -> int
 		{
 			*size = (bpNumberI + 1) * (bpNumberJ + 1);
@@ -187,7 +187,7 @@ void LoadBalancingCentralTest()
 	
 	int receiveCalls = -1;
 
-	auto comm = TestCommunicator(
+	auto comm = MockCommunicator(
 		[bpNumberI, bpNumberJ](int* size) -> int
 		{
 			*size = (bpNumberI + 1) * (bpNumberJ + 1);
@@ -405,7 +405,7 @@ void LoadBalancingCentralTest()
 //	
 //	int receiveCalls = 0;
 //
-//	auto comm = TestCommunicator(
+//	auto comm = MockCommunicator(
 //		[bpNumberI, bpNumberJ](int* size) -> int
 //		{
 //			*size = (bpNumberI + 1) * (bpNumberJ + 1);

@@ -22,13 +22,14 @@
 #include "IMPICommunicator.h"
 #include "IDomainModel.h"
 #include "ILoadBalancingAlgorithm.h"
+#include "ILoadBalancingCondition.h"
 #include "IRebalancer.h"
 
 /**
  * \class   IEnvironment
  *
  * \brief   Environment interface.
- *          Provides an environment for running testing system with using
+ *          Provides an environment for running domain model with using
  *          load balancing algorithm and rebalancer to rebalance data blocks.
  */
 
@@ -37,19 +38,20 @@ class IEnvironment
 public:
 
     /**
-     * \fn  virtual void IEnvironment::Run(IMPICommunicator& comm, IDomainModel& ts,
-     *      ILoadBalancingAlgorithm& lb, IRebalancer& rb) = 0;
+     * \fn  virtual void IEnvironment::Run(IMPICommunicator& comm, IDomainModel& dm,
+     *      ILoadBalancingAlgorithm& lb, ILoadBalancingCondition& lbc, IRebalancer& rb) = 0;
      *
-     * \brief   Runs testing system \a ts on the current processor specified by communicator \a comm.
+     * \brief   Runs domain model \a dm on the current processor specified by communicator \a comm.
      *          Runs load balancing algorithm \a lb and rebalances data using rebalancer \a rb via communicator \a comm
      *
      * \param [in,out]  comm    The communicator.
-     * \param [in,out]  ts      The testing system.
+     * \param [in,out]  dm      The domain model.
      * \param [in,out]  lb      The load balancing algorithm.
+     * \param [in,out]  lbc     The load balancing condition.
      * \param [in,out]  rb      The rebalancer.
      */
 
-	virtual void Run(IMPICommunicator& comm, IDomainModel& ts, ILoadBalancingAlgorithm& lb, IRebalancer& rb) = 0;
+	virtual void Run(IMPICommunicator& comm, IDomainModel& dm, ILoadBalancingAlgorithm& lb, ILoadBalancingCondition& lbc, IRebalancer& rb) = 0;
 };
 
 #endif

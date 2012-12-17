@@ -24,16 +24,14 @@
 class Environment : public IEnvironment
 {
 public:
-	Environment(bool needLoadBalancing, bool printResults)
-		: needLoadBalancing(needLoadBalancing)
-		, printResults(printResults)
+	Environment(bool printResults)
+		: printResults(printResults)
 	{
 	}
 
-	void Run(IMPICommunicator& comm, IDomainModel& ts, ILoadBalancingAlgorithm& lb, IRebalancer& rb);
+	void Run(IMPICommunicator& comm, IDomainModel& dm, ILoadBalancingAlgorithm& lb, ILoadBalancingCondition& lbc, IRebalancer& rb);
 
 private:
-	bool needLoadBalancing;
 	bool printResults;
 };
 

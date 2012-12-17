@@ -24,10 +24,11 @@
 #include <LoadBalancing/IMPICommunicator.h>
 
 #include "../Environment.h"
-#include "utils/TestCommunicator.h"
-#include "utils/TestLoadBalancing.h"
-#include "utils/TestDomainModel.h"
-#include "utils/TestRebalancer.h"
+#include "utils/MockCommunicator.h"
+#include "utils/MockLoadBalancingAlgorithm.h"
+#include "utils/MockLoadBalancingCondition.h"
+#include "utils/MockDomainModel.h"
+#include "utils/MockRebalancer.h"
 #include "utils/Assert.h"
 
 
@@ -47,9 +48,9 @@ void EnvironmentTest()
 	int step = 0;
 	int steps = 10;
 
-	auto env = Environment(true, false);
+	auto env = Environment(false);
 
-	auto comm = TestCommunicator(
+	auto comm = MockCommunicator(
 		[bpNumberI, bpNumberJ](int* size) -> int
 		{
 			*size = (bpNumberI + 1) * (bpNumberJ + 1);
@@ -72,14 +73,15 @@ void EnvironmentTest()
 		}
 	);
 
-	auto lb = TestLoadBalancing(
-		[procI](IMPICommunicator& comm, const int time_matrix[], const int oldSolutionI[], const int oldSolutionJ[], int bpNumberI, int bpNumberJ, int newSolutionI[], int newSolutionJ[])
+	auto lb = MockLoadBalancingAlgorithm(
+		[procI](IMPICommunicator& comm, const int time_matrix[], const int oldSolutionI[], const int oldSolutionJ[], int bpNumberI, int bpNumberJ, int newSolutionI[], int newSolutionJ[]) -> bool
 		{
 			newSolutionI[procI]--;
+			return false;
 		}
 	);
 	
-	auto ts = TestDomainModel(
+	auto dm = MockDomainModel(
 		[localWidth, localHeight, bpNumberI, bpNumberJ](IMPICommunicator& comm, IProblemBuilder& builder)
 		{
 			builder.SetBreakPointCount(bpNumberI, bpNumberJ);
@@ -131,7 +133,7 @@ void EnvironmentTest()
 		}
 	);
 	
-	auto rb = TestRebalancer(
+	auto rb = MockRebalancer(
 		[localWidth, localHeight](IMPICommunicator& comm, const int oldSolutionI[], const int oldSolutionJ[], const double oldMatrix[], const int newSolutionI[], const int newSolutionJ[], double newMatrix[], int bpNumberI, int bpNumberJ)
 		{
 			assert(oldSolutionI);
@@ -144,6 +146,18 @@ void EnvironmentTest()
 			}
 		}
 	);
+	
+	
 
-	env.Run(comm, ts, lb, rb);
+	auto lbc = MockLoadBalancingCondition(
+		[](IMPICommunicator& comm, const int time_matrix[], const int solutionI[], const int solutionJ[], int bpNumberI, int bpNumberJ)
+		{
+			return true;
+		},
+		[]()
+		{
+		}
+	);
+
+	env.Run(comm, dm, lb, lbc, rb);
 }

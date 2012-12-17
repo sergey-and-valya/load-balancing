@@ -16,44 +16,36 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************
 
-#ifndef _TESTTESTINGSYSTEM_H
-#define _TESTTESTINGSYSTEM_H
+#ifndef _MOCKLOADBALANCING_H
+#define _MOCKLOADBALANCING_H
 
-#include <LoadBalancing/IDomainModel.h>
+#include <LoadBalancing/ILoadBalancingAlgorithm.h>
 #include <functional>
 
-class TestDomainModel : public IDomainModel
+class MockLoadBalancingAlgorithm : public ILoadBalancingAlgorithm
 {
 public:
-	typedef std::function<void(IMPICommunicator&, IProblemBuilder&)> LoadProblemFunction;
-	typedef std::function<bool(IMPICommunicator&, int[], const double[], double[], const int[], const int[], int, int)> RunFunction;
+	typedef std::function<bool(IMPICommunicator&, const int[], const int[], const int[], int, int, int[], int[])> RunFunction;
 
-	TestDomainModel (LoadProblemFunction loadProblemImpl, RunFunction runImpl)
-		: m_loadProblemImpl(loadProblemImpl)
-		, m_runImpl(runImpl)
+	MockLoadBalancingAlgorithm(RunFunction runImpl)
+		: m_runImpl(runImpl)
 	{
-	}
-	
-	void LoadProblem(IMPICommunicator& comm, IProblemBuilder& builder)
-	{
-		m_loadProblemImpl(comm, builder);
 	}
 
 	bool Run(
 		IMPICommunicator& comm,
-		int time_matrix[],
-		const double matrix[],
-		double new_matrix[],
-		const int solutionI[], // bpNumberI + 2, solutionI[0] = -1, solutionI[bpNumberI + 1] = m - 1
-		const int solutionJ[], // bpNumberJ + 2, solutionJ[0] = -1, solutionJ[bpNumberJ + 1] = n - 1
+		const int time_matrix[],
+		const int oldSolutionI[], // bpNumberI + 2, oldSolutionI[0] = -1, oldSolutionI[bpNumberI + 1] = m - 1
+		const int oldSolutionJ[], // bpNumberJ + 2, oldSolutionJ[0] = -1, oldSolutionJ[bpNumberJ + 1] = n - 1
 		int bpNumberI,
-		int bpNumberJ)
+		int bpNumberJ,
+		int newSolutionI[],
+		int newSolutionJ[])
 	{
-		return m_runImpl(comm, time_matrix, matrix, new_matrix, solutionI, solutionJ, bpNumberI, bpNumberJ);
+		return m_runImpl(comm, time_matrix, oldSolutionI, oldSolutionJ, bpNumberI, bpNumberJ, newSolutionI, newSolutionJ);
 	}
 
 private:
-	LoadProblemFunction m_loadProblemImpl;
 	RunFunction m_runImpl;
 };
 

@@ -18,6 +18,7 @@
 
 #include <LoadBalancing/LuaAPI/IEnvironment.h>
 #include <LoadBalancing/LuaAPI/ILoadBalancingAlgorithm.h>
+#include <LoadBalancing/LuaAPI/ILoadBalancingCondition.h>
 #include <LoadBalancing/LuaAPI/IDomainModel.h>
 #include <LoadBalancing/LuaAPI/IRebalancer.h>
 #include <LoadBalancing/LuaAPI/IMPICommunicator.h>
@@ -84,22 +85,23 @@ IDomainModel* lua_checkDomainModel(lua_State* L, int idx)
 }
 
 
-static int instance_run(lua_State* L) //env:run(IMPICommunicator& comm, IDomainModel& ts, ILoadBalancingAlgorithm& lb, IRebalancer& rb)
+static int instance_run(lua_State* L) //env:run(IMPICommunicator& comm, IDomainModel& dm, ILoadBalancingAlgorithm& lb, ILoadBalancingCondition& lbc, IRebalancer& rb)
 {
 	IEnvironment* pEnv = luaLB_checkIEnvironment(L, 1);
 	
-	if(lua_gettop(L) != 5)
+	if(lua_gettop(L) != 6)
 	{
-		luaL_error(L, "Function env:run takes 4 arguments!");
+		luaL_error(L, "Function env:run takes 5 arguments!");
 	}	
 	
 
-	IMPICommunicator* comm      = luaLB_checkIMPICommunicator(L, 2);
-	IDomainModel* ts            = lua_checkDomainModel(L, 3); 
-	ILoadBalancingAlgorithm* lb = luaLB_checkILoadBalancingAlgorithm(L, 4);
-	IRebalancer* rb             = luaLB_checkIRebalancer(L, 5);
+	IMPICommunicator* comm       = luaLB_checkIMPICommunicator(L, 2);
+	IDomainModel* dm             = lua_checkDomainModel(L, 3); 
+	ILoadBalancingAlgorithm* lb  = luaLB_checkILoadBalancingAlgorithm(L, 4);
+	ILoadBalancingCondition* lbc = luaLB_checkILoadBalancingCondition(L, 5);
+	IRebalancer* rb              = luaLB_checkIRebalancer(L, 6);
 
-	pEnv->Run(*comm, *ts, *lb, *rb);
+	pEnv->Run(*comm, *dm, *lb, *lbc, *rb);
 
 	return 0;
 }

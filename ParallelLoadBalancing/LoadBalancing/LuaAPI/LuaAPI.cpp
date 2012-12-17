@@ -17,6 +17,7 @@
 // ****************************************************************************
 
 #include <LoadBalancing/LuaAPI/ILoadBalancingAlgorithm.h>
+#include <LoadBalancing/LuaAPI/ILoadBalancingCondition.h>
 #include <LoadBalancing/LuaAPI/IRebalancer.h>
 #include <LoadBalancing/LuaAPI/IEnvironment.h>
 #include <LoadBalancing/LuaAPI/IDomainModel.h>
@@ -25,6 +26,7 @@
 LUALB_API int luaLB_openlibs(lua_State* L)
 {
 	luaLB_openILoadBalancingAlgorithm(L);
+	luaLB_openILoadBalancingCondition(L);
 	luaLB_openIRebalancer(L);
 	luaLB_openIEnvironment(L);
 	luaLB_openIDomainModel(L);

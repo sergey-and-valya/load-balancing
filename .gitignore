@@ -27,3 +27,7 @@ bin
 /ParallelLoadBalancing/Modules/Algorithms/StochasticLoadBalancingAlgorithm/*.user
 /ParallelLoadBalancing/Modules/Algorithms/StochasticLoadBalancingAlgorithm/Debug Emulate MPI
 /ParallelLoadBalancing/Modules/Algorithms/StochasticLoadBalancingAlgorithm/Release Emulate MPI
+/ParallelLoadBalancing/Release Emulate MPI
+/ParallelLoadBalancing/Modules/Algorithms/SampleLoadBalancingAlgorithmModule/Release Emulate MPI
+/ParallelLoadBalancing/LoadBalancing/Release Emulate MPI
+/ParallelLoadBalancing/LoadBalancing/My Amplifier XE Results - LoadBalancing

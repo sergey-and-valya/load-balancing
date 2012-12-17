@@ -75,25 +75,7 @@
     <ClInclude Include="tests\utils\Assert.h">
       <Filter>Заголовочные файлы\tests\utils</Filter>
     </ClInclude>
-    <ClInclude Include="tests\utils\TestCommunicator.h">
-      <Filter>Заголовочные файлы\tests\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="tests\utils\TestInputFile.h">
-      <Filter>Заголовочные файлы\tests\utils</Filter>
-    </ClInclude>
     <ClInclude Include="tests\utils\Testkit.h">
-      <Filter>Заголовочные файлы\tests\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="tests\utils\TestLoadBalancing.h">
-      <Filter>Заголовочные файлы\tests\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="tests\utils\TestMPIWorld.h">
-      <Filter>Заголовочные файлы\tests\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="tests\utils\TestProblemBuilder.h">
-      <Filter>Заголовочные файлы\tests\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="tests\utils\TestRebalancer.h">
       <Filter>Заголовочные файлы\tests\utils</Filter>
     </ClInclude>
     <ClInclude Include="tests\Tests.h">
@@ -116,9 +98,6 @@
     </ClInclude>
     <ClInclude Include="tests\DomainModelTest.h">
       <Filter>Заголовочные файлы\tests</Filter>
-    </ClInclude>
-    <ClInclude Include="tests\utils\TestDomainModel.h">
-      <Filter>Заголовочные файлы\tests\utils</Filter>
     </ClInclude>
     <ClInclude Include="Values.h">
       <Filter>Заголовочные файлы</Filter>
@@ -192,6 +171,42 @@
     <ClInclude Include="include\LoadBalancing\LuaAPI\IMPICommunicator.h">
       <Filter>Заголовочные файлы\include\LoadBalancing\LuaAPI</Filter>
     </ClInclude>
+    <ClInclude Include="include\LoadBalancing\ILoadBalancingCondition.h">
+      <Filter>Заголовочные файлы\include\LoadBalancing</Filter>
+    </ClInclude>
+    <ClInclude Include="tests\utils\MockCommunicator.h">
+      <Filter>Заголовочные файлы\tests\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="tests\utils\MockDomainModel.h">
+      <Filter>Заголовочные файлы\tests\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="tests\utils\MockInputFile.h">
+      <Filter>Заголовочные файлы\tests\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="tests\utils\MockMPIWorld.h">
+      <Filter>Заголовочные файлы\tests\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="tests\utils\MockProblemBuilder.h">
+      <Filter>Заголовочные файлы\tests\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="tests\utils\MockRebalancer.h">
+      <Filter>Заголовочные файлы\tests\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="tests\utils\MockLoadBalancingCondition.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="tests\utils\MockLoadBalancingAlgorithm.h">
+      <Filter>Заголовочные файлы\tests\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LoadBalancing\LuaAPI\ILoadBalancingCondition.h">
+      <Filter>Заголовочные файлы\include\LoadBalancing\LuaAPI</Filter>
+    </ClInclude>
+    <ClInclude Include="StandartLuaModule\LoadBalancingConditionModule.h">
+      <Filter>Заголовочные файлы\StandartLuaModule</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadBalancingCondition.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -211,9 +226,6 @@
     </ClCompile>
     <ClCompile Include="BinaryFile.cpp">
       <Filter>Файлы исходного кода</Filter>
-    </ClCompile>
-    <ClCompile Include="tests\utils\TestMPIWorld.cpp">
-      <Filter>Файлы исходного кода\tests\utils</Filter>
     </ClCompile>
     <ClCompile Include="tests\utils\Testkit.cpp">
       <Filter>Файлы исходного кода\tests\utils</Filter>
@@ -277,6 +289,18 @@
     </ClCompile>
     <ClCompile Include="LuaAPI\IMPICommunicator.cpp">
       <Filter>Файлы исходного кода\LuaAPI</Filter>
+    </ClCompile>
+    <ClCompile Include="tests\utils\MockMPIWorld.cpp">
+      <Filter>Файлы исходного кода\tests\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="LuaAPI\ILoadBalancingCondition.cpp">
+      <Filter>Файлы исходного кода\LuaAPI</Filter>
+    </ClCompile>
+    <ClCompile Include="StandartLuaModule\LoadBalancingConditionModule.cpp">
+      <Filter>Файлы исходного кода\StandartLuaModule</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadBalancingCondition.cpp">
+      <Filter>Файлы исходного кода</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

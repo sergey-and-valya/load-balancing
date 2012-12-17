@@ -26,10 +26,10 @@
 
 #include "../SampleFunction.h"
 
-#include "utils/TestMPIWorld.h"
-#include "utils/TestCommunicator.h"
-#include "utils/TestInputFile.h"
-#include "utils/TestProblemBuilder.h"
+#include "utils/MockMPIWorld.h"
+#include "utils/MockCommunicator.h"
+#include "utils/MockInputFile.h"
+#include "utils/MockProblemBuilder.h"
 #include "utils/Assert.h"
 
 void DomainModelLoadTest()
@@ -78,7 +78,7 @@ void DomainModelLoadTest()
 								 67,   78,   888
 								};
 
-	auto comm = TestCommunicator(
+	auto comm = MockCommunicator(
 		[bpNumberI, bpNumberJ](int* size) -> int
 		{
 			*size = (bpNumberI + 1) * (bpNumberJ + 1);
@@ -111,7 +111,7 @@ void DomainModelLoadTest()
 	double* localMatrix = new double[localWidth * localHeight];
 	
 	
-	auto pb = TestProblemBuilder(
+	auto pb = MockProblemBuilder(
 		[&setBreakPointCountCalled, bpNumberI, bpNumberJ](int actual_bpNumberI, int actual_bpNumberJ)
 		{
 			assert(!setBreakPointCountCalled);
@@ -146,7 +146,7 @@ void DomainModelLoadTest()
 		}
 	);
 	
-	auto f = TestInputFile(
+	auto f = MockInputFile(
 		[file](void *buffer, size_t elementSize, size_t count)
 		{
 			return fread(buffer, elementSize, count, file);
@@ -158,9 +158,9 @@ void DomainModelLoadTest()
 	);
 
 	SampleFunction func;
-	auto ts = DomainModel(f, func, steps);
+	auto dm = DomainModel(f, func, steps);
 	
-	ts.LoadProblem(comm, pb);
+	dm.LoadProblem(comm, pb);
 	
 	for(int i = 0; i < bpNumberI + 1; i++)
 	{
@@ -248,7 +248,7 @@ void DomainModelStep()
 
 		int mpiCommSize = (bpNumberI + 1) * (bpNumberJ + 1);
 		
-		auto f = TestInputFile(
+		auto f = MockInputFile(
 			[](void *buffer, size_t elementSize, size_t count) -> size_t
 			{
 				assert(false);
@@ -264,10 +264,10 @@ void DomainModelStep()
 		auto _steps = steps;
 		auto _f = f;
 
-		TestMPIWorld world(mpiCommSize, [mpiCommSize, solutionI, solutionJ, bpNumberI, bpNumberJ, &_f, matrix, _matrixWidth, _matrixHeight, _steps](IMPICommunicator& comm)
+		MockMPIWorld world(mpiCommSize, [mpiCommSize, solutionI, solutionJ, bpNumberI, bpNumberJ, &_f, matrix, _matrixWidth, _matrixHeight, _steps](IMPICommunicator& comm)
 		{
 			SampleFunction func;
-			auto ts = DomainModel(_f, func, _steps);
+			auto dm = DomainModel(_f, func, _steps);
 			int mpiRank;
 			comm.Rank(&mpiRank);
 				
@@ -294,7 +294,7 @@ void DomainModelStep()
 					}
 				}
 
-				bool shouldContinue = ts.Run(comm, time_matrix, local_matrix, new_local_matrix, solutionI, solutionJ, bpNumberI, bpNumberJ);
+				bool shouldContinue = dm.Run(comm, time_matrix, local_matrix, new_local_matrix, solutionI, solutionJ, bpNumberI, bpNumberJ);
 						
 				if(step == _steps - 1)
 				{

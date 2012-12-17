@@ -16,13 +16,13 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************
 
-#ifndef _TESTCOMMUNICATOR_H
-#define _TESTCOMMUNICATOR_H
+#ifndef _MOCKCOMMUNICATOR_H
+#define _MOCKCOMMUNICATOR_H
 
 #include <LoadBalancing/IMPICommunicator.h>
 #include <functional>
 
-class TestCommunicator : public IMPICommunicator
+class MockCommunicator : public IMPICommunicator
 {
 public:
 	typedef std::function<int(int*)> SizeFunction;
@@ -30,7 +30,7 @@ public:
 	typedef std::function<int(void*, int, MPI_Datatype, int, int)> SendFunction;
 	typedef std::function<int(void*, int, MPI_Datatype, int, int, MPI_Status*)> RecvFunction;
 
-	TestCommunicator(SizeFunction sizeImpl, RankFunction rankImpl, SendFunction sendImpl, RecvFunction recvImpl)
+	MockCommunicator(SizeFunction sizeImpl, RankFunction rankImpl, SendFunction sendImpl, RecvFunction recvImpl)
 		: m_sizeImpl(sizeImpl)
 		, m_rankImpl(rankImpl)
 		, m_sendImpl(sendImpl)

@@ -16,37 +16,38 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************
 
-#ifndef _TESTLOADBALANCING_H
-#define _TESTLOADBALANCING_H
+#ifndef _MOCKINPUTFILE_H
+#define _MOCKINPUTFILE_H
 
-#include <LoadBalancing/ILoadBalancingAlgorithm.h>
+#include <LoadBalancing/IInputFile.h>
 #include <functional>
 
-class TestLoadBalancing : public ILoadBalancingAlgorithm
+class MockInputFile : public IInputFile
 {
 public:
-	typedef std::function<void(IMPICommunicator&, const int[], const int[], const int[], int, int, int[], int[])> RunFunction;
+	typedef std::function<size_t(void*, size_t, size_t)> ReadFunction;
+	typedef std::function<int(long, int)> SeekFunction;
 
-	TestLoadBalancing(RunFunction runImpl)
-		: m_runImpl(runImpl)
+	MockInputFile(ReadFunction readImpl, SeekFunction seekImpl)
+		: m_readImpl(readImpl)
+		, m_seekImpl(seekImpl)
 	{
 	}
 
-	void Run(
-		IMPICommunicator& comm,
-		const int time_matrix[],
-		const int oldSolutionI[], // bpNumberI + 2, oldSolutionI[0] = -1, oldSolutionI[bpNumberI + 1] = m - 1
-		const int oldSolutionJ[], // bpNumberJ + 2, oldSolutionJ[0] = -1, oldSolutionJ[bpNumberJ + 1] = n - 1
-		int bpNumberI,
-		int bpNumberJ,
-		int newSolutionI[],
-		int newSolutionJ[])
+	
+	size_t Read(void *buffer, size_t elementSize, size_t count)
 	{
-		m_runImpl(comm, time_matrix, oldSolutionI, oldSolutionJ, bpNumberI, bpNumberJ, newSolutionI, newSolutionJ);
+		return m_readImpl(buffer, elementSize, count);
+	}
+
+	int Seek(long offset, int origin)
+	{
+		return m_seekImpl(offset, origin);
 	}
 
 private:
-	RunFunction m_runImpl;
+	ReadFunction m_readImpl;
+	SeekFunction m_seekImpl;
 };
 
 #endif

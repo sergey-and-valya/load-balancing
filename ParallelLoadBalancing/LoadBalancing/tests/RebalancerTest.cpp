@@ -19,7 +19,7 @@
 #include "RebalancerTest.h"
 
 #include "utils/Assert.h"
-#include "utils/TestCommunicator.h"
+#include "utils/MockCommunicator.h"
 
 #include <LoadBalancing/IRebalancer.h>
 #include <LoadBalancing/IMPICommunicator.h>
@@ -38,7 +38,7 @@ void RebalancerNoMoveTest()
 
 	int mpiRank = 10;
 
-	auto comm = TestCommunicator(
+	auto comm = MockCommunicator(
 		[bpNumberI, bpNumberJ](int* size) -> int
 		{
 			*size = (bpNumberI + 1) * (bpNumberJ + 1);
@@ -131,7 +131,7 @@ void RebalancerMoveFromLeftTest()
 
 	int receiveCalls = 0;
 
-	auto comm = TestCommunicator(
+	auto comm = MockCommunicator(
 		[bpNumberI, bpNumberJ](int* size) -> int
 		{
 			*size = (bpNumberI + 1) * (bpNumberJ + 1);
@@ -258,7 +258,7 @@ void RebalancerMoveFromRightTest()
 
 	int receiveCalls = 0;
 
-	auto comm = TestCommunicator(
+	auto comm = MockCommunicator(
 		[bpNumberI, bpNumberJ](int* size) -> int
 		{
 			*size = (bpNumberI + 1) * (bpNumberJ + 1);
@@ -385,7 +385,7 @@ void RebalancerMoveFromTopTest()
 
 	int receiveCalls = 0;
 
-	auto comm = TestCommunicator(
+	auto comm = MockCommunicator(
 		[bpNumberI, bpNumberJ](int* size) -> int
 		{
 			*size = (bpNumberI + 1) * (bpNumberJ + 1);
@@ -512,7 +512,7 @@ void RebalancerMoveFromBottomTest()
 
 	int receiveCalls = 0;
 
-	auto comm = TestCommunicator(
+	auto comm = MockCommunicator(
 		[bpNumberI, bpNumberJ](int* size) -> int
 		{
 			*size = (bpNumberI + 1) * (bpNumberJ + 1);
@@ -640,7 +640,7 @@ void RebalancerMoveToLeftTest()
 
 	int sendCalls = 0;
 
-	auto comm = TestCommunicator(
+	auto comm = MockCommunicator(
 		[bpNumberI, bpNumberJ](int* size) -> int
 		{
 			*size = (bpNumberI + 1) * (bpNumberJ + 1);
@@ -762,7 +762,7 @@ void RebalancerMoveToRightTest()
 
 	int sendCalls = 0;
 
-	auto comm = TestCommunicator(
+	auto comm = MockCommunicator(
 		[bpNumberI, bpNumberJ](int* size) -> int
 		{
 			*size = (bpNumberI + 1) * (bpNumberJ + 1);
@@ -884,7 +884,7 @@ void RebalancerMoveToTopTest()
 
 	int sendCalls = 0;
 
-	auto comm = TestCommunicator(
+	auto comm = MockCommunicator(
 		[bpNumberI, bpNumberJ](int* size) -> int
 		{
 			*size = (bpNumberI + 1) * (bpNumberJ + 1);
@@ -1006,7 +1006,7 @@ void RebalancerMoveToBottomTest()
 
 	int sendCalls = 0;
 
-	auto comm = TestCommunicator(
+	auto comm = MockCommunicator(
 		[bpNumberI, bpNumberJ](int* size) -> int
 		{
 			*size = (bpNumberI + 1) * (bpNumberJ + 1);
@@ -1130,7 +1130,7 @@ void RebalancerMoveFromLeftFromTopTest()
 
 	int receiveCalls = 0;
 
-	auto comm = TestCommunicator(
+	auto comm = MockCommunicator(
 		[bpNumberI, bpNumberJ](int* size) -> int
 		{
 			*size = (bpNumberI + 1) * (bpNumberJ + 1);

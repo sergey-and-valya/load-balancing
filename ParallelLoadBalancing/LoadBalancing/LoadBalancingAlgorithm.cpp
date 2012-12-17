@@ -24,7 +24,7 @@ LoadBalancingAlgorithm::LoadBalancingAlgorithm(int accuracy)
 {
 }
 
-void LoadBalancingAlgorithm::Run(
+bool LoadBalancingAlgorithm::Run(
 		IMPICommunicator& comm,
 		const int time_matrix[],
 		const int oldSolutionI[], // bpNumberI + 2, oldSolutionI[0] = -1, oldSolutionI[bpNumberI + 1] = m - 1
@@ -409,6 +409,7 @@ void LoadBalancingAlgorithm::Run(
 		comm.Send(repVJb, accuracy-1, MPI_INT, 0, 0);
 		comm.Recv(newSolutionI, bpnumberI + 2, MPI_INT, 0, 0, &status);
 		comm.Recv(newSolutionJ, bpnumberJ + 2, MPI_INT, 0, 0, &status);
-		return;
 	}
+
+	return false;
 }

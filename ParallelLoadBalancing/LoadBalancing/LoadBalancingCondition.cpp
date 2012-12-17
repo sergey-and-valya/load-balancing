@@ -16,27 +16,26 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************
 
-#ifndef _LOADBALANCINGALGORITHM_H
-#define _LOADBALANCINGALGORITHM_H
+#include "LoadBalancingCondition.h"
+#include <memory.h>
 
-#include <LoadBalancing/ILoadBalancingAlgorithm.h>
-
-class LoadBalancingAlgorithm : public ILoadBalancingAlgorithm
+LoadBalancingCondition::LoadBalancingCondition(int count)
+	: m_count(count)
 {
-public:
-	LoadBalancingAlgorithm(int accuracy);
+}
+	
+bool LoadBalancingCondition::ShouldRebalance(
+	IMPICommunicator& comm,
+	const int time_matrix[],
+	const int solutionI[], // bpNumberI + 2, solutionI[0] = -1, solutionI[bpNumberI + 1] = m - 1
+	const int solutionJ[], // bpNumberJ + 2, solutionJ[0] = -1, solutionJ[bpNumberJ + 1] = n - 1
+	int bpNumberI,
+	int bpNumberJ)
+{
+	return m_currentSteps++ < m_count;
+}
 
-	bool Run(
-		IMPICommunicator& comm,
-		const int time_matrix[],
-		const int oldSolutionI[], // bpNumberI + 2, oldSolutionI[0] = -1, oldSolutionI[bpNumberI + 1] = m - 1
-		const int oldSolutionJ[], // bpNumberJ + 2, oldSolutionJ[0] = -1, oldSolutionJ[bpNumberJ + 1] = n - 1
-		int bpNumberI,
-		int bpNumberJ,
-		int newSolutionI[],
-		int newSolutionJ[]);
-
-	int accuracy;
-};
-
-#endif
+void LoadBalancingCondition::Reset()
+{
+	m_currentSteps = 0;
+}

@@ -26,7 +26,7 @@ class SampleLoadBalancingAlgorithm : public ILoadBalancingAlgorithm
 public:
 	SampleLoadBalancingAlgorithm(int parameter1, int parameter2);
 
-	void Run(
+	bool Run(
 		IMPICommunicator& comm,
 		const int time_matrix[],
 		const int oldSolutionI[], // bpNumberI + 2, oldSolutionI[0] = -1, oldSolutionI[bpNumberI + 1] = m - 1

@@ -27,10 +27,9 @@ static void Destructor(IEnvironment* instance)
 
 static int luaModule_new(lua_State* L)
 {
-	bool needLoadBalancing = lua_toboolean(L, 1);
 	bool printResults = lua_toboolean(L, 2);
 
-	luaLB_pushIEnvironment(L, new Environment(needLoadBalancing, printResults), Destructor);
+	luaLB_pushIEnvironment(L, new Environment(printResults), Destructor);
 	
 	return 1;
 }

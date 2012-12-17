@@ -16,13 +16,13 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************
 
-#ifndef _TESTPROBLEMBUILDER_H
-#define _TESTPROBLEMBUILDER_H
+#ifndef _MOCKPROBLEMBUILDER_H
+#define _MOCKPROBLEMBUILDER_H
 
 #include <LoadBalancing/IProblemBuilder.h>
 #include <functional>
 
-class TestProblemBuilder : public IProblemBuilder
+class MockProblemBuilder : public IProblemBuilder
 {
 public:
 	typedef std::function<void(int, int)> SetBreakPointCountFunction;
@@ -30,7 +30,7 @@ public:
 	typedef std::function<int*()>		  CreateSolutionJFunction;
 	typedef std::function<double*()>	  CreateLocalMatrixFunction;
 
-	TestProblemBuilder(SetBreakPointCountFunction  setBreakPointCountImpl,
+	MockProblemBuilder(SetBreakPointCountFunction  setBreakPointCountImpl,
 					   CreateSolutionIFunction     createSolutionIImpl,
 					   CreateSolutionJFunction     createSolutionJImpl,
 					   CreateLocalMatrixFunction   createLocalMatrixImpl)

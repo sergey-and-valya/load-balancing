@@ -16,24 +16,19 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************
 
-#ifndef _TESTMPIWORLD_H
-#define _TESTMPIWORLD_H
+#ifndef _LUAAPI_ILOADBALANCINGCONDITION_H
+#define _LUAAPI_ILOADBALANCINGCONDITION_H
 
-#include <LoadBalancing/IMPICommunicator.h>
-#include <functional>
+#include "LuaAPI.h"
+#include "../ILoadBalancingCondition.h"
 
-class TestMPIWorld
-{
-public:
-	typedef std::function<void(IMPICommunicator& comm)> RunFunction;
+typedef void (*LoadBalancingConditionDestructor) (ILoadBalancingCondition* instance);
 
-	TestMPIWorld(int mpiCommSize, RunFunction runFunction);
+LUALB_API int luaLB_pushILoadBalancingCondition(lua_State* L, ILoadBalancingCondition* instance, LoadBalancingConditionDestructor destructor);
 
-	void RunAndWait();
+LUALB_API ILoadBalancingCondition* luaLB_checkILoadBalancingCondition(lua_State* L, int idx);
 
-private:
-	int m_mpiCommSize;
-	RunFunction m_runFunction;
-};
+LUALB_API int luaLB_openILoadBalancingCondition(lua_State* L);
+
 
 #endif

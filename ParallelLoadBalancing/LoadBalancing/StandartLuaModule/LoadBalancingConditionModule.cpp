@@ -16,27 +16,31 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************
 
-#ifndef _LOADBALANCINGALGORITHM_H
-#define _LOADBALANCINGALGORITHM_H
+#include <LoadBalancing/LuaAPI/ILoadBalancingCondition.h>
+#include "../LoadBalancingCondition.h"
+#include "LoadBalancingConditionModule.h"
 
-#include <LoadBalancing/ILoadBalancingAlgorithm.h>
-
-class LoadBalancingAlgorithm : public ILoadBalancingAlgorithm
+static void LoadBalancingCondition_destructor(ILoadBalancingCondition* instance)
 {
-public:
-	LoadBalancingAlgorithm(int accuracy);
+	delete static_cast<LoadBalancingCondition*>(instance);
+}
 
-	bool Run(
-		IMPICommunicator& comm,
-		const int time_matrix[],
-		const int oldSolutionI[], // bpNumberI + 2, oldSolutionI[0] = -1, oldSolutionI[bpNumberI + 1] = m - 1
-		const int oldSolutionJ[], // bpNumberJ + 2, oldSolutionJ[0] = -1, oldSolutionJ[bpNumberJ + 1] = n - 1
-		int bpNumberI,
-		int bpNumberJ,
-		int newSolutionI[],
-		int newSolutionJ[]);
+static int luaModule_new(lua_State* L)
+{
+	int count = luaL_checkinteger(L, 1);
 
-	int accuracy;
+	luaLB_pushILoadBalancingCondition(L, new LoadBalancingCondition(count), LoadBalancingCondition_destructor);
+
+	return 1;
+}
+
+static const luaL_Reg module_functions[] = {
+	{"new", luaModule_new},
+	{NULL,  NULL}
 };
 
-#endif
+int luaopen_Standart_LoadBalancingCondition(lua_State* L)
+{
+	luaL_newlib(L, module_functions);
+	return 1;
+}

@@ -19,6 +19,7 @@
 #include <lua.hpp>
 
 #include "StandartLuaModule/LoadBalancingAlgorithmModule.h"
+#include "StandartLuaModule/LoadBalancingConditionModule.h"
 #include "StandartLuaModule/RebalancerModule.h"
 #include "StandartLuaModule/EnvironmentModule.h"
 #include "StandartLuaModule/DomainModelModule.h"
@@ -30,6 +31,9 @@ static int luaopen_Standart(lua_State* L)
 	
 	luaopen_Standart_LoadBalancingAlgorithm(L);
 	lua_setfield(L, -2, "LoadBalancingAlgorithm");
+	
+	luaopen_Standart_LoadBalancingCondition(L);
+	lua_setfield(L, -2, "LoadBalancingCondition");
 	
 	luaopen_Standart_Rebalancer(L);
 	lua_setfield(L, -2, "Rebalancer");

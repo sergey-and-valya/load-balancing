@@ -25,7 +25,7 @@
 #include <stdlib.h>
 #include <memory.h>
 
-void Environment::Run(IMPICommunicator& comm, IDomainModel& ts, ILoadBalancingAlgorithm& lb, IRebalancer& rb)
+void Environment::Run(IMPICommunicator& comm, IDomainModel& dm, ILoadBalancingAlgorithm& lb, ILoadBalancingCondition& lbc, IRebalancer& rb)
 {
 	int mpi_size;
 	int mpi_rank;
@@ -43,7 +43,7 @@ void Environment::Run(IMPICommunicator& comm, IDomainModel& ts, ILoadBalancingAl
 	int bpNumberJ;
 
 	ProblemBuilder pb(comm, &solutionI[currentSolution], &solutionJ[currentSolution], &matrix[currentMatrix], &bpNumberI, &bpNumberJ, malloc);
-	ts.LoadProblem(comm, pb);
+	dm.LoadProblem(comm, pb);
 	
 	int procI = mpi_rank / (bpNumberJ + 1);
 	int procJ = mpi_rank % (bpNumberJ + 1);
@@ -57,17 +57,21 @@ void Environment::Run(IMPICommunicator& comm, IDomainModel& ts, ILoadBalancingAl
 	matrix[(currentMatrix + 1) % 2] = (double*)malloc(sizeof(double) * matrixHeight * matrixWidth);
 	int *time_matrix = (int*)malloc(sizeof(int) * matrixHeight * matrixWidth);
 
-	while(ts.Run(comm, time_matrix, matrix[currentMatrix], matrix[(currentMatrix + 1) % 2], solutionI[currentSolution], solutionJ[currentSolution], bpNumberI, bpNumberJ))
+	while(dm.Run(comm, time_matrix, matrix[currentMatrix], matrix[(currentMatrix + 1) % 2], solutionI[currentSolution], solutionJ[currentSolution], bpNumberI, bpNumberJ))
 	{
 		currentMatrix = (currentMatrix + 1) % 2;
 
-		if(needLoadBalancing)
+		lbc.Reset();
+
+		while(lbc.ShouldRebalance(comm, time_matrix,
+				solutionI[currentSolution], solutionJ[currentSolution],
+				bpNumberI, bpNumberJ))
 		{
 			int newSolution = (currentSolution + 1) % 2;
 			memcpy(solutionI[newSolution], solutionI[currentSolution], (bpNumberI + 2) * sizeof(int));
 			memcpy(solutionJ[newSolution], solutionJ[currentSolution], (bpNumberJ + 2) * sizeof(int));
 
-			lb.Run(comm,
+			bool canRunAgain = lb.Run(comm,
 				time_matrix,
 				solutionI[currentSolution], solutionJ[currentSolution],
 				bpNumberI, bpNumberJ,
@@ -96,6 +100,9 @@ void Environment::Run(IMPICommunicator& comm, IDomainModel& ts, ILoadBalancingAl
 			matrixWidth   = newMatrixWidth;
 			matrixHeight  = newMatrixHeight;
 			currentMatrix = newMatrix;
+
+			if(!canRunAgain)
+				break;
 		}
 	}
 

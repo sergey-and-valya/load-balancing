@@ -16,27 +16,29 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************
 
-#ifndef _LOADBALANCINGALGORITHM_H
-#define _LOADBALANCINGALGORITHM_H
+#ifndef _MOCKREBALANCER_H
+#define _MOCKREBALANCER_H
 
-#include <LoadBalancing/ILoadBalancingAlgorithm.h>
+#include <LoadBalancing/IRebalancer.h>
+#include <functional>
 
-class LoadBalancingAlgorithm : public ILoadBalancingAlgorithm
+class MockRebalancer : public IRebalancer
 {
 public:
-	LoadBalancingAlgorithm(int accuracy);
+	typedef std::function<void(IMPICommunicator&, const int[], const int[], const double[], const int[], const int[], double[], int, int)> RebalanceFunction;
 
-	bool Run(
-		IMPICommunicator& comm,
-		const int time_matrix[],
-		const int oldSolutionI[], // bpNumberI + 2, oldSolutionI[0] = -1, oldSolutionI[bpNumberI + 1] = m - 1
-		const int oldSolutionJ[], // bpNumberJ + 2, oldSolutionJ[0] = -1, oldSolutionJ[bpNumberJ + 1] = n - 1
-		int bpNumberI,
-		int bpNumberJ,
-		int newSolutionI[],
-		int newSolutionJ[]);
+	MockRebalancer(RebalanceFunction rebalanceImpl)
+		: m_rebalanceImpl(rebalanceImpl)
+	{
+	}
 
-	int accuracy;
+	void Rebalance(IMPICommunicator& comm, const int oldSolutionI[], const int oldSolutionJ[], const double oldMatrix[], const int newSolutionI[], const int newSolutionJ[], double newMatrix[], int bpNumberI, int bpNumberJ)
+	{
+		m_rebalanceImpl(comm, oldSolutionI, oldSolutionJ, oldMatrix, newSolutionI, newSolutionJ, newMatrix, bpNumberI, bpNumberJ);
+	}
+
+private:
+	RebalanceFunction m_rebalanceImpl;
 };
 
 #endif

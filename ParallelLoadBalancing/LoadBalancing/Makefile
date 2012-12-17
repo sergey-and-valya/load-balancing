@@ -12,11 +12,13 @@ DomainModel.cpp \
 LuaFunction.cpp \
 Rebalancer.cpp \
 LoadBalancingAlgorithm.cpp \
+LoadBalancingCondition.cpp \
 SampleFunction.cpp \
 Environment.cpp \
 main.cpp \
 StandartLuaModule/DomainModelModule.cpp \
 StandartLuaModule/LoadBalancingAlgorithmModule.cpp \
+StandartLuaModule/LoadBalancingConditionModule.cpp \
 StandartLuaModule/RebalancerModule.cpp \
 StandartLuaModule/LuaFunctionModule.cpp \
 StandartLuaModule/EnvironmentModule.cpp \
@@ -25,11 +27,13 @@ LuaAPI/IEnvironment.cpp \
 LuaAPI/IRebalancer.cpp \
 LuaAPI/IDomainModel.cpp \
 LuaAPI/ILoadBalancingAlgorithm.cpp \
+LuaAPI/ILoadBalancingCondition.cpp \
 LuaAPI/IMPICommunicator.cpp
 
 
 HEADERS = \
 LoadBalancingAlgorithm.h \
+LoadBalancingCondition.h \
 MPIWorldCommunicator.h \
 Environment.h \
 Utils.h \
@@ -43,6 +47,7 @@ StandartLuaModule.h \
 StandartLuaModule/RebalancerModule.h \
 StandartLuaModule/EnvironmentModule.h \
 StandartLuaModule/LoadBalancingAlgorithmModule.h \
+StandartLuaModule/LoadBalancingConditionModule.h \
 StandartLuaModule/DomainModelModule.h \
 StandartLuaModule/LuaFunctionModule.h \
 include/LoadBalancing/IProblemBuilder.h \
@@ -55,9 +60,11 @@ include/LoadBalancing/LuaAPI/IRebalancer.h \
 include/LoadBalancing/LuaAPI/LuaAPI.h \
 include/LoadBalancing/LuaAPI/IDomainModel.h \
 include/LoadBalancing/LuaAPI/ILoadBalancingAlgorithm.h \
+include/LoadBalancing/LuaAPI/ILoadBalancingCondition.h \
 include/LoadBalancing/LuaAPI/IMPICommunicator.h \
 include/LoadBalancing/IDomainModel.h \
 include/LoadBalancing/ILoadBalancingAlgorithm.h \
+include/LoadBalancing/ILoadBalancingCondition.h \
 include/LoadBalancing/IMPICommunicator.h \
 include/LoadBalancing/IFunction.h \
 include/LoadBalancing/Values.h

@@ -16,29 +16,29 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************
 
-#ifndef _TESTREBALANCER_H
-#define _TESTREBALANCER_H
+#ifndef _LOADBALANCINGCONDITION_H
+#define _LOADBALANCINGCONDITION_H
 
-#include <LoadBalancing/IRebalancer.h>
-#include <functional>
+#include <LoadBalancing/ILoadBalancingCondition.h>
 
-class TestRebalancer : public IRebalancer
+class LoadBalancingCondition : public ILoadBalancingCondition
 {
 public:
-	typedef std::function<void(IMPICommunicator&, const int[], const int[], const double[], const int[], const int[], double[], int, int)> RebalanceFunction;
+	LoadBalancingCondition(int count);
+	
+	bool ShouldRebalance(
+		IMPICommunicator& comm,
+		const int time_matrix[],
+		const int solutionI[], // bpNumberI + 2, solutionI[0] = -1, solutionI[bpNumberI + 1] = m - 1
+		const int solutionJ[], // bpNumberJ + 2, solutionJ[0] = -1, solutionJ[bpNumberJ + 1] = n - 1
+		int bpNumberI,
+		int bpNumberJ);
 
-	TestRebalancer(RebalanceFunction rebalanceImpl)
-		: m_rebalanceImpl(rebalanceImpl)
-	{
-	}
-
-	void Rebalance(IMPICommunicator& comm, const int oldSolutionI[], const int oldSolutionJ[], const double oldMatrix[], const int newSolutionI[], const int newSolutionJ[], double newMatrix[], int bpNumberI, int bpNumberJ)
-	{
-		m_rebalanceImpl(comm, oldSolutionI, oldSolutionJ, oldMatrix, newSolutionI, newSolutionJ, newMatrix, bpNumberI, bpNumberJ);
-	}
+	void Reset();
 
 private:
-	RebalanceFunction m_rebalanceImpl;
+	int m_count;
+	int m_currentSteps;
 };
 
 #endif

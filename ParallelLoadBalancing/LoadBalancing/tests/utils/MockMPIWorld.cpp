@@ -16,10 +16,10 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************
 
-#include "TestMPIWorld.h"
+#include "MockMPIWorld.h"
 
 #include <LoadBalancing/IMPICommunicator.h>
-#include "TestCommunicator.h"
+#include "MockCommunicator.h"
 #include "Assert.h"
 
 #include <agents.h>
@@ -27,7 +27,7 @@
 using namespace Concurrency;
 
 
-class TestMPIProcessor : public agent
+class MockMPIProcessor : public agent
 {
 private:
 	struct Message
@@ -40,13 +40,13 @@ private:
 
 		void* data;
 		int size;
-		TestMPIProcessor* sender;
+		MockMPIProcessor* sender;
 	};
 
 public:
 	typedef std::function<void()> RunFunction;
 
-	TestMPIProcessor(RunFunction runImpl)
+	MockMPIProcessor(RunFunction runImpl)
 		: m_runImpl(runImpl)
 	{
 	}
@@ -58,7 +58,7 @@ public:
 		done();
 	}
 
-	void Send(TestMPIProcessor* target, void* data, int size)
+	void Send(MockMPIProcessor* target, void* data, int size)
 	{
 		e.reset();
 		Message message(data, size);
@@ -67,7 +67,7 @@ public:
 		e.wait();
 	}
 
-	void Receive(TestMPIProcessor* source, void* data, int size)
+	void Receive(MockMPIProcessor* source, void* data, int size)
 	{
 		std::vector<Message> tmpBuffer;
 
@@ -100,25 +100,25 @@ private:
 };
 
 
-TestMPIWorld::TestMPIWorld(int mpiCommSize, TestMPIWorld::RunFunction runFunction)
+MockMPIWorld::MockMPIWorld(int mpiCommSize, MockMPIWorld::RunFunction runFunction)
 	: m_mpiCommSize(mpiCommSize)
 	, m_runFunction(runFunction)
 {
 }
 
-void TestMPIWorld::RunAndWait()
+void MockMPIWorld::RunAndWait()
 {
-	auto processors = new TestMPIProcessor*[m_mpiCommSize];
+	auto processors = new MockMPIProcessor*[m_mpiCommSize];
 	
 	for(int mpiRank = 0; mpiRank < m_mpiCommSize; mpiRank++)
 	{
-		processors[mpiRank] = new TestMPIProcessor([this, processors, mpiRank]()
+		processors[mpiRank] = new MockMPIProcessor([this, processors, mpiRank]()
 		{
 			auto _mpiCommSize = m_mpiCommSize;
 			auto _mpiRank = mpiRank;
 			auto _processors = processors;
 
-			auto comm = TestCommunicator(
+			auto comm = MockCommunicator(
 				[_mpiCommSize](int* size) -> int
 				{
 					*size = _mpiCommSize;

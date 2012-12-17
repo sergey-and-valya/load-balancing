@@ -25,7 +25,7 @@ SampleLoadBalancingAlgorithm::SampleLoadBalancingAlgorithm(int parameter1, int p
 {
 }
 
-void SampleLoadBalancingAlgorithm::Run(
+bool SampleLoadBalancingAlgorithm::Run(
 		IMPICommunicator& comm,
 		const int time_matrix[],
 		const int oldSolutionI[], // bpNumberI + 2, oldSolutionI[0] = -1, oldSolutionI[bpNumberI + 1] = m - 1
@@ -35,4 +35,5 @@ void SampleLoadBalancingAlgorithm::Run(
 		int newSolutionI[],
 		int newSolutionJ[])
 {
+	return false;
 }

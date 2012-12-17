@@ -39,7 +39,7 @@
 #ifdef WIN32
 #include "tests/Tests.h"
 #include "tests/utils/Testkit.h"
-#include "tests/utils/TestMPIWorld.h"
+#include "tests/utils/MockMPIWorld.h"
 #endif
 
 #include <time.h>
@@ -334,7 +334,7 @@ int main(int argc, char* argv[])
 	EmulateMPIConfig cfg;
 	ParseEmulateMPICommandLine(argc, argv, &cfg);
 
-	TestMPIWorld world(cfg.world_size, [argc, argv](IMPICommunicator& comm)
+	MockMPIWorld world(cfg.world_size, [argc, argv](IMPICommunicator& comm)
 	{
 		Run(comm, argc, argv);
 	});
