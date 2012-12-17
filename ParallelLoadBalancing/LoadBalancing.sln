@@ -8,6 +8,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SampleLoadBalancingAlgorith
 		{F6D8C100-9EA9-45B4-A27F-E1F38D0AC83E} = {F6D8C100-9EA9-45B4-A27F-E1F38D0AC83E}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StochasticLoadBalancingAlgorithm", "Modules\Algorithms\StochasticLoadBalancingAlgorithm\StochasticLoadBalancingAlgorithm.vcxproj", "{65F46E28-B930-4428-B1A9-2E0464A49FCF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug Emulate MPI|Win32 = Debug Emulate MPI|Win32
@@ -32,6 +34,14 @@ Global
 		{E5DAE759-1E22-4055-9D39-B1150FBEDFE2}.Release Emulate MPI|Win32.Build.0 = Release Emulate MPI|Win32
 		{E5DAE759-1E22-4055-9D39-B1150FBEDFE2}.Release MPI|Win32.ActiveCfg = Release MPI|Win32
 		{E5DAE759-1E22-4055-9D39-B1150FBEDFE2}.Release MPI|Win32.Build.0 = Release MPI|Win32
+		{65F46E28-B930-4428-B1A9-2E0464A49FCF}.Debug Emulate MPI|Win32.ActiveCfg = Debug Emulate MPI|Win32
+		{65F46E28-B930-4428-B1A9-2E0464A49FCF}.Debug Emulate MPI|Win32.Build.0 = Debug Emulate MPI|Win32
+		{65F46E28-B930-4428-B1A9-2E0464A49FCF}.Debug MPI|Win32.ActiveCfg = Debug MPI|Win32
+		{65F46E28-B930-4428-B1A9-2E0464A49FCF}.Debug MPI|Win32.Build.0 = Debug MPI|Win32
+		{65F46E28-B930-4428-B1A9-2E0464A49FCF}.Release Emulate MPI|Win32.ActiveCfg = Release Emulate MPI|Win32
+		{65F46E28-B930-4428-B1A9-2E0464A49FCF}.Release Emulate MPI|Win32.Build.0 = Release Emulate MPI|Win32
+		{65F46E28-B930-4428-B1A9-2E0464A49FCF}.Release MPI|Win32.ActiveCfg = Release MPI|Win32
+		{65F46E28-B930-4428-B1A9-2E0464A49FCF}.Release MPI|Win32.Build.0 = Release MPI|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
