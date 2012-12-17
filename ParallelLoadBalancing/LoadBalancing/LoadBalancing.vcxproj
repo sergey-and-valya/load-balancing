@@ -144,39 +144,33 @@
     <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="res\matrix">
-      <FileType>Document</FileType>
-      <Command>copy /Y "%(FullPath)" "$(OutputPath)%(Filename)%(Extension)"</Command>
-      <Outputs>$(OutputPath)%(Filename)%(Extension)</Outputs>
-    </CustomBuild>
     <CustomBuild Include="lua\domain_functions\sample1.lua">
       <FileType>Document</FileType>
       <Command>copy /Y "%(FullPath)" "$(OutputPath)%(RelativeDir)%(Filename)%(Extension)"</Command>
       <Outputs>$(OutputPath)%(RelativeDir)%(Filename)%(Extension)</Outputs>
     </CustomBuild>
     <None Include="lua\config.template.lua" />
-    <None Include="res\matrix.txt" />
-    <CustomBuild Include="res\matrix2">
+    <CustomBuild Include="res\color_circle_test_1">
       <FileType>Document</FileType>
-      <Command>copy /Y "%(FullPath)" "$(OutputPath)%(Filename)%(Extension)"</Command>
-      <Outputs>$(OutputPath)%(Filename)%(Extension)</Outputs>
     </CustomBuild>
-    <None Include="res\matrix2.txt" />
-    <CustomBuild Include="res\matrix3">
+    <CustomBuild Include="res\color_circle_test_1.bmp" />
+    <CustomBuild Include="res\color_rect_test_1">
       <FileType>Document</FileType>
-      <Command>copy /Y "%(FullPath)" "$(OutputPath)%(Filename)%(Extension)"</Command>
-      <Outputs>$(OutputPath)%(Filename)%(Extension)</Outputs>
     </CustomBuild>
-    <None Include="res\matrix3.txt" />
+    <CustomBuild Include="res\color_rect_test_1.bmp" />
+    <CustomBuild Include="res\color_star_test_1">
+      <FileType>Document</FileType>
+    </CustomBuild>
+    <CustomBuild Include="res\color_star_test_1.bmp" />
+    <CustomBuild Include="res\color_star_test_2">
+      <FileType>Document</FileType>
+    </CustomBuild>
+    <CustomBuild Include="res\color_star_test_2.bmp" />
+    <None Include="res\description_examples.txt" />
+    <None Include="res\gen_test_1" />
+    <None Include="res\gen_test_2" />
     <CustomBuild Include="res\matrix_big">
       <FileType>Document</FileType>
-      <Command>copy /Y "%(FullPath)" "$(OutputPath)%(Filename)%(Extension)"</Command>
-      <Outputs>$(OutputPath)%(Filename)%(Extension)</Outputs>
-    </CustomBuild>
-    <CustomBuild Include="res\matrix_G1">
-      <FileType>Document</FileType>
-      <Command>copy /Y "%(FullPath)" "$(OutputPath)%(Filename)%(Extension)"</Command>
-      <Outputs>$(OutputPath)%(Filename)%(Extension)</Outputs>
     </CustomBuild>
     <None Include="res\readme.txt" />
     <None Include="res\testmatrix.txt" />

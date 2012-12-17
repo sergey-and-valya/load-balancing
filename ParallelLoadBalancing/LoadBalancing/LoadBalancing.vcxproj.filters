@@ -304,16 +304,13 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\testmatrix.txt">
+    <None Include="res\description_examples.txt">
       <Filter>matrices</Filter>
     </None>
-    <None Include="res\matrix.txt">
+    <None Include="res\gen_test_1">
       <Filter>matrices</Filter>
     </None>
-    <None Include="res\matrix2.txt">
-      <Filter>matrices</Filter>
-    </None>
-    <None Include="res\matrix3.txt">
+    <None Include="res\gen_test_2">
       <Filter>matrices</Filter>
     </None>
     <None Include="res\readme.txt">
@@ -324,19 +321,34 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="res\matrix_G1">
+    <CustomBuild Include="res\color_star_test_1.bmp">
+      <Filter>Файлы ресурсов</Filter>
+    </CustomBuild>
+    <CustomBuild Include="res\color_rect_test_1.bmp">
+      <Filter>Файлы ресурсов</Filter>
+    </CustomBuild>
+    <CustomBuild Include="res\color_circle_test_1.bmp">
+      <Filter>Файлы ресурсов</Filter>
+    </CustomBuild>
+    <CustomBuild Include="res\color_star_test_2.bmp">
+      <Filter>Файлы ресурсов</Filter>
+    </CustomBuild>
+    <CustomBuild Include="res\color_circle_test_1">
+      <Filter>matrices</Filter>
+    </CustomBuild>
+    <CustomBuild Include="res\color_rect_test_1">
+      <Filter>matrices</Filter>
+    </CustomBuild>
+    <CustomBuild Include="res\color_star_test_1">
+      <Filter>matrices</Filter>
+    </CustomBuild>
+    <CustomBuild Include="res\color_star_test_2">
       <Filter>matrices</Filter>
     </CustomBuild>
     <CustomBuild Include="res\matrix_big">
       <Filter>matrices</Filter>
     </CustomBuild>
-    <CustomBuild Include="res\matrix3">
-      <Filter>matrices</Filter>
-    </CustomBuild>
-    <CustomBuild Include="res\matrix2">
-      <Filter>matrices</Filter>
-    </CustomBuild>
-    <CustomBuild Include="res\matrix">
+    <CustomBuild Include="res\testmatrix.txt">
       <Filter>matrices</Filter>
     </CustomBuild>
     <CustomBuild Include="lua\domain_functions\sample1.lua">
