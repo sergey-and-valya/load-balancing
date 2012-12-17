@@ -25,16 +25,16 @@
 class MockRebalancer : public IRebalancer
 {
 public:
-	typedef std::function<void(IMPICommunicator&, const int[], const int[], const double[], const int[], const int[], double[], int, int)> RebalanceFunction;
+	typedef std::function<void(IMPICommunicator&, const int[], const int[], const void*, const int[], const int[], void*, int, int, MPI_Datatype)> RebalanceFunction;
 
 	MockRebalancer(RebalanceFunction rebalanceImpl)
 		: m_rebalanceImpl(rebalanceImpl)
 	{
 	}
 
-	void Rebalance(IMPICommunicator& comm, const int oldSolutionI[], const int oldSolutionJ[], const double oldMatrix[], const int newSolutionI[], const int newSolutionJ[], double newMatrix[], int bpNumberI, int bpNumberJ)
+	void Rebalance(IMPICommunicator& comm, const int oldSolutionI[], const int oldSolutionJ[], const void* oldMatrix, const int newSolutionI[], const int newSolutionJ[], void* newMatrix, int bpNumberI, int bpNumberJ, MPI_Datatype datatype, size_t elementSize)
 	{
-		m_rebalanceImpl(comm, oldSolutionI, oldSolutionJ, oldMatrix, newSolutionI, newSolutionJ, newMatrix, bpNumberI, bpNumberJ);
+		m_rebalanceImpl(comm, oldSolutionI, oldSolutionJ, oldMatrix, newSolutionI, newSolutionJ, newMatrix, bpNumberI, bpNumberJ, datatype);
 	}
 
 private:

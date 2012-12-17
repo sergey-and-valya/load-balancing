@@ -24,7 +24,9 @@
 #define min(x, y) (((x) < (y)) ? (x) : (y))
 #define max(x, y) (((x) > (y)) ? (x) : (y))
 
-void Rebalancer::Rebalance(IMPICommunicator& comm, const int oldSolutionI[], const int oldSolutionJ[], const double oldMatrix[], const int newSolutionI[], const int newSolutionJ[], double newMatrix[], int bpNumberI, int bpNumberJ)
+#define copy(x, i, y, j, size) memcpy(static_cast<char*>(x) + (i) * (size), static_cast<const char*>(y) + (j) * (size), (size))
+
+void Rebalancer::Rebalance(IMPICommunicator& comm, const int oldSolutionI[], const int oldSolutionJ[], const void* oldMatrix, const int newSolutionI[], const int newSolutionJ[], void* newMatrix, int bpNumberI, int bpNumberJ, MPI_Datatype datatype, size_t elementSize)
 {
 	MPI_Status status;
 
@@ -56,7 +58,10 @@ void Rebalancer::Rebalance(IMPICommunicator& comm, const int oldSolutionI[], con
 	{
 		for(int j = 0; j < copiedWidth; j++)
 		{
-			newMatrix[(i + newTopOffset) * newMatrixWidth + j + newLeftOffset] = oldMatrix[(i + topOffset) * oldMatrixWidth + j + leftOffset];
+			copy(
+				newMatrix, (i + newTopOffset) * newMatrixWidth + j + newLeftOffset,
+				oldMatrix, (i + topOffset) * oldMatrixWidth + j + leftOffset,
+				elementSize);
 		}
 	}
 
@@ -76,7 +81,7 @@ exchange_left:
 		{
 			int sendWidth = abs(newSolutionJ[procJ] - oldSolutionJ[procJ]);
 			int sendCount = sendWidth * copiedHeight;
-			double* tmp = (double*)malloc(sizeof(double) * sendCount);
+			void* tmp = malloc(elementSize * sendCount);
 
 			if(newSolutionJ[procJ] > oldSolutionJ[procJ])
 			{
@@ -84,21 +89,27 @@ exchange_left:
 				{
 					for(int j = 0; j < sendWidth; j++)
 					{
-						tmp[i * sendWidth + j] = oldMatrix[(i + topOffset) * oldMatrixWidth + j];
+						copy(
+							tmp, i * sendWidth + j,
+							oldMatrix, (i + topOffset) * oldMatrixWidth + j,
+							elementSize);
 					}
 				}
 
-				comm.Send(tmp, sendCount, MPI_DOUBLE, mpi_rank - 1, 0);
+				comm.Send(tmp, sendCount, datatype, mpi_rank - 1, 0);
 			}
 			else
 			{
-				comm.Recv(tmp, sendCount, MPI_DOUBLE, mpi_rank - 1, 0, &status);
+				comm.Recv(tmp, sendCount, datatype, mpi_rank - 1, 0, &status);
 						
 				for(int i = 0; i < copiedHeight; i++)
 				{
 					for(int j = 0; j < sendWidth; j++)
 					{
-						newMatrix[(i + newTopOffset) * newMatrixWidth + j] = tmp[i * sendWidth + j];
+						copy(
+							newMatrix, (i + newTopOffset) * newMatrixWidth + j,
+							tmp, i * sendWidth + j,
+							elementSize);
 					}
 				}
 			}
@@ -120,11 +131,11 @@ exchange_right:
 		{
 			int sendWidth = abs(newSolutionJ[procJ + 1] - oldSolutionJ[procJ + 1]);
 			int sendCount = sendWidth * copiedHeight;
-			double* tmp = (double*)malloc(sizeof(double) * sendCount);
+			void* tmp = malloc(elementSize * sendCount);
 
 			if(newSolutionJ[procJ + 1] > oldSolutionJ[procJ + 1])
 			{
-				comm.Recv(tmp, sendCount, MPI_DOUBLE, mpi_rank + 1, 0, &status);
+				comm.Recv(tmp, sendCount, datatype, mpi_rank + 1, 0, &status);
 						
 				int offset = newMatrixWidth - sendWidth;
 
@@ -132,7 +143,10 @@ exchange_right:
 				{
 					for(int j = 0; j < sendWidth; j++)
 					{
-						newMatrix[(i + newTopOffset) * newMatrixWidth + j + offset] = tmp[i * sendWidth + j];
+						copy(
+							newMatrix, (i + newTopOffset) * newMatrixWidth + j + offset,
+							tmp, i * sendWidth + j,
+							elementSize);
 					}
 				}
 			}
@@ -144,11 +158,14 @@ exchange_right:
 				{
 					for(int j = 0; j < sendWidth; j++)
 					{
-						tmp[i * sendWidth + j] = oldMatrix[(i + topOffset) * oldMatrixWidth + j + offset];
+						copy(
+							tmp, i * sendWidth + j,
+							oldMatrix, (i + topOffset) * oldMatrixWidth + j + offset,
+							elementSize);
 					}
 				}
 						
-				comm.Send(tmp, sendCount, MPI_DOUBLE, mpi_rank + 1, 0);
+				comm.Send(tmp, sendCount, datatype, mpi_rank + 1, 0);
 			}
 
 			free(tmp);
@@ -182,7 +199,7 @@ exchange_top:
 		{
 			int sendHeight = abs(newSolutionI[procI] - oldSolutionI[procI]);
 			int sendCount = sendHeight * copiedWidth;
-			double* tmp = (double*)malloc(sizeof(double) * sendCount);
+			void* tmp = malloc(elementSize * sendCount);
 
 			if(newSolutionI[procI] > oldSolutionI[procI])
 			{
@@ -190,21 +207,27 @@ exchange_top:
 				{
 					for(int j = 0; j < copiedWidth; j++)
 					{
-						tmp[i * copiedWidth + j] = oldMatrix[i * oldMatrixWidth + j + leftOffset];
+						copy(
+							tmp, i * copiedWidth + j,
+							oldMatrix, i * oldMatrixWidth + j + leftOffset,
+							elementSize);
 					}
 				}
 						
-				comm.Send(tmp, sendCount, MPI_DOUBLE, mpi_rank - bpNumberJ - 1, 0);
+				comm.Send(tmp, sendCount, datatype, mpi_rank - bpNumberJ - 1, 0);
 			}
 			else
 			{
-				comm.Recv(tmp, sendCount, MPI_DOUBLE, mpi_rank - bpNumberJ - 1, 0, &status);
+				comm.Recv(tmp, sendCount, datatype, mpi_rank - bpNumberJ - 1, 0, &status);
 						
 				for(int i = 0; i < sendHeight; i++)
 				{
 					for(int j = 0; j < copiedWidth; j++)
 					{
-						newMatrix[i * newMatrixWidth + j + newLeftOffset] = tmp[i * copiedWidth + j];
+						copy(
+							newMatrix, i * newMatrixWidth + j + newLeftOffset,
+							tmp, i * copiedWidth + j,
+							elementSize);
 					}
 				}
 			}
@@ -226,11 +249,11 @@ exchange_bottom:
 		{
 			int sendHeight = abs(newSolutionI[procI + 1] - oldSolutionI[procI + 1]);
 			int sendCount = sendHeight * copiedWidth;
-			double* tmp = (double*)malloc(sizeof(double) * sendCount);
+			void* tmp = malloc(elementSize * sendCount);
 
 			if(newSolutionI[procI + 1] > oldSolutionI[procI + 1])
 			{
-				comm.Recv(tmp, sendCount, MPI_DOUBLE, mpi_rank + bpNumberJ + 1, 0, &status);
+				comm.Recv(tmp, sendCount, datatype, mpi_rank + bpNumberJ + 1, 0, &status);
 						
 				int offset = newMatrixHeight - sendHeight;
 
@@ -238,7 +261,10 @@ exchange_bottom:
 				{
 					for(int j = 0; j < copiedWidth; j++)
 					{
-						newMatrix[(i + offset) * newMatrixWidth + j + newLeftOffset] = tmp[i * copiedWidth + j];
+						copy(
+							newMatrix, (i + offset) * newMatrixWidth + j + newLeftOffset,
+							tmp, i * copiedWidth + j,
+							elementSize);
 					}
 				}
 			}
@@ -250,11 +276,14 @@ exchange_bottom:
 				{
 					for(int j = 0; j < copiedWidth; j++)
 					{
-						tmp[i * copiedWidth + j] = oldMatrix[(i + offset) * oldMatrixWidth + j + leftOffset];
+						copy(
+							tmp, i * copiedWidth + j,
+							oldMatrix, (i + offset) * oldMatrixWidth + j + leftOffset,
+							elementSize);
 					}
 				}
 						
-				comm.Send(tmp, sendCount, MPI_DOUBLE, mpi_rank + bpNumberJ + 1, 0);
+				comm.Send(tmp, sendCount, datatype, mpi_rank + bpNumberJ + 1, 0);
 			}
 
 			free(tmp);
@@ -290,7 +319,7 @@ exchange_left_top:
 			int sendWidth = abs(newSolutionJ[procJ] - oldSolutionJ[procJ]);
 			int sendHeight = abs(newSolutionI[procI] - oldSolutionI[procI]);
 			int sendCount = sendWidth * sendHeight;
-			double* tmp = (double*)malloc(sizeof(double) * sendCount);
+			void* tmp = malloc(elementSize * sendCount);
 
 			if(newSolutionJ[procJ] > oldSolutionJ[procJ] && newSolutionI[procI] > oldSolutionI[procI])
 			{
@@ -298,21 +327,27 @@ exchange_left_top:
 				{
 					for(int j = 0; j < sendWidth; j++)
 					{
-						tmp[i * sendWidth + j] = oldMatrix[i * oldMatrixWidth + j];
+						copy(
+							tmp, i * sendWidth + j,
+							oldMatrix, i * oldMatrixWidth + j,
+							elementSize);
 					}
 				}
 						
-				comm.Send(tmp, sendCount, MPI_DOUBLE, mpi_rank - bpNumberJ - 2, 0);
+				comm.Send(tmp, sendCount, datatype, mpi_rank - bpNumberJ - 2, 0);
 			}
 			else
 			{
-				comm.Recv(tmp, sendCount, MPI_DOUBLE, mpi_rank - bpNumberJ - 2, 0, &status);
+				comm.Recv(tmp, sendCount, datatype, mpi_rank - bpNumberJ - 2, 0, &status);
 
 				for(int i = 0; i < sendHeight; i++)
 				{
 					for(int j = 0; j < sendWidth; j++)
 					{
-						newMatrix[i * newMatrixWidth + j] = tmp[i * sendWidth + j];
+						copy(
+							newMatrix, i * newMatrixWidth + j,
+							tmp, i * sendWidth + j,
+							elementSize);
 					}
 				}
 			}
@@ -335,7 +370,7 @@ exchange_right_bottom:
 			int sendWidth = abs(newSolutionJ[procJ + 1] - oldSolutionJ[procJ + 1]);
 			int sendHeight = abs(newSolutionI[procI + 1] - oldSolutionI[procI + 1]);
 			int sendCount = sendWidth * sendHeight;
-			double* tmp = (double*)malloc(sizeof(double) * sendCount);
+			void* tmp = malloc(elementSize * sendCount);
 
 			if(newSolutionJ[procJ + 1] < oldSolutionJ[procJ + 1] && newSolutionI[procI + 1] < oldSolutionI[procI + 1])
 			{
@@ -346,15 +381,18 @@ exchange_right_bottom:
 				{
 					for(int j = 0; j < sendWidth; j++)
 					{
-						tmp[i * sendWidth + j] = oldMatrix[(i + offsetI) * oldMatrixWidth + j + offsetJ];
+						copy(
+							tmp, i * sendWidth + j,
+							oldMatrix, (i + offsetI) * oldMatrixWidth + j + offsetJ,
+							elementSize);
 					}
 				}
 						
-				comm.Send(tmp, sendCount, MPI_DOUBLE, mpi_rank + bpNumberJ + 2, 0);
+				comm.Send(tmp, sendCount, datatype, mpi_rank + bpNumberJ + 2, 0);
 			}
 			else
 			{
-				comm.Recv(tmp, sendCount, MPI_DOUBLE, mpi_rank + bpNumberJ + 2, 0, &status);
+				comm.Recv(tmp, sendCount, datatype, mpi_rank + bpNumberJ + 2, 0, &status);
 						
 				int offsetJ = newMatrixWidth - sendWidth;
 				int offsetI = newMatrixHeight - sendHeight;
@@ -363,7 +401,10 @@ exchange_right_bottom:
 				{
 					for(int j = 0; j < sendWidth; j++)
 					{
-						newMatrix[(i + offsetI) * newMatrixWidth + j + offsetJ] = tmp[i * sendWidth + j];
+						copy(
+							newMatrix, (i + offsetI) * newMatrixWidth + j + offsetJ,
+							tmp, i * sendWidth + j,
+							elementSize);
 					}
 				}
 			}
@@ -401,7 +442,7 @@ exchange_right_top:
 			int sendWidth = abs(newSolutionJ[procJ + 1] - oldSolutionJ[procJ + 1]);
 			int sendHeight = abs(newSolutionI[procI] - oldSolutionI[procI]);
 			int sendCount = sendWidth * sendHeight;
-			double* tmp = (double*)malloc(sizeof(double) * sendCount);
+			void* tmp = malloc(elementSize * sendCount);
 
 			if(newSolutionJ[procJ + 1] < oldSolutionJ[procJ + 1] && newSolutionI[procI] > oldSolutionI[procI])
 			{
@@ -411,15 +452,18 @@ exchange_right_top:
 				{
 					for(int j = 0; j < sendWidth; j++)
 					{
-						tmp[i * sendWidth + j] = oldMatrix[i * oldMatrixWidth + j + offsetJ];
+						copy(
+							tmp, i * sendWidth + j,
+							oldMatrix, i * oldMatrixWidth + j + offsetJ,
+							elementSize);
 					}
 				}
 						
-				comm.Send(tmp, sendCount, MPI_DOUBLE, mpi_rank - bpNumberJ, 0);
+				comm.Send(tmp, sendCount, datatype, mpi_rank - bpNumberJ, 0);
 			}
 			else
 			{
-				comm.Recv(tmp, sendCount, MPI_DOUBLE, mpi_rank - bpNumberJ, 0, &status);
+				comm.Recv(tmp, sendCount, datatype, mpi_rank - bpNumberJ, 0, &status);
 						
 				int offsetJ = newMatrixWidth - sendWidth;
 						
@@ -427,7 +471,10 @@ exchange_right_top:
 				{
 					for(int j = 0; j < sendWidth; j++)
 					{
-						newMatrix[i * newMatrixWidth + j + offsetJ] = tmp[i * sendWidth + j];
+						copy(
+							newMatrix, i * newMatrixWidth + j + offsetJ,
+							tmp, i * sendWidth + j,
+							elementSize);
 					}
 				}
 			}
@@ -450,7 +497,7 @@ exchange_left_bottom:
 			int sendWidth = abs(newSolutionJ[procJ] - oldSolutionJ[procJ]);
 			int sendHeight = abs(newSolutionI[procI + 1] - oldSolutionI[procI + 1]);
 			int sendCount = sendWidth * sendHeight;
-			double* tmp = (double*)malloc(sizeof(double) * sendCount);
+			void* tmp = malloc(elementSize * sendCount);
 
 			if(newSolutionJ[procJ] > oldSolutionJ[procJ] && newSolutionI[procI + 1] < oldSolutionI[procI + 1])
 			{
@@ -460,14 +507,17 @@ exchange_left_bottom:
 				{
 					for(int j = 0; j < sendWidth; j++)
 					{
-						tmp[i * sendWidth + j] = oldMatrix[(i + offsetI) * oldMatrixWidth + j];
+						copy(
+							tmp, i * sendWidth + j,
+							oldMatrix, (i + offsetI) * oldMatrixWidth + j,
+							elementSize);
 					}
 				}
-				comm.Send(tmp, sendCount, MPI_DOUBLE, mpi_rank + bpNumberJ, 0);
+				comm.Send(tmp, sendCount, datatype, mpi_rank + bpNumberJ, 0);
 			}
 			else
 			{
-				comm.Recv(tmp, sendCount, MPI_DOUBLE, mpi_rank + bpNumberJ, 0, &status);
+				comm.Recv(tmp, sendCount, datatype, mpi_rank + bpNumberJ, 0, &status);
 						
 				int offsetI = newMatrixHeight - sendHeight;
 
@@ -475,7 +525,10 @@ exchange_left_bottom:
 				{
 					for(int j = 0; j < sendWidth; j++)
 					{
-						newMatrix[(i + offsetI) * newMatrixWidth + j] = tmp[i * sendWidth + j];
+						copy(
+							newMatrix, (i + offsetI) * newMatrixWidth + j,
+							tmp, i * sendWidth + j,
+							elementSize);
 					}
 				}
 			}

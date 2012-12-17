@@ -39,31 +39,31 @@ void Environment::Run(IMPICommunicator& comm, IDomainModel& dm, ILoadBalancingAl
 	int* solutionI[2];
 	int* solutionJ[2];
 	double* matrix[2];
+	int* time_matrix[2];
 	int bpNumberI;
 	int bpNumberJ;
 
-	ProblemBuilder pb(comm, &solutionI[currentSolution], &solutionJ[currentSolution], &matrix[currentMatrix], &bpNumberI, &bpNumberJ, malloc);
+	ProblemBuilder pb(comm, &solutionI[0], &solutionJ[0], &matrix[0], &bpNumberI, &bpNumberJ, malloc);
 	dm.LoadProblem(comm, pb);
 	
 	int procI = mpi_rank / (bpNumberJ + 1);
 	int procJ = mpi_rank % (bpNumberJ + 1);
 
-	int matrixHeight = solutionI[currentSolution][procI + 1] - solutionI[currentSolution][procI];
-	int matrixWidth = solutionJ[currentSolution][procJ + 1] - solutionJ[currentSolution][procJ];
+	int matrixHeight = solutionI[0][procI + 1] - solutionI[0][procI];
+	int matrixWidth = solutionJ[0][procJ + 1] - solutionJ[0][procJ];
 		
-	solutionI[(currentSolution + 1) % 2] = (int*)malloc(sizeof(int) * (bpNumberI + 2));
-	solutionJ[(currentSolution + 1) % 2] = (int*)malloc(sizeof(int) * (bpNumberJ + 2));
+	solutionI[1] = (int*)malloc(sizeof(int) * (bpNumberI + 2));
+	solutionJ[1] = (int*)malloc(sizeof(int) * (bpNumberJ + 2));
 	
-	matrix[(currentMatrix + 1) % 2] = (double*)malloc(sizeof(double) * matrixHeight * matrixWidth);
-	int *time_matrix = (int*)malloc(sizeof(int) * matrixHeight * matrixWidth);
+	matrix[1]   = (double*)malloc(sizeof(double) * matrixHeight * matrixWidth);
+	time_matrix[0] = (int*)malloc(sizeof(int)    * matrixHeight * matrixWidth);
+	time_matrix[1] = (int*)malloc(sizeof(int)    * matrixHeight * matrixWidth);
 
-	while(dm.Run(comm, time_matrix, matrix[currentMatrix], matrix[(currentMatrix + 1) % 2], solutionI[currentSolution], solutionJ[currentSolution], bpNumberI, bpNumberJ))
+	while(dm.Run(comm, time_matrix[currentMatrix], matrix[currentMatrix], matrix[(currentMatrix + 1) % 2], solutionI[currentSolution], solutionJ[currentSolution], bpNumberI, bpNumberJ))
 	{
-		currentMatrix = (currentMatrix + 1) % 2;
-
 		lbc.Reset();
 
-		while(lbc.ShouldRebalance(comm, time_matrix,
+		while(lbc.ShouldRebalance(comm, time_matrix[currentMatrix],
 				solutionI[currentSolution], solutionJ[currentSolution],
 				bpNumberI, bpNumberJ))
 		{
@@ -72,29 +72,31 @@ void Environment::Run(IMPICommunicator& comm, IDomainModel& dm, ILoadBalancingAl
 			memcpy(solutionJ[newSolution], solutionJ[currentSolution], (bpNumberJ + 2) * sizeof(int));
 
 			bool canRunAgain = lb.Run(comm,
-				time_matrix,
+				time_matrix[currentMatrix],
 				solutionI[currentSolution], solutionJ[currentSolution],
 				bpNumberI, bpNumberJ,
 				solutionI[newSolution], solutionJ[newSolution]
 				);
-
+				
 			int newMatrix = (currentMatrix + 1) % 2;
 			int newMatrixHeight = solutionI[newSolution][procI + 1] - solutionI[newSolution][procI];
-			int newMatrixWidth = solutionJ[newSolution][procJ + 1] - solutionJ[newSolution][procJ];
+			int newMatrixWidth  = solutionJ[newSolution][procJ + 1] - solutionJ[newSolution][procJ];
 
 			if(newMatrixHeight * newMatrixWidth != matrixHeight * matrixWidth)
 			{
-				matrix[newMatrix]     = (double*)realloc(matrix[newMatrix], sizeof(double) * newMatrixHeight * newMatrixWidth);
+				matrix[newMatrix]      = (double*)realloc(matrix[newMatrix],      sizeof(double) * newMatrixHeight * newMatrixWidth);
+				time_matrix[newMatrix] = (int*)   realloc(time_matrix[newMatrix], sizeof(int)    * newMatrixHeight * newMatrixWidth);
 			}
 
-			rb.Rebalance(comm, solutionI[currentSolution], solutionJ[currentSolution], matrix[currentMatrix], solutionI[newSolution], solutionJ[newSolution], matrix[newMatrix], bpNumberI, bpNumberJ);
+			rb.Rebalance(comm, solutionI[currentSolution], solutionJ[currentSolution], matrix[currentMatrix],      solutionI[newSolution], solutionJ[newSolution], matrix[newMatrix],      bpNumberI, bpNumberJ, MPI_DOUBLE, sizeof(double));
+			rb.Rebalance(comm, solutionI[currentSolution], solutionJ[currentSolution], time_matrix[currentMatrix], solutionI[newSolution], solutionJ[newSolution], time_matrix[newMatrix], bpNumberI, bpNumberJ, MPI_INT,    sizeof(int));
 			
 			currentSolution = newSolution;
 
 			if(newMatrixHeight * newMatrixWidth != matrixHeight * matrixWidth)
 			{
-				matrix[currentMatrix] = (double*)realloc(matrix[currentMatrix], sizeof(double) * newMatrixHeight * newMatrixWidth);
-				time_matrix           = (int*)realloc(time_matrix,              sizeof(int)    * newMatrixHeight * newMatrixWidth);
+				matrix[currentMatrix]      = (double*)realloc(matrix[currentMatrix],      sizeof(double) * newMatrixHeight * newMatrixWidth);
+				time_matrix[currentMatrix] = (int*)   realloc(time_matrix[currentMatrix], sizeof(int)    * newMatrixHeight * newMatrixWidth);
 			}
 			
 			matrixWidth   = newMatrixWidth;
@@ -118,5 +120,6 @@ void Environment::Run(IMPICommunicator& comm, IDomainModel& dm, ILoadBalancingAl
 	free(solutionJ[1]);
 	free(matrix[0]);
 	free(matrix[1]);
-	free(time_matrix);
+	free(time_matrix[0]);
+	free(time_matrix[1]);
 }

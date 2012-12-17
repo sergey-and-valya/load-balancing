@@ -93,7 +93,7 @@ void RebalancerNoMoveTest()
 		newSolutionJ[i] = oldSolutionJ[i];
 	}
 	
-	rb.Rebalance(comm, oldSolutionI, oldSolutionJ, oldMatrix, newSolutionI, newSolutionJ, newMatrix, bpNumberI, bpNumberJ);
+	rb.Rebalance(comm, oldSolutionI, oldSolutionJ, oldMatrix, newSolutionI, newSolutionJ, newMatrix, bpNumberI, bpNumberJ, MPI_DOUBLE, sizeof(double));
 	
 	for(int i = 0; i < oldLocalHeight; i++)
 	{
@@ -214,7 +214,7 @@ void RebalancerMoveFromLeftTest()
 
 	newSolutionJ[procJ] -= deltaWidth;
 	
-	rb.Rebalance(comm, oldSolutionI, oldSolutionJ, oldMatrix, newSolutionI, newSolutionJ, newMatrix, bpNumberI, bpNumberJ);
+	rb.Rebalance(comm, oldSolutionI, oldSolutionJ, oldMatrix, newSolutionI, newSolutionJ, newMatrix, bpNumberI, bpNumberJ, MPI_DOUBLE, sizeof(double));
 	
 	assert(receiveCalls == 1);
 
@@ -341,7 +341,7 @@ void RebalancerMoveFromRightTest()
 
 	newSolutionJ[procJ + 1] += deltaWidth;
 	
-	rb.Rebalance(comm, oldSolutionI, oldSolutionJ, oldMatrix, newSolutionI, newSolutionJ, newMatrix, bpNumberI, bpNumberJ);
+	rb.Rebalance(comm, oldSolutionI, oldSolutionJ, oldMatrix, newSolutionI, newSolutionJ, newMatrix, bpNumberI, bpNumberJ, MPI_DOUBLE, sizeof(double));
 	
 	assert(receiveCalls == 1);
 
@@ -468,7 +468,7 @@ void RebalancerMoveFromTopTest()
 
 	newSolutionI[procI] -= deltaHeight;
 	
-	rb.Rebalance(comm, oldSolutionI, oldSolutionJ, oldMatrix, newSolutionI, newSolutionJ, newMatrix, bpNumberI, bpNumberJ);
+	rb.Rebalance(comm, oldSolutionI, oldSolutionJ, oldMatrix, newSolutionI, newSolutionJ, newMatrix, bpNumberI, bpNumberJ, MPI_DOUBLE, sizeof(double));
 	
 	assert(receiveCalls == 1);
 	
@@ -595,7 +595,7 @@ void RebalancerMoveFromBottomTest()
 
 	newSolutionI[procI + 1] += deltaHeight;
 	
-	rb.Rebalance(comm, oldSolutionI, oldSolutionJ, oldMatrix, newSolutionI, newSolutionJ, newMatrix, bpNumberI, bpNumberJ);
+	rb.Rebalance(comm, oldSolutionI, oldSolutionJ, oldMatrix, newSolutionI, newSolutionJ, newMatrix, bpNumberI, bpNumberJ, MPI_DOUBLE, sizeof(double));
 	
 	assert(receiveCalls == 1);
 	
@@ -723,7 +723,7 @@ void RebalancerMoveToLeftTest()
 
 	newSolutionJ[procJ] += deltaWidth;
 	
-	rb.Rebalance(comm, oldSolutionI, oldSolutionJ, oldMatrix, newSolutionI, newSolutionJ, newMatrix, bpNumberI, bpNumberJ);
+	rb.Rebalance(comm, oldSolutionI, oldSolutionJ, oldMatrix, newSolutionI, newSolutionJ, newMatrix, bpNumberI, bpNumberJ, MPI_DOUBLE, sizeof(double));
 	
 	assert(sendCalls == 1);
 
@@ -845,7 +845,7 @@ void RebalancerMoveToRightTest()
 
 	newSolutionJ[procJ + 1] -= deltaWidth;
 	
-	rb.Rebalance(comm, oldSolutionI, oldSolutionJ, oldMatrix, newSolutionI, newSolutionJ, newMatrix, bpNumberI, bpNumberJ);
+	rb.Rebalance(comm, oldSolutionI, oldSolutionJ, oldMatrix, newSolutionI, newSolutionJ, newMatrix, bpNumberI, bpNumberJ, MPI_DOUBLE, sizeof(double));
 	
 	assert(sendCalls == 1);
 
@@ -967,7 +967,7 @@ void RebalancerMoveToTopTest()
 
 	newSolutionI[procI] += deltaHeight;
 	
-	rb.Rebalance(comm, oldSolutionI, oldSolutionJ, oldMatrix, newSolutionI, newSolutionJ, newMatrix, bpNumberI, bpNumberJ);
+	rb.Rebalance(comm, oldSolutionI, oldSolutionJ, oldMatrix, newSolutionI, newSolutionJ, newMatrix, bpNumberI, bpNumberJ, MPI_DOUBLE, sizeof(double));
 	
 	assert(sendCalls == 1);
 
@@ -1089,7 +1089,7 @@ void RebalancerMoveToBottomTest()
 
 	newSolutionI[procI + 1] -= deltaHeight;
 	
-	rb.Rebalance(comm, oldSolutionI, oldSolutionJ, oldMatrix, newSolutionI, newSolutionJ, newMatrix, bpNumberI, bpNumberJ);
+	rb.Rebalance(comm, oldSolutionI, oldSolutionJ, oldMatrix, newSolutionI, newSolutionJ, newMatrix, bpNumberI, bpNumberJ, MPI_DOUBLE, sizeof(double));
 	
 	assert(sendCalls == 1);
 
@@ -1246,7 +1246,7 @@ void RebalancerMoveFromLeftFromTopTest()
 	newSolutionJ[procJ] -= deltaWidth;
 	newSolutionI[procI] -= deltaHeight;
 	
-	rb.Rebalance(comm, oldSolutionI, oldSolutionJ, oldMatrix, newSolutionI, newSolutionJ, newMatrix, bpNumberI, bpNumberJ);
+	rb.Rebalance(comm, oldSolutionI, oldSolutionJ, oldMatrix, newSolutionI, newSolutionJ, newMatrix, bpNumberI, bpNumberJ, MPI_DOUBLE, sizeof(double));
 	
 	assert(receiveCalls == 3);
 	

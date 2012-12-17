@@ -134,14 +134,15 @@ void EnvironmentTest()
 	);
 	
 	auto rb = MockRebalancer(
-		[localWidth, localHeight](IMPICommunicator& comm, const int oldSolutionI[], const int oldSolutionJ[], const double oldMatrix[], const int newSolutionI[], const int newSolutionJ[], double newMatrix[], int bpNumberI, int bpNumberJ)
+		[localWidth, localHeight](IMPICommunicator& comm, const int oldSolutionI[], const int oldSolutionJ[], const void* oldMatrix, const int newSolutionI[], const int newSolutionJ[], void* newMatrix, int bpNumberI, int bpNumberJ, MPI_Datatype datatype)
 		{
 			assert(oldSolutionI);
+			assert(datatype == MPI_INT);
 			for(int i = 0; i < localHeight; i++)
 			{
 				for(int j = 0; j < localWidth; j++)
 				{
-					newMatrix[i * localWidth + j] = i * localWidth + j;
+					static_cast<int*>(newMatrix)[i * localWidth + j] = i * localWidth + j;
 				}
 			}
 		}

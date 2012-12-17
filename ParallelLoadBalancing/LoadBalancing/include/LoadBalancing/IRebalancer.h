@@ -33,9 +33,13 @@ class IRebalancer
 public:
 
     /**
-     * \fn  virtual void IRebalancer::Rebalance(IMPICommunicator& comm, const int oldSolutionI[],
-     *      const int oldSolutionJ[], const double oldMatrix[], const int newSolutionI[],
-     *      const int newSolutionJ[], double newMatrix[], int bpNumberI, int bpNumberJ) = 0;
+     * \fn  virtual void IRebalancer::Rebalance(IMPICommunicator& comm,
+	 *      const int oldSolutionI[], const int oldSolutionJ[],
+	 *      const void* oldMatrix,
+	 *      const int newSolutionI[], const int newSolutionJ[],
+	 *      void* newMatrix,
+	 *      int bpNumberI, int bpNumberJ,
+	 *      MPI_Datatype datatype, size_t elementSize) = 0;
      *
      * \brief   Performs rebalancing on the current processor (determined by \a comm.Rank()).
      *          Exchanges blocks of data with surroundings via communicator \a comm to distribute
@@ -50,17 +54,21 @@ public:
      * \param  [out]     newMatrix     New matrix values to be stored at the current processor.
      * \param            bpNumberI     Break point number by rows.
      * \param            bpNumberJ     Break point number by columns.
+     * \param            datatype      Datatype of values.
+     * \param            elementSize   Size of value element.
      */
 
 	virtual void Rebalance(IMPICommunicator& comm, 
                            const int oldSolutionI[],
                            const int oldSolutionJ[],
-                           const double oldMatrix[],
+                           const void* oldMatrix,
                            const int newSolutionI[],
                            const int newSolutionJ[],
-                           double newMatrix[],
+                           void* newMatrix,
                            int bpNumberI,
-                           int bpNumberJ) = 0;
+                           int bpNumberJ,
+						   MPI_Datatype datatype,
+						   size_t elementSize) = 0;
 };
 
 #endif
