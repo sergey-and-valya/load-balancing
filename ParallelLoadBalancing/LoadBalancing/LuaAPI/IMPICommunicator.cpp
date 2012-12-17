@@ -67,9 +67,50 @@ static int instance_tostring(lua_State* L)
 	return 1;
 }
 
+//comm:barrier([root])
+static int instance_barrier(lua_State* L)
+{
+	IMPICommunicator* instance = luaLB_checkIMPICommunicator(L, 1);
+
+	int parameters = lua_gettop(L);
+
+	int root = 0;
+
+	if(parameters == 2)
+	{
+		root = luaL_checkinteger(L, 2);
+	}
+
+	int mpiRank;
+	int dummy;
+	instance->Rank(&mpiRank);
+
+	if(mpiRank == root)
+	{
+		int mpiSize;
+		instance->Size(&mpiSize);
+
+		MPI_Status s;
+		for(int i = 0; i < mpiSize; ++i)
+		{
+			if(i != root)
+			{
+				instance->Recv(&dummy, 1, MPI_INT, i, 0, 0);
+			}
+		}
+	}
+	else
+	{
+		instance->Send(&dummy, 1, MPI_INT, root, 0);
+	}
+
+	return 0;
+}
+
 static const luaL_Reg instance_functions[] = {
 	{"__gc",                      instance_destructor},
 	{"__tostring",                instance_tostring},
+	{"barrier",                   instance_barrier},
 
 	{NULL, NULL}
 };

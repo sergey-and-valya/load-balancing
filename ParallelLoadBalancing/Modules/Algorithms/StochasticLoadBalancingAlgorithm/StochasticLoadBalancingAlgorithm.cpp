@@ -29,29 +29,6 @@ StochasticLoadBalancingAlgorithm::StochasticLoadBalancingAlgorithm()
 	srand(time(0));
 }
 
-void Barrier(IMPICommunicator& comm)
-{
-	int mpiRank;
-	int dummy;
-	comm.Rank(&mpiRank);
-
-	if(mpiRank == 0)
-	{
-		int mpiSize;
-		comm.Size(&mpiSize);
-
-		MPI_Status s;
-		for(int i = 1; i < mpiSize; ++i)
-		{
-			comm.Recv(&dummy, 1, MPI_INT, i, 0, 0);
-		}
-	}
-	else
-	{
-		comm.Send(&dummy, 1, MPI_INT, 0, 0);
-	}
-}
-
 void StochasticLoadBalancingAlgorithm::Run(
 		IMPICommunicator& comm,
 		const int time_matrix[],
