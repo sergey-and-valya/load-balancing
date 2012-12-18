@@ -41,41 +41,6 @@ public:
 		int bpNumberJ);
 
 private:
-	void CreateArrSide(
-		IMPICommunicator& comm,
-		int col,
-		int row,
-		int num_processor_col,
-		int num_processor_row,
-		const double matrix[],
-		Values* values,
-		int i, int j, 
-		double* top_row,						
-		double* bottom_row,						
-		double* left_column,					
-		double* right_column,					
-		double top_left_corner,					
-		double top_right_corner,				
-		double bottom_left_corner,				
-		double bottom_right_corner
-		);
-
-	void Global_Sending(
-		IMPICommunicator& comm,
-		int col,
-		int row,
-		int num_processor_col,
-		const double matrix[],
-		double* top_row,						
-		double* bottom_row,						
-		double* left_column,					
-		double* right_column,					
-		double &top_left_corner,					
-		double &top_right_corner,				
-		double &bottom_left_corner,				
-		double &bottom_right_corner);
-
-private:
 	IInputFile& inputFile;
 	IFunction& func;
 	int steps;

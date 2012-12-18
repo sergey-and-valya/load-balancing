@@ -22,8 +22,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define SIZE_BLOCK 3
-
 DomainModel::DomainModel(IInputFile& inputFile, IFunction& func, int steps)
 	: inputFile(inputFile)
 	, func(func)
@@ -41,70 +39,34 @@ void DomainModel::LoadProblem(IMPICommunicator& comm, IProblemBuilder& builder)
 	
 	int mpi_rank;
 	comm.Rank(&mpi_rank);
+	
+	int mpi_size;
+	comm.Size(&mpi_size);
 
-	//загрузить свой кусок матрицы
-	inputFile.Read(&row_global, sizeof(int), 1);
-	inputFile.Read(&col_global, sizeof(int), 1);
-	inputFile.Read(&num_processor_row, sizeof(int), 1);
-	inputFile.Read(&num_processor_col, sizeof(int), 1);
-		
-	builder.SetBreakPointCount(num_processor_row - 1, num_processor_col - 1);
+	int x = (int)floor(sqrt((double)mpi_size));
+	
+	int M = x;
+	int N = x;
+	
+	int m = 1000;
+	int n = 1000;
+
+	builder.SetBreakPointCount(M - 1, N - 1);
 
 	int* solutionI = builder.CreateSolutionI();
 	int* solutionJ = builder.CreateSolutionJ();
 
-	inputFile.Read(solutionI, sizeof(int), num_processor_row + 1);
-	inputFile.Read(solutionJ, sizeof(int), num_processor_col + 1);
-
-	solutionI[0] = -1;
-	solutionJ[0] = -1;
-
-	// высчитываем глобальный номер процессора
-	int ind_row = mpi_rank / num_processor_col;
-	int ind_col = mpi_rank % num_processor_col;
-
-	// теперь находим чему равны  номера строк и столбцов (начальные и конечные)
-	// для текущего процессора (ищем наш "кусок" исходной матрицы)
-	int start_row;
-	int finish_row;
-	int start_col;
-	int finish_col;
-		
-	// смещаемся на ind_row переменных int
-	//inputFile.Seek(ind_row * sizeof(int), SEEK_CUR);
-	//inputFile.Read(&start_row, sizeof(int), 1);
-	//if (ind_row != 0) 
-	//	start_row++;				
-	//inputFile.Read(&finish_row, sizeof(int), 1);
-	//	
-	//// теперь посчитаем номера столбцов, которые должны считать
-	//inputFile.Seek((num_processor_row + 1 + 4 + ind_col) * sizeof(int), SEEK_SET);
-	//inputFile.Read(&start_col, sizeof(int), 1);		
-	//if (ind_col != 0) 
-	//	start_col++;
-	//inputFile.Read(&finish_col, sizeof(int), 1);
-	start_row = solutionI[ind_row];
-	finish_row = solutionI[ind_row + 1];
-	start_col = solutionJ[ind_col];
-	finish_col = solutionJ[ind_col + 1];
-
-
-	// теперь заполним нашу матрицу
-	int row = finish_row - start_row;
-	int col = finish_col - start_col;
-
-	double* matrix = builder.CreateLocalMatrix();
-		
-	
-	int tmp_row = start_row + 1;			// номер текущей строки
-	int count_variable_int = num_processor_row + 4 + num_processor_col + 2;
-	for (int i = 0; i < row; i++)
+	for(int i = 0; i <= M; i++)
 	{
-		// сдвигаемся на начало матрицы
-		inputFile.Seek((count_variable_int) * sizeof(int) + (tmp_row * col_global + start_col + 1) * sizeof(double), SEEK_SET);
-		inputFile.Read(matrix + i * col, sizeof(double), col);
-		tmp_row++;
+		solutionI[i] = i * m - 1;
 	}
+
+	for(int j = 0; j <= N; j++)
+	{
+		solutionJ[j] = j * n - 1;
+	}
+	
+	double* matrix = builder.CreateLocalMatrix();
 }
 
 bool DomainModel::Run(
@@ -117,547 +79,109 @@ bool DomainModel::Run(
 	int bpNumberI,
 	int bpNumberJ)
 {
+	int rank;
+	comm.Rank(&rank);
 	
-	int mpi_rank;
-	comm.Rank(&mpi_rank);
+	int procI = rank / (bpNumberJ + 1);
+	int procJ = rank % (bpNumberJ + 1);
 
-	int num_processor_row = bpNumberI + 1;
-	int num_processor_col = bpNumberJ + 1;
-
-	int procI = mpi_rank / num_processor_col;
-	int procJ = mpi_rank % num_processor_col;
-
-	
-	int global_index_i = solutionI[procI] + 1;
-	int global_index_j = solutionJ[procJ] + 1;
-
-	int col = solutionJ[procJ + 1] - solutionJ[procJ];
-	int row = solutionI[procI + 1] - solutionI[procI];
-
-	
-
-	clock_t start_time;
-	clock_t finish_time; 
-
-	Values values(SIZE_BLOCK);
-	// сюда я буду принимать и потом с этим "работать"
-	double* top_row = new double[col];		// верхняя строка
-	double* bottom_row = new double[col];	// нижнняя строка
-	double* left_column = new double[row];	// левый столбец
-	double* right_column = new double[row];	// правый столбец
-	double top_left_corner = 0;				// верхний левый угол
-	double top_right_corner = 0;			// верхний правый угол
-	double bottom_left_corner = 0;			// нижний левый угол
-	double bottom_right_corner = 0;			// нижний правый угол
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
-	Global_Sending(comm, col, row, num_processor_col, matrix, top_row,	bottom_row,	left_column, right_column, top_left_corner, top_right_corner, bottom_left_corner, bottom_right_corner);
-	
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// высчитываем "внутренность"
-	for (int i = 1; i < row - 1; i++)
+	int dummy;
+	if(procJ % 2 == 0)
 	{
-		for (int j = 1; j < col - 1; j++)
-		{	
-			start_time = clock();
-			// формируем нужный нам массив
-			for (int k = 0; k < SIZE_BLOCK; k++)
-			{
-				for (int l = 0; l < SIZE_BLOCK; l++)
-				{
-					values.SetValue(k, l, matrix[(i - 1 + k) * col + j - 1 + l]);
-				}
-			}
-			new_matrix[i * col + j] = func(values, global_index_i + i, global_index_j + j);
-			finish_time = clock();
-			time_matrix[i * col + j] = (int)(finish_time - start_time);
+		if(procJ > 0)
+		{
+			comm.Recv(&dummy, 1, MPI_INT, rank - 1, 0, 0);
+		}
+		if(procJ < bpNumberJ)
+		{
+			comm.Recv(&dummy, 1, MPI_INT, rank + 1, 0, 0);
+		}
+	}
+	else
+	{
+		if(procJ < bpNumberJ)
+		{
+			comm.Send(&dummy, 1, MPI_INT, rank + 1, 0);
+		}
+		if(procJ > 0)
+		{
+			comm.Send(&dummy, 1, MPI_INT, rank - 1, 0);
+		}
+	}
+	
+	if(procI % 2 == 0)
+	{
+		if(procI > 0)
+		{
+			comm.Recv(&dummy, 1, MPI_INT, rank - bpNumberI - 1, 0, 0);
+		}
+		if(procI < bpNumberI)
+		{
+			comm.Recv(&dummy, 1, MPI_INT, rank + bpNumberI + 1, 0, 0);
+		}
+	}
+	else
+	{
+		if(procI < bpNumberI)
+		{
+			comm.Send(&dummy, 1, MPI_INT, rank + bpNumberI + 1, 0);
+		}
+		if(procI > 0)
+		{
+			comm.Send(&dummy, 1, MPI_INT, rank - bpNumberI - 1, 0);
 		}
 	}
 
-	// высчитываем границы
-	// полная нулевая строка
-	int i = 0;
-	for (int j = 0; j < col; j++)
-	{
-		CreateArrSide(comm, col, row, num_processor_col, num_processor_row, matrix, &values, i, j, top_row,	bottom_row,	left_column, right_column, top_left_corner, top_right_corner, bottom_left_corner, bottom_right_corner);
-		start_time = clock();
-		new_matrix[i * col + j] = func(values, global_index_i + i, global_index_j + j);
-		finish_time = clock();
-		time_matrix[i * col + j] = (int)(finish_time - start_time);
-	}
-
-	// полная последняя строка
-	i = row - 1;
-	for (int j = 0; j < col; j++)
-	{
-		CreateArrSide(comm, col, row, num_processor_col, num_processor_row, matrix, &values, i, j, top_row,	bottom_row,	left_column, right_column, top_left_corner, top_right_corner, bottom_left_corner, bottom_right_corner);
-		start_time = clock();
-		new_matrix[i * col + j] = func(values, global_index_i + i, global_index_j + j);
-		finish_time = clock();
-		time_matrix[i * col + j] = (int)(finish_time - start_time);
-	}
-
-	// полный нулевой столбец
-	int j = 0;
-	for (int i = 1; i < row - 1; i++)
-	{
-		CreateArrSide(comm, col, row, num_processor_col, num_processor_row, matrix, &values, i, j, top_row,	bottom_row,	left_column, right_column, top_left_corner, top_right_corner, bottom_left_corner, bottom_right_corner);
-		start_time = clock();
-		new_matrix[i * col + j] = func(values, global_index_i + i, global_index_j + j);
-		finish_time = clock();
-		time_matrix[i * col + j] = (int)(finish_time - start_time);
-	}
-
-	// полный последний столбец
-	j = col - 1;
-	for (int i = 1; i < row - 1; i++)
-	{
-		CreateArrSide(comm, col, row, num_processor_col, num_processor_row, matrix, &values, i, j, top_row,	bottom_row,	left_column, right_column, top_left_corner, top_right_corner, bottom_left_corner, bottom_right_corner);
-		start_time = clock();
-		new_matrix[i * col + j] = func(values, global_index_i + i, global_index_j + j);
-		finish_time = clock();
-		time_matrix[i * col + j] = (int)(finish_time - start_time);
-	}
+	int m = solutionI[procI + 1] - solutionI[procI];
+	int n = solutionJ[procJ + 1] - solutionJ[procJ];
 	
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	int rows = solutionI[bpNumberI + 1] + 1;
+	int cols = solutionJ[bpNumberJ + 1] + 1;
+	
+	int p = 5;
+	double px[] = {  100,     200,   2000,     500,    700 };
+	double py[] = {  400,     120,    350,     400,     80 };
+	double dx[] = {   20,       3,    -50,       0,    -20 };
+	double dy[] = {    0,      -8,     11,      40,    120 };
+	double w[]  = { 1000,   50000,   3000,  200000,  10000 };
+	double a[]  = {    1,      50,     14,      50,      1 };
+	double b[]  = {    1,       0,    0.5,     0.7,      1 };
+	double c[]  = {    0,       1,    0.5,     0.2,      1 };
 
-	// освобождение памяти
-	delete [] top_row;							// верхняя строка
-	delete [] bottom_row;						// нижнняя строка
-	delete [] left_column;						// левый столбец
-	delete [] right_column;						// правый столбец
+	for(int k = 0; k < p; k++)
+	{
+		px[p] += dx[p] * step;
+		py[p] += dy[p] * step;
+	}
+
+	for(int i = 0; i < m; i++)
+	{
+		for(int j = 0; j < n; j++)
+		{
+			int I = solutionI[procI] + i + 1;
+			int J = solutionJ[procJ] + j + 1;
+
+			//time_matrix[i * n + j] = 1 + 100 / (1.2 + sin(sqrt(((I - SI) * (I - SI) + (J - SJ) * (J - SJ)) / 100.0) + step * 0.5));
+			
+			time_matrix[i * n + j] = 1;
+			for(int k = 0; k < p; k++)
+			{
+				time_matrix[i * n + j] += w[p] / (a[p] + sqrt(b[p] * (I - px[p]) * (I - px[p]) + c[p] * (J - py[p]) * (J - py[p])));
+			}
+
+			new_matrix[i * n + j] = 0;
+			for(int k = 0; k < time_matrix[i * n + j]; k++)
+			{
+				for(int s = 0; s < 1000; s++)
+				{
+					if(rand())
+					{
+						new_matrix[i * n + j]++;
+					}
+				}
+			}
+		}
+	}
 
 	return ++step < steps;
-}
-
-void DomainModel::CreateArrSide(
-	IMPICommunicator& comm,
-	int col,
-	int row,
-	int num_processor_col,
-	int num_processor_row,
-	const double matrix[],
-	Values* values,
-	int i, int j, 
-	double* top_row,						
-	double* bottom_row,						
-	double* left_column,					
-	double* right_column,					
-	double top_left_corner,					
-	double top_right_corner,				
-	double bottom_left_corner,				
-	double bottom_right_corner
-	)
-{
-	int mpi_rank;
-	comm.Rank(&mpi_rank);
-
-	int mpi_size;
-	comm.Size(&mpi_size);
-
-	// устанавливаем флаги для тех ячеек, которых нет в качестве соседей для текущей ячейки
-	bool is_top = (i == 0) && (mpi_rank < num_processor_col);
-	bool is_left = (j == 0) && (mpi_rank % num_processor_col == 0);
-
-	bool is_right = (j == col - 1) && ((mpi_rank + 1) % num_processor_col == 0);
-	bool is_bottom = (i == row - 1) && (mpi_rank >= mpi_size - num_processor_col);
-
-	///////////////////////////////////////////////////////////////////////////////////////
-	values->SetValue(1, 1, matrix[i * col + j]);
-	///////////////////////////////////////////////////////////////////////////////////////
-
-	if (!(is_top || is_left)) 
-	{
-		if ((i == 0) && (j == 0))
-		{
-			values->SetValue(0, 0, top_left_corner);
-		}
-		else
-		{
-			if ((i == 0) && (j < col))
-			{
-				values->SetValue(0, 0, top_row[j - 1]);
-			}
-			else
-				if ((j == 0) && (i < row))
-				{
-					values->SetValue(0, 0, left_column[i - 1]);
-				}
-				else
-				{
-					values->SetValue(0, 0, matrix[(i - 1) * col + j- 1]);
-				}
-		}
-	}
-	///////////////////////////////////////////////////////////////////////////////////////
-	if (!(is_top || is_right)) 
-	{
-
-		if ((i == 0) && (j == col - 1))
-		{
-			values->SetValue(0, 2, top_right_corner);
-		}
-		else
-		{
-			if ((i == 0) && (j < col))
-			{
-				values->SetValue(0, 2, top_row[j + 1]);
-			}
-			else
-				if ((j == col - 1) && (i > 0))
-				{
-					values->SetValue(0, 2, right_column[i - 1]);
-				}
-				else
-				{
-					values->SetValue(0, 2, matrix[(i - 1) * col + j + 1]);
-				}
-		}
-	}
-	///////////////////////////////////////////////////////////////////////////////////////
-	if (!(is_bottom || is_left)) 
-	{
-		if ((i == row - 1) && (j == 0))
-		{
-			values->SetValue(2, 0, bottom_left_corner);
-		}
-		else
-		{
-			if ((i == row - 1) && (j > 0))
-			{
-				values->SetValue(2, 0, bottom_row[j - 1]);
-			}
-			else
-				if ((j == 0) && (i < row))
-				{
-					values->SetValue(2, 0, left_column[i + 1]);
-				}
-				else
-				{
-					values->SetValue(2, 0, matrix[(i + 1) * col + j - 1]);
-				}
-		}
-	}
-	///////////////////////////////////////////////////////////////////////////////////////
-	if (!(is_bottom || is_right)) 
-	{
-		if ((i == row - 1) && (j == col - 1))
-		{
-			values->SetValue(2, 2, bottom_right_corner);
-		}
-		else
-		{
-			if ((i == row - 1) && (j < col))
-			{
-				values->SetValue(2, 2, bottom_row[j + 1]);
-			}
-			else
-				if ((j == col - 1) && (i < row))
-				{
-					values->SetValue(2, 2, right_column[i + 1]);
-				}
-				else
-				{
-					values->SetValue(2, 2, matrix[(i + 1) * col + j + 1]);
-				}
-		}
-	}
-	///////////////////////////////////////////////////////////////////////////////////////
-	if (!is_left)
-	{
-		if (j == 0)
-		{
-			values->SetValue(1, 0, left_column[i]);
-		}
-		else
-		{
-			values->SetValue(1, 0, matrix[i * col + j - 1]);
-		}
-	}
-	///////////////////////////////////////////////////////////////////////////////////////
-	if (!is_top)
-	{
-		if (i == 0)
-		{
-			values->SetValue(0, 1, top_row[j]);
-		}
-		else
-		{
-			values->SetValue(0, 1, matrix[(i - 1) * col + j]);
-		}
-	}
-	///////////////////////////////////////////////////////////////////////////////////////
-	if (!is_bottom) 
-	{
-		if (i == row - 1)
-		{
-			values->SetValue(2, 1, bottom_row[j]);
-		}
-		else
-		{
-			values->SetValue(2, 1, matrix[(i + 1) * col + j]);
-		}
-	}
-	///////////////////////////////////////////////////////////////////////////////////////
-	if (!is_right) 
-	{
-		if (j == col - 1)
-		{
-			values->SetValue(1, 2, right_column[i]);
-		}
-		else
-		{
-			values->SetValue(1, 2, matrix[i * col + j + 1]);
-		}
-	}
-	///////////////////////////////////////////////////////////////////////////////////////
-	
-	if(is_left)
-		values->SetOffsetJ(SIZE_BLOCK / 2);
-	else if(is_right)
-		values->SetOffsetJ(-SIZE_BLOCK / 2);
-	else
-		values->SetOffsetJ(0);
-	
-	if(is_top)
-		values->SetOffsetI(SIZE_BLOCK / 2);
-	else if(is_bottom)
-		values->SetOffsetI(-SIZE_BLOCK / 2);
-	else
-		values->SetOffsetI(0);
-}
-
-void DomainModel::Global_Sending(	
-	IMPICommunicator& comm,
-	int col,
-	int row,
-	int num_processor_col,
-	const double matrix[],
-	double* top_row,						// верхняя строка
-	double* bottom_row,						// нижнняя строка
-	double* left_column,					// левый столбец
-	double* right_column,					// правый столбец
-	double &top_left_corner,				// верхний левый угол
-	double &top_right_corner,				// верхний правый угол
-	double &bottom_left_corner,				// нижний левый угол
-	double &bottom_right_corner				// нижний правый угол
-	)
-{
-	int mpi_rank;
-	comm.Rank(&mpi_rank);
-	int mpi_size;
-	comm.Size(&mpi_size);
-	MPI_Status status;
-
-	// это я буду посылать
-	const double* top_row_send;					// верхняя строка
-	const double* bottom_row_send ;				// нижнняя строка
-	double* left_column_send = new double[row];	// левый столбец
-	double* right_column_send = new double[row];// правый столбец
-	double top_left_corner_send = 0;			// верхний левый угол
-	double top_right_corner_send = 0;			// верхний правый угол
-	double bottom_left_corner_send = 0;			// нижний левый угол
-	double bottom_right_corner_send = 0;		// нижний правый угол
-
-	// формируем то, что должны послать, посылаем и принимаем
-	
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	top_row_send = matrix; //Верхняя строчка
-
-	if (mpi_rank < num_processor_col) 
-		// процессорам первой блок-строки нужно только получить нижнюю строчку
-	{
-		comm.Recv((void*) bottom_row, col, MPI_DOUBLE, mpi_rank + num_processor_col, 0, &status);
-	}
-	else 
-	{
-		if(mpi_rank >= mpi_size - num_processor_col) 
-			// процессорам последней блок-строки не нужна нижняя строчка, 
-			// только посылаем свою верхнюю строчку
-		{
-			comm.Send((void*) top_row_send, col, MPI_DOUBLE, mpi_rank - num_processor_col, 0);
-		}
-		else
-		{
-			comm.Recv((void*) bottom_row, col, MPI_DOUBLE, mpi_rank + num_processor_col, 0, &status);
-			comm.Send((void*) top_row_send, col, MPI_DOUBLE, mpi_rank - num_processor_col, 0);
-		}
-	}
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	bottom_row_send = matrix + (row - 1) * col; // Нижняя строчка
-
-	if (mpi_rank >= mpi_size - num_processor_col) 
-		// процессорам последней блок-строки нужно только получить верхнюю строчку
-	{
-		comm.Recv((void*) top_row, col, MPI_DOUBLE, mpi_rank - num_processor_col, 0, &status);
-	}
-	else 
-	{
-		if(mpi_rank < num_processor_col) 
-			// процессорам первой блок-строки не нужна верхняя строчка, 
-			// только посылаем свою нижнюю строчку
-		{
-			comm.Send((void*) bottom_row_send, col, MPI_DOUBLE, mpi_rank + num_processor_col, 0);
-		}
-		else
-		{
-			comm.Recv((void*) top_row, col, MPI_DOUBLE, mpi_rank - num_processor_col, 0, &status);
-			comm.Send((void*) bottom_row_send, col, MPI_DOUBLE, mpi_rank + num_processor_col, 0);
-		}
-	}
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
-	if((mpi_rank + 1) % num_processor_col != 0)
-	{
-		for (int i = 0; i < row; i++)
-		{
-			right_column_send[i] = matrix[i * col + col - 1];
-		}
-	}
-
-	
-	if ((mpi_rank + 1) % num_processor_col == 0) // Правый столбик
-	{
-		comm.Recv((void*) left_column, row, MPI_DOUBLE, mpi_rank - 1, 0, &status);
-	}
-	else 
-	{
-		if(mpi_rank % num_processor_col == 0) // Левый столбик
-		{
-			comm.Send((void*) right_column_send, row, MPI_DOUBLE, mpi_rank + 1, 0);
-		}
-		else
-		{
-			comm.Recv((void*) left_column, row, MPI_DOUBLE, mpi_rank - 1, 0, &status);
-			comm.Send((void*) right_column_send, row, MPI_DOUBLE, mpi_rank + 1, 0);
-		}
-	}
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
-	if(mpi_rank % num_processor_col != 0)
-	{
-		for (int i = 0; i < row; i++)
-		{
-			left_column_send[i] = matrix[i * col];
-		}
-	}
-
-	if (mpi_rank % num_processor_col == 0) // Левый столбик
-	{
-		comm.Recv((void*) right_column, row, MPI_DOUBLE, mpi_rank + 1, 0, &status);
-	}
-	else 
-	{
-		if((mpi_rank + 1) % num_processor_col == 0) // Правый столбик
-		{
-			comm.Send((void*) left_column_send, row, MPI_DOUBLE, mpi_rank - 1, 0);
-		}
-		else
-		{
-			comm.Recv((void*) right_column, row, MPI_DOUBLE, mpi_rank + 1, 0, &status);
-			comm.Send((void*) left_column_send, row, MPI_DOUBLE, mpi_rank - 1, 0);
-		}
-	}
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	top_left_corner_send = matrix[0];
-
-	if ((mpi_rank % num_processor_col == 0)  ||	(mpi_rank < num_processor_col )) // Левый столбик или верхняя строчка
-	{
-		if ((mpi_rank != mpi_size - num_processor_col) && (mpi_rank != num_processor_col - 1))
-		{
-			comm.Recv((void*) &bottom_right_corner, 1, MPI_DOUBLE, mpi_rank + num_processor_col + 1, 0, &status);
-		}
-		
-	}
-	else 
-	{
-		if(((mpi_rank + 1) % num_processor_col == 0) || (mpi_rank >= mpi_size - num_processor_col)) // Правый столбик + Нижняя строчка
-		{
-			comm.Send((void*) &top_left_corner_send, 1, MPI_DOUBLE, mpi_rank - num_processor_col - 1, 0);
-		}
-		else
-		{
-			comm.Recv((void*) &bottom_right_corner, 1, MPI_DOUBLE, mpi_rank + num_processor_col + 1, 0, &status);
-			comm.Send((void*) &top_left_corner_send, 1, MPI_DOUBLE, mpi_rank - num_processor_col - 1, 0);
-		}
-	}
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	top_right_corner_send = matrix[col - 1];
-
-	if (((mpi_rank + 1) % num_processor_col == 0)  || (mpi_rank < num_processor_col )) // Правый столбик или верхняя строчка
-	{
-		if ((mpi_rank != 0) && (mpi_rank != mpi_size - 1))
-		{
-			comm.Recv((void*) &bottom_left_corner, 1, MPI_DOUBLE, mpi_rank + num_processor_col - 1, 0, &status);
-		}
-		
-	}
-	else 
-	{
-		if((mpi_rank % num_processor_col == 0) || (mpi_rank >= mpi_size - num_processor_col)) // Правый столбик + Нижняя строчка
-		{
-			comm.Send((void*) &top_right_corner_send, 1, MPI_DOUBLE, mpi_rank - num_processor_col + 1, 0);
-		}
-		else
-		{
-			comm.Recv((void*) &bottom_left_corner, 1, MPI_DOUBLE, mpi_rank + num_processor_col - 1, 0, &status);
-			comm.Send((void*) &top_right_corner_send, 1, MPI_DOUBLE, mpi_rank - num_processor_col + 1, 0);
-		}
-	}
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	bottom_left_corner_send = matrix[(row - 1) * col];
-	if ((mpi_rank  % num_processor_col == 0)  || (mpi_rank >= mpi_size - num_processor_col)) // Левый столбик или нижняя строчка
-	{
-		if ((mpi_rank != 0) && (mpi_rank != mpi_size - 1))
-		{
-			comm.Recv((void*) &top_right_corner, 1, MPI_DOUBLE, mpi_rank - num_processor_col + 1, 0, &status);
-		}
-		
-	}
-	else 
-	{
-		if(((mpi_rank + 1) % num_processor_col == 0) || (mpi_rank < num_processor_col)) // Правый столбик + Верхняя строчка
-		{
-			comm.Send((void*) &bottom_left_corner_send, 1, MPI_DOUBLE, mpi_rank + num_processor_col - 1, 0);
-		}
-		else
-		{
-			comm.Recv((void*) &top_right_corner, 1, MPI_DOUBLE, mpi_rank - num_processor_col + 1, 0, &status);
-			comm.Send((void*) &bottom_left_corner_send, 1, MPI_DOUBLE, mpi_rank + num_processor_col - 1, 0);
-		}
-	}
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	bottom_right_corner_send = matrix[(row - 1) * col + col - 1];
-	if (((mpi_rank + 1)  % num_processor_col == 0)  || (mpi_rank >= mpi_size - num_processor_col)) // Правый столбик или нижняя строчка
-	{
-		if ((mpi_rank != num_processor_col - 1) && (mpi_rank != mpi_size - num_processor_col))
-		{
-			comm.Recv((void*) &top_left_corner, 1, MPI_DOUBLE, mpi_rank - num_processor_col - 1, 0, &status);
-		}
-		
-	}
-	else 
-	{
-		if((mpi_rank % num_processor_col == 0) || (mpi_rank < num_processor_col)) // Левый столбик + Верхняя строчка
-		{
-			comm.Send((void*) &bottom_right_corner_send, 1, MPI_DOUBLE, mpi_rank + num_processor_col + 1, 0);
-		}
-		else
-		{
-			comm.Recv((void*) &top_left_corner, 1, MPI_DOUBLE, mpi_rank - num_processor_col - 1, 0, &status);
-			comm.Send((void*) &bottom_right_corner_send, 1, MPI_DOUBLE, mpi_rank + num_processor_col + 1, 0);
-		}
-	}
-	
-	// освобождение памяти
-	top_row_send = NULL;						// верхняя строка
-	bottom_row_send = NULL;						// нижнняя строка
-	delete [] left_column_send;					// левый столбец
-	delete [] right_column_send;				// правый столбец
 }
